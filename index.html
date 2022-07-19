@@ -169,7 +169,7 @@
 <h2 id="嵌套用户命名空间"><a href="#嵌套用户命名空间" class="headerlink" title="嵌套用户命名空间"></a>嵌套用户命名空间</h2><p>用户名称空间可以嵌套,也就是说除了初始根用户命名空间之外,每个用户命名空间都有一个父用户命名空间,并且可以具有零个或多个子用户命名空间,父用户命名空间通过<code>unshare</code>、<code>clone</code>,配合使用<code>CLONE_NEWUSER</code>标志创建子用户命名空间。内核（&gt;3.11)限制用户命名空间最多嵌套32层,超出限制会报<code>EUSERS</code></p>
 <p>每一个进程都是一个用户命名空间的成员,一个进程通过<code>fork</code>或者<code>clone</code>但是不使用<code>CLONE_NEWUSER</code>就会和父进程一样作为同一个用户命名空间的成员。一个进程可以通过<code>setns</code>加入另一个用户命名空间,前提是这个进程在这个用户命名空间有<code>CAP_SYS_ADMIN</code>能力,切换后这个进程将在这个用户命名空间有全部能力</p>
 <p>ioctl中的<code>NS_GET_PARENT</code>用于获取用户命名空间的父子关系(ioctl_ns)</p>
-<h2 id="用户命名空间能力"><a href="#用户命名空间能力" class="headerlink" title="用户命名空间能力"></a>用户命名空间能力</h2><p>通过<code>clone</code>或者<code>unshare</code>创建一个新的用户命名空间,或者通过<code>setns</code>加入一个已经存在的用户命名空间都会使这个进程获得这个用户命名空间的全部能力集,并且这个进程在父用户命名空间没有任何能力,即使新的用户命名空间是由root创建的</p>
+<h2 id="用户命名空间能力"><a href="#用户命名空间能力" class="headerlink" title="用户命名空间能力"></a>用户命名空间能力</h2><p>通过<code>clone</code>或者<code>unshare</code>创建一个新的用户命名空间,或者通过<code>setns</code>加入一个已经存在的用户命名空间都会使这个进程获得这个用户命名空间的全部能力集,并且这个进程在父用户命名空间或切换之前的用户命名空间没有任何能力,即使新的用户命名空间是由root创建或切换的</p>
 <p>在用户命名空间中调用<code>execve</code>通常将以正常的方式重新计算新进程的能力,因此除非uid&#x3D;0或者文件的<code>inheritable capabilities mask</code>不为空,能力都将被丢掉</p>
 <p><code>clone</code>,<code>unshare</code>,<code>setns</code>创建&#x2F;切换用户命名空间都将导致<code>securebits</code>标志位变成默认值(全关),因为切换到新的用户命名空间的进程在原用户命名空间将失去所有能力,所以即使将<code>securebits</code>标志位恢复,也没有办法通过两次<code>setns</code>在两个用户命名空间中切换。</p>
 <p>判断进程在用户命名空间能力规则如下</p>
@@ -733,11 +733,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
             
             <div class="clearfix"></div>
