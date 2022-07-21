@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Linux Capabilities | zeyu的博客</title>
+  <title>Head First Go - 语法基础 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="描述为了执行权限检查，传统的UNIX实现区分了两类进程：特权进程(euid&#x3D;0，称为超级用户或root)和非特权进程(euid!&#x3D;0),特权进程绕过所有内核权限检查，而非特权进程则根据进程身份认证进行权限检查(通常为:euid,egid,group list)。从内核2.2开始，Linux将传统上与超级用户相关的权限划分为不同的单元——称为能力。能力可以单独启用和禁用,是每个线程的属性  能力的要">
+  <meta name="description" content="开了一个新坑 Ready ~~~ Go! ( ^ @ ^ )  认识Go一般Go文件都是由以下三部分组成  package子句 import语句 代码片段  1234567package main &#x2F;&#x2F;表示文件所有的代码都属于main包import &quot;fmt&quot; &#x2F;&#x2F;包含了fmt包func main() &amp;#123; &#x2F;&#x2F;首先运行main函数	fmt.Println(&quot;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux Capabilities">
-<meta property="og:url" content="http://example.com/2022/06/11/linux-capabilities/index.html">
+<meta property="og:title" content="Head First Go - 语法基础">
+<meta property="og:url" content="http://example.com/2022/07/19/head-first-go-%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="描述为了执行权限检查，传统的UNIX实现区分了两类进程：特权进程(euid&#x3D;0，称为超级用户或root)和非特权进程(euid!&#x3D;0),特权进程绕过所有内核权限检查，而非特权进程则根据进程身份认证进行权限检查(通常为:euid,egid,group list)。从内核2.2开始，Linux将传统上与超级用户相关的权限划分为不同的单元——称为能力。能力可以单独启用和禁用,是每个线程的属性  能力的要">
+<meta property="og:description" content="开了一个新坑 Ready ~~~ Go! ( ^ @ ^ )  认识Go一般Go文件都是由以下三部分组成  package子句 import语句 代码片段  1234567package main &#x2F;&#x2F;表示文件所有的代码都属于main包import &quot;fmt&quot; &#x2F;&#x2F;包含了fmt包func main() &amp;#123; &#x2F;&#x2F;首先运行main函数	fmt.Println(&quot;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-06-11T15:19:11.000Z">
-<meta property="article:modified_time" content="2022-07-14T05:43:33.623Z">
-<meta property="article:tag" content="Linux">
+<meta property="article:published_time" content="2022-07-19T15:19:11.000Z">
+<meta property="article:modified_time" content="2022-07-21T00:37:10.944Z">
+<meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -148,144 +148,67 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-linux-capabilities" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-head-first-go-语法基础" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Linux Capabilities
+      Head First Go - 语法基础
     </h1>
   
 
         
-        <a href="/2022/06/11/linux-capabilities/" class="archive-article-date">
-  	<time datetime="2022-06-11T15:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-11</time>
+        <a href="/2022/07/19/head-first-go-%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/" class="archive-article-date">
+  	<time datetime="2022-07-19T15:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-19</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>为了执行权限检查，传统的UNIX实现区分了两类进程：特权进程(<code>euid=0</code>，称为超级用户或<code>root</code>)和非特权进程(<code>euid!=0</code>),特权进程绕过所有内核权限检查，而非特权进程则根据进程身份认证进行权限检查(通常为:<code>euid,egid,group list</code>)。从内核2.2开始，Linux将传统上与超级用户相关的权限划分为不同的单元——称为能力。能力可以单独启用和禁用,是每个线程的属性 </p>
-<h2 id="能力的要求"><a href="#能力的要求" class="headerlink" title="能力的要求"></a>能力的要求</h2><ol>
-<li>对于所有特权操作，内核必须检查对应线程<code>effective set</code>是否有该能力</li>
-<li>内核必须提供允许更改和检索线程能力集的系统调用 </li>
-<li>文件系统必须支持将能力附加到可执行文件,以便进程在文件被执行时获得这些能力</li>
-</ol>
-<h2 id="针对内核开发者"><a href="#针对内核开发者" class="headerlink" title="针对内核开发者"></a>针对内核开发者</h2><p>当为内核开发新功能时，这个功能需要被能力管控</p>
+        <p>开了一个新坑 <strong>Ready ~~~ Go!</strong> ( ^ @ ^ )</p>
+<hr>
+<h2 id="认识Go"><a href="#认识Go" class="headerlink" title="认识Go"></a>认识Go</h2><p>一般Go文件都是由以下三部分组成</p>
 <ol>
-<li>能力目标是将超级用户的能力分成几部分，这样，如果一个程序具有一个或多个能力,它对系统造成破坏的能力将小于使用root权限运行的同一程序</li>
-<li>您可以选择为新功能创建新能力，或将该功能与现有能力关联,为了将能力集保持在一个可管理的规模，除非有令人信服的选择前者的原因。(还有一个技术限制：能力集的大小目前限制为64位)</li>
-<li>要确定哪个现有功能最适合与您的新功能相关联，请查看上面的功能列表，以便找到最适合您的新功能的能力。一种方法是确定是否有其他功能需要能力并且将始终与新功能一起使用的可能性。</li>
-<li>尽可能不要为新功能使用<code>CAP_SYS_ADMIN</code>能力,这个能力权限太高(被称为 the new root)</li>
-<li>如果您确定确实有必要为您的功能创建新能力，请不要将其命名为“一次性使用”,要让这个能力的名称可以适用于更多其他的功能</li>
+<li>package子句</li>
+<li>import语句</li>
+<li>代码片段</li>
 </ol>
-<h2 id="线程能力"><a href="#线程能力" class="headerlink" title="线程能力"></a>线程能力</h2><p>每个线程都有以下能力集，其中包含零个或多个上述能力</p>
-<ul>
-<li><p>Permitted<br>用于限制<code>Effective set</code>的超集,同时也可以限制想添加能力到<code>Inheritable set</code>但是 <code>Effective set</code>没有<code>CAP_SETPCAP</code>能力的情况<br>如果一个线程从<code>Permitted set</code>丢掉一个能力，那么它就无法再获取这个能力(除非它<code>execve</code>一个suid&#x3D;0程序或者一个程序的相关可执行文件有对应的能力)</p>
-</li>
-<li><p>Inheritable<br>这个集合声明<code>execve</code>继承的能力,当程序运行时，要执行的文件的<code>file inheritable set</code>和当前程序 <code>Inheritable set</code>相符合时，就会被添加到新的程序<code>Permitted set</code></p>
-</li>
-<li><p>Effective<br>这是内核用来对线程执行权限检查的一组能力</p>
-</li>
-<li><p>Bounding (2.6.25后变成线程级)<br>可用于限制在执行<code>execve</code>时新进程获得的能力</p>
-</li>
-<li><p>Ambient (4.3后内核)<br>该能力主要针对非特权用户(<code>prctl</code>可直接修改能力),非特权程序<code>A</code>调用<code>execv</code>系列函数执行新的程序<code>B</code>时，程序<code>A</code>的<code>ambient</code>权限集就会被进程<code>B</code>所继承</p>
-<ol>
-<li>如果<code>Permitted</code>或者<code>Inheritable</code>中的某个能力<code>P</code>被清空，在<code>Ambient</code>中该能力<code>P</code>也自动被清空</li>
-<li>当程序调用<code>setuid</code>改变<code>UID</code>或者<code>setgid</code>改变<code>GID</code>时，<code>Ambient</code>中的所有能力会被清空</li>
-<li>调用<code>execve</code>函数执行一个程序时，如果该文件曾经被设置了任何的文件<code>capabilities</code>，<code>Ambient</code>中的所有能力会被清空；</li>
-<li>当调用<code>execve</code>函数执行一个程序时，如果该文件没有设置过任何的文件<code>capabilities</code>，<code>Ambient</code>中的所有能力就会被赋予给新程序的<code>Permited</code>和<code>Effective</code>能力集。</li>
-</ol>
-</li>
-</ul>
-<h2 id="文件能力"><a href="#文件能力" class="headerlink" title="文件能力"></a>文件能力</h2><p>可执行文件的能力会被存储在文件扩展属性中(<code>security.capability</code>),可以通过<code>setcap</code>, <code>cap_set_file</code>,<code>cap_set_fd</code>,设置文件的能力。对文件写入扩展属性这一过程需要<code>CAP_SETFCAP</code>能力。文件的能力将与线程的能力一起决定<code>execve</code>后新进程的能力</p>
-<ul>
-<li><p>Permitted<br>无论线程的<code>Inheritable</code>能力集如何，文件<code>Permitted</code>的能力都会与线程的<code>Bounding</code>集合与运算，添加到新线程的<code>Permitted</code></p>
-</li>
-<li><p>Inheritable<br>文件的<code>Inheritable</code>会和线程的<code>Inheritable</code>做与运算,添加到<code>execv</code>后新进程的<code>Permitted</code></p>
-</li>
-<li><p>Effective<br>这不是一个集合，仅仅是一个标志位。如果设置开启，那么在执行完<code>execve</code>后，线程<code>Permitted</code>集合中的<code>capabilities</code>会自动添加到它的<code>Effective</code>集合中。对于一些旧的可执行文件，由于其不会调用 <code>capabilities</code>相关函数设置自身的<code>Effective</code>集合，所以可以将可执行文件的<code>Effective bit</code>开启，从而可以将<code>Permitted</code>集合中的 <code>capabilities</code>自动添加到<code>Effective</code>集合中</p>
-</li>
-</ul>
-<h3 id="文件扩展属性"><a href="#文件扩展属性" class="headerlink" title="文件扩展属性"></a>文件扩展属性</h3><p><code>VFS_CAP_REVISION_3</code>和命名空间有关，当线程处于一个子命名空间中，并且这个线程在该命名空间有<code>CAP_SETFCAP</code>能力，那么这个线程为文件添加能力时文件security.capability就是<code>VFS_CAP_REVISION_3</code>版本，与<code>VFS_CAP_REVISION_2</code>的区别体现在扩展属性会将当前命名空间的root user id一起编码加到扩展属性中</p>
-<h2 id="能力继承"><a href="#能力继承" class="headerlink" title="能力继承"></a>能力继承</h2><h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p>通过<code>fork</code>创建的子进程继承其父进程的全部能力集</p>
-<h3 id="execve"><a href="#execve" class="headerlink" title="execve"></a>execve</h3><p>P’ : 新进程<br>P  : 旧进程<br>F  : 文件</p>
-<ul>
-<li>P’(ambient) &#x3D; (file is privileged) ? 0 : P(ambient)</li>
-<li>P’(permitted) &#x3D; (P(inheritable) &amp; F(inheritable)) | (F(permitted) &amp; P(bounding)) | P’(ambient)</li>
-<li>P’(effective) &#x3D; F(effective) ? P’(permitted) : P’(ambient)</li>
-<li>P’(inheritable) &#x3D; P(inheritable)</li>
-<li>P’(bounding) &#x3D; P(bounding)</li>
-</ul>
-<p>普通用户执行<code>execve</code>时<code>permitted</code>和<code>effective</code>都会被清空<br>root用户执行<code>execve</code>时<code>ambient</code>会被清空</p>
-<h3 id="old-bin"><a href="#old-bin" class="headerlink" title="old bin"></a>old bin</h3><p>对于老的二进制文件，没有使用libcap的api去获得能力，而是使用文件的能力，这就需要将文件的<code>effective set</code>开启，这样执行时会自动将文件的<code>permitted</code>添加到对应进程的<code>effective</code></p>
-<h3 id="root"><a href="#root" class="headerlink" title="root"></a>root</h3><ol>
-<li>如果进程的real uid或euid &#x3D; 0,那么<code>execve</code>文件的<code>inheritalbe</code>和<code>permitted</code>就会被忽略(通常意味着新进程所有权限都有,有一种特殊情况：一个普通进程<code>execve</code>一个<code>setuid root</code>的可执行文件,并且这个文件添加了额外的能力,这时新进程只会获得旧进程的能力，不会获取来自文件的能力,通过这种方式我们可以实现让一个进程切换到euid&#x3D;0但是却没能力的状态)</li>
-<li>如果进程euid&#x3D;0,那么<code>execve</code>文件的<code>effective bit</code>就会默认为开启状态</li>
-</ol>
-<p>所以当一个普通程序execve一个setuid root的可执行文件（这个文件没添加额外的能力），或者一个real uid | euid &#x3D; root程序执行execve时：</p>
-<ul>
-<li>P’(permitted) &#x3D; P(inheritable) | P(bounding)</li>
-<li>P’(effective) &#x3D; P’(permitted)</li>
-</ul>
-<h2 id="bounding-set"><a href="#bounding-set" class="headerlink" title="bounding set"></a>bounding set</h2><p><code>bounding set</code>用于限制<code>execve</code>时新进程能力的一组能力集</p>
-<ul>
-<li><code>bounding set</code>会和文件的<code>permitted set</code>做与运算后添加到新进程的<code>permitted set</code></li>
-<li>如果一个能力不在<code>bounding set</code>，那么也无法将这个能力添加到<code>inheritable set</code>,即使这个能力在<code>permitted set</code></li>
-</ul>
-<p>在计算<code>execve</code>新进程的<code>permitted set</code>时，<code>bounding set</code>只会和文件的<code>permitted set</code>与运算，不会与<code>inheritalbe set</code>与运算,如果一个能力在进程的<code>inheritable set</code>而不在<code>bounding set</code>时，只要文件的<code>inheritable set</code>有该能力，还是可以将这个能力添加到新进程<code>permitted set</code></p>
-<h3 id="2-6-25后的内核"><a href="#2-6-25后的内核" class="headerlink" title="2.6.25后的内核"></a>2.6.25后的内核</h3><p><code>bounding set</code>不再是系统范围的能力集，而是作用到每个线程</p>
-<p><code>bounding set</code>本身在<code>fork</code>和<code>execve</code>都是直接继承的</p>
-<p>线程可以通过使用<code>prctl</code>的<code>PR_CAPBSET_DROP</code>去除一个<code>bounding set</code>能力，能力一旦被去除就不能恢复,可以使用<code>prctl</code>的<code>PR_CAPBSET_READ</code>去读取能力是否在<code>bounding set</code></p>
-<p>从<code>bounding set</code>中删除一个能力不会让<code>inheritable set</code>对应的能力删除，但是却能阻止向<code>inheritable set</code>添加对应能力</p>
-<h2 id="EUID-改变时的能力"><a href="#EUID-改变时的能力" class="headerlink" title="EUID 改变时的能力"></a>EUID 改变时的能力</h2><ol>
-<li>如果<code>real</code>,<code>effective</code>或者<code>saved set user IDs</code>原先是0，通过<code>setuid</code>导致这些值变为非0，那么<code>permitted</code>,<code>effective</code>,和<code>ambient</code>集中所有能力都会被清除</li>
-<li>如果<code>euid</code>从0变为非0，那么<code>effective set</code>中所有能力都会清除</li>
-<li>如果<code>euid</code>从非0变为0，那么<code>permitted set</code>中所有能力都将拷贝到<code>effective set</code></li>
-<li>如果<code>fsuid</code>从0变为非0，那么<code>effective set</code>中的<code>CAP_CHOWN, CAP_DAC_OVERRIDE, CAP_DAC_READ_SEARCH, CAP_FOWNER, CAP_FSETID, CAP_LINUX_IMMUTABLE (since Linux  2.6.30),  CAP_MAC_OVERRIDE, and CAP_MKNOD(since Linux 2.6.30)</code>会被清除,相反如果<code>fsuid</code>从非0变为0，那么任何一个上述能力只要在<code>permitted set</code>中都会被添加到<code>effective set</code></li>
-</ol>
-<p>如果一个uid&#x3D;0 euid&#x3D;0的线程在setuid到普通用户时想要保存之前的能力，可以使用<code>SECBIT_KEEP_CAPS</code>标志位</p>
-<h2 id="以编程的方式调整能力集"><a href="#以编程的方式调整能力集" class="headerlink" title="以编程的方式调整能力集"></a>以编程的方式调整能力集</h2><p>一个线程可以使用capget,capset系统调用去改变permitted, effective,和inheritable能力集</p>
-<p>但是更推荐使用cap_get_proc,cap_set_proc去完成上述功能</p>
-<ol>
-<li>如果一个线程没有<code>CAP_SETPCAP</code>能力,那么新的<code>inheritable set</code>一定是现有<code>inheritable set ＋ permitted set</code>的子集</li>
-<li>新的<code>inheritable set</code>一定是现有<code>inheritable set + bounding set</code>的子集</li>
-<li>新的<code>permitted set</code>一定是现有<code>permitted set</code>的子集</li>
-<li>新的<code>effective set</code>一定是新的<code>permitted set</code>的子集</li>
-</ol>
-<h2 id="安全参数"><a href="#安全参数" class="headerlink" title="安全参数"></a>安全参数</h2><p>自2.6.26，内核启用文件能力,linux声明了一系列线程级的安全位参数去禁用一些uid&#x3D;0的线程对应的能力</p>
-<ul>
-<li><p>SECBIT_KEEP_CAPS  </p>
-<ol>
-<li>设置了这个标志位可以在线程从UIDs&#x3D;0 切换到非0时保存<code>permitted set</code>的能力，否则<code>permitted set</code>的能力都将清空  </li>
-<li>这个标志位本身在execve时会被清空  </li>
-<li>请注意，即使设置了<code>SECBIT_KEEP_CAPS</code>,<code>effective set</code>在从euid&#x3D;0切换到非0时也会被清空,但是如果线程设置了这个标志位但是它的euid不等于0，那么他再切换到其他UIDs不等于0的线程就不会清空<code>effective set</code>  </li>
-<li>如果设置了<code>SECBIT_NO_SETUID_FIXUP</code>,那么<code>SECBIT_KEEP_CAPS</code>就会被屏蔽  </li>
-<li>这个标志位和旧版的prctl<code>PR_SET_KEEPCAPS</code>功能相同</li>
-</ol>
-</li>
-<li><p>SECBIT_NO_SETUID_FIXUP<br>这个设置将在线程的euid fsuid从0和非0切换时阻止内核调整线程的permitted,effective,ambient集</p>
-</li>
-<li><p>SECBIT_NOROOT<br>如果设置了这个标志位，那么suid的可执行文件被执行或者euid ruid &#x3D; 0执行一个程序时新程序不会获得root对应的能力</p>
-</li>
-<li><p>SECBIT_NO_CAP_AMBIENT_RAISE<br>设置这个标志位将不允许提升ambient set的能力通过prctl PR_CAP_AMBIENT_RAISE 选项</p>
-</li>
-</ul>
-<p>每一个标志都有一个<code>lock</code>标志,任何<code>lock</code>标志都是不可逆的，一旦设置锁定标志位，原来的基础标志位就不可更改,锁定标志位包含：SECBIT_KEEP_CAPS_LOCKED, SECBIT_NO_SETUID_FIXUP_LOCKED,<br>SECBIT_NOROOT_LOCKED,SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED.</p>
-<p>安全参数可以通过prctl的PR_SET_SECUREBITS 和 PR_GET_SECUREBITS去获取和更改, <code>CAP_SETPCAP</code>能力具有修改安全参数的功能,注意：只有包含&lt;linux&#x2F;securebits.h&gt;才可以使用SECBIT*相关内容</p>
-<p>安全标志位除了SECBIT_KEEP_CAPS始终会被清除,其余都会被子进程继承</p>
-<p>使用以下标志位可以锁定自身以及子进程的能力，除非对应执行的文件有能力</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">prctl(PR_SET_SECUREBITS,</span><br><span class="line">            <span class="comment">/* SECBIT_KEEP_CAPS off */</span></span><br><span class="line">            SECBIT_KEEP_CAPS_LOCKED |</span><br><span class="line">            SECBIT_NO_SETUID_FIXUP |</span><br><span class="line">            SECBIT_NO_SETUID_FIXUP_LOCKED |</span><br><span class="line">            SECBIT_NOROOT |</span><br><span class="line">            SECBIT_NOROOT_LOCKED);</span><br><span class="line">            <span class="comment">/* Setting/locking SECBIT_NO_CAP_AMBIENT_RAISE</span></span><br><span class="line"><span class="comment">               is not required */</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">//表示文件所有的代码都属于main包</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span> <span class="comment">//包含了fmt包</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123; <span class="comment">//首先运行main函数</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello, Go&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><a target="_blank" rel="noopener" href="https://go.dev/play/">代码测试网站</a></p>
+<h2 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h2><p>包名.函数名(参数)</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>和C区别不大诶</p>
+<h2 id="符文-rune"><a href="#符文-rune" class="headerlink" title="符文(rune)"></a>符文(rune)</h2><p>就是单个字符，Go中用Unicode存储符文</p>
+<h2 id="布尔"><a href="#布尔" class="headerlink" title="布尔"></a>布尔</h2><p>true false</p>
+<h2 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h2><p>字面意思</p>
+<h2 id="数学运算比较"><a href="#数学运算比较" class="headerlink" title="数学运算比较"></a>数学运算比较</h2><p>和C差不多，比较结果返回bool</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Go也是静态类型，在运行之前类型就要确定,如果使用了错误类型Go会编译失败</p>
+<p><code>reflect</code>包中的<code>TypeOf</code>可以输出类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123.456</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&quot;zeyu&quot;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&#x27;z&#x27;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="literal">false</span>))</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="namespace"><a href="#namespace" class="headerlink" title="namespace"></a>namespace</h2><h3 id="suid-root"><a href="#suid-root" class="headerlink" title="suid root"></a>suid root</h3><p>当一个suid程序的uid匹配上了一个创建新namespace的uid时，当这个程序在命名空间内被任意程序执行时,就会被授予进程的permitted和effective集的能力,这里执行suid程序新进程获得的能力与上文执行suid程序获取能力的策略一致，只不过这里root程序是创建namespace对应的那个uid</p>
-<h3 id="file-cap"><a href="#file-cap" class="headerlink" title="file cap"></a>file cap</h3><p>传统的文件能力只是与二进制文件的一系列能力集有关，并不关心namespace,后来引入<code>VFS_CAP_REVISION_3</code>,在传统文件能力后又添加了namespace的root uid,在命名空间执行一个程序时，只有当文件setuid的 uid与扩展属性的uid匹配上时才会授予相关权限 </p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>内核选项<code>CONFIG_SECURITY_CAPABILITIES</code>去开启,关闭能力</p>
-<p>&#x2F;proc&#x2F;[pid]&#x2F;task&#x2F;TID&#x2F;status 去看线程的能力</p>
-<p>&#x2F;proc&#x2F;[pid]&#x2F;status 去看进程的能力</p>
+<h2 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h2><p><code>var</code> 变量名称 类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test <span class="type">int</span> <span class="comment">//单个变量声明</span></span><br><span class="line">	test = <span class="number">4</span>     <span class="comment">//单个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testa, testb <span class="type">string</span>     <span class="comment">//多个变量声明</span></span><br><span class="line">	testa, testb = <span class="string">&quot;hhh&quot;</span>, <span class="string">&quot;xxx&quot;</span> <span class="comment">//多个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testc, testd <span class="type">float64</span> = <span class="number">1.1</span>, <span class="number">1.2</span> <span class="comment">//声明同时赋值</span></span><br><span class="line">	<span class="keyword">var</span> teste, testf = <span class="number">5</span>, <span class="string">&quot;www&quot;</span>         <span class="comment">//声明同时赋值 省略类型</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">	fmt.Println(testa)</span><br><span class="line">	fmt.Println(testb)</span><br><span class="line">	fmt.Println(testc)</span><br><span class="line">	fmt.Println(testd)</span><br><span class="line">	fmt.Println(teste)</span><br><span class="line">	fmt.Println(testf)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="零值"><a href="#零值" class="headerlink" title="零值"></a>零值</h2><p>对于没有赋值的变量默认是零值<br>字符串变量的零值是空字符串，bool变量的零值是false,int,float64的零值是0</p>
+<h2 id="短变量声明"><a href="#短变量声明" class="headerlink" title="短变量声明"></a>短变量声明</h2><p>如果声明的时候就知道变量的初值，可以使用短变量声明，省略<code>val</code>和类型 赋值符号变为<code>:=</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test := <span class="number">5</span> <span class="comment">//短变量声明</span></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量声明规范"><a href="#变量声明规范" class="headerlink" title="变量声明规范"></a>变量声明规范</h2><ol>
+<li>一个变量只能声明一次</li>
+<li>不能给未声明的变量赋值</li>
+<li>只能给变量赋相同类型的值</li>
+<li>声明同时赋值要求变量数量和值一一对应</li>
+<li>所有声明的变量都必须在程序中使用,否则因该删除声明</li>
+</ol>
+<h2 id="命名规则"><a href="#命名规则" class="headerlink" title="命名规则"></a>命名规则</h2><p>名称必须以字母开头，可以有任意数量的额外字母和数字<br>变量、函数、类型的名称如果以大写字母开头，则认为它是导出的,可以通过其他包访问，否则认为是未导出的，只能在当前包使用<br>名称一般用驼峰式  </p>
+<h2 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h2><p>使用不同类型的值直接比较会报错<br>赋值的类型和变量类型不匹配也会报错  </p>
+<p>解决办法是使用转换  <code>类型(变量)</code></p>
+<h2 id="运行Go"><a href="#运行Go" class="headerlink" title="运行Go"></a>运行Go</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">fmt</span> hello.go //重新格式化 </span><br><span class="line">go build hello.go //编译为二进制</span><br><span class="line">./hello</span><br></pre></td></tr></table></figure>
+
+<p>go run hello.go &#x2F;&#x2F;编译并运行，不保存可执行文件</p>
 
       
 
@@ -299,7 +222,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
         		</li>
       		
 		</ul>
@@ -355,7 +278,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/06/11/linux-capabilities/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/07/19/head-first-go-%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -369,18 +292,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/07/14/user-namespace/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          User Namespace
-        
-      </div>
-    </a>
   
-  
-    <a href="/2022/05/21/begin/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">起点</div>
+    <a href="/2022/07/14/user-namespace/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">User Namespace</div>
       <i class="icon-circle-right"></i>
     </a>
   
