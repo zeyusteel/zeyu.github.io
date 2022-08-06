@@ -145,6 +145,100 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-head-first-go-08struct" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/05/head-first-go-08struct/">Head First Go - 08struct</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/05/head-first-go-08struct/" class="archive-article-date">
+  	<time datetime="2022-08-05T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="struct"><a href="#struct" class="headerlink" title="struct"></a>struct</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> myStruct <span class="keyword">struct</span> &#123;</span><br><span class="line">		num <span class="type">int</span></span><br><span class="line">		str <span class="type">string</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, myStruct)</span><br><span class="line"></span><br><span class="line">	myStruct.num = <span class="number">5</span></span><br><span class="line">	fmt.Println(myStruct.num)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="定义类型"><a href="#定义类型" class="headerlink" title="定义类型"></a>定义类型</h2><p><code>type</code> 类型名 <code>基础类型</code></p>
+<p>不要使用一个已经存在的类型名称作为变量的名称</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line">	st.name = <span class="string">&quot;zeyu&quot;</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(st.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="指针访问struct字段"><a href="#指针访问struct字段" class="headerlink" title="指针访问struct字段"></a>指针访问struct字段</h2><p>使用点运算符在struct指针和struct上都可访问字段</p>
+<p>这里和C就有区别了，C取普通struct变量的成员用<code>.</code>,取指向struct的指针变量指向的成员要用<code>-&gt;</code>,Go可以都用<code>.</code></p>
+<p>如果函数需要修改struct或者struct过大，应该向函数传递，返回指针</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line">	st.name = <span class="string">&quot;zeyu&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> pointer *myType = &amp;st</span><br><span class="line"></span><br><span class="line">	fmt.Println((*pointer).name)</span><br><span class="line">	fmt.Println(pointer.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="struct-导出"><a href="#struct-导出" class="headerlink" title="struct 导出"></a>struct 导出</h2><p>定义类型的名称首字母必须大写才能导出该类型</p>
+<p>struct字段的名称首字母必须大写才能导出该字段</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyType <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span><span class="comment">//能导出</span></span><br><span class="line">	age <span class="type">int</span><span class="comment">//不能导出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="struct-字面量"><a href="#struct-字面量" class="headerlink" title="struct 字面量"></a>struct 字面量</h2><p>和映射差不多</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	age <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := myType&#123;name : <span class="string">&quot;aaa&quot;</span>, age: <span class="number">15</span>&#125;</span><br><span class="line">	fmt.Println(st.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="struct-嵌套"><a href="#struct-嵌套" class="headerlink" title="struct 嵌套"></a>struct 嵌套</h2><p>没法直接用字面量<code>&#123; &#123;&#125; &#125;</code>给嵌套的结构体赋值 </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stb <span class="keyword">struct</span> &#123;</span><br><span class="line">	b <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sta <span class="keyword">struct</span> &#123;</span><br><span class="line">	a <span class="type">int</span></span><br><span class="line">	sub stb </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := sta&#123;a: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">	st.sub = stb&#123;b : <span class="number">15</span>&#125; <span class="comment">//直接填充整个子struct</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line"></span><br><span class="line">	st.sub.b = <span class="number">100</span> <span class="comment">//给子strcut成员赋值</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="匿名struct"><a href="#匿名struct" class="headerlink" title="匿名struct"></a>匿名struct</h2><p>一个内部struct使用匿名字段的方式存储在了外部的struct中，这被称为嵌入了外部struct。嵌入struct的字段被提升到了外部struct，可以像访问外部struct的字段一样访问它们</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stb <span class="keyword">struct</span> &#123;</span><br><span class="line">	b <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sta <span class="keyword">struct</span> &#123;</span><br><span class="line">	a <span class="type">int</span></span><br><span class="line">	stb <span class="comment">//只写类型名 </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := sta&#123;a: <span class="number">1</span>&#125;</span><br><span class="line">    <span class="comment">//当你声明一个匿名字段时，你可以使用字段类型名称作为字段名称</span></span><br><span class="line">	st.stb = stb&#123;b : <span class="number">15</span>&#125;</span><br><span class="line">	fmt.Println(st.stb.b)</span><br><span class="line"></span><br><span class="line">	st.stb.b = <span class="number">100</span></span><br><span class="line">	fmt.Println(st.stb.b)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//可以像访问外部字段一样访问嵌入的strcut字段</span></span><br><span class="line">	st.b = <span class="number">50</span></span><br><span class="line">	fmt.Println(st.b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/05/head-first-go-08struct/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-head-first-go-07映射" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1205,82 +1299,6 @@
 
 
   
-    <article id="post-begin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/21/begin/">起点</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/21/begin/" class="archive-article-date">
-  	<time datetime="2022-05-21T07:22:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>送给自己的小TIPS:</p>
-<p>博客最重要的是什么？</p>
-<p><strong>是文章</strong></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">日常</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/21/begin/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1370,11 +1388,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
