@@ -145,6 +145,167 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-user-namespace" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/14/user-namespace/">User Namespace</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/14/user-namespace/" class="archive-article-date">
+  	<time datetime="2022-07-14T00:49:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>用户命名空间隔离了安全相关的标识和属性,尤其是<code>uid</code>和<code>gid</code>(credentials)、根目录、密钥(keyrings)、能力(capabilities)。一个进程的<code>uid</code>,<code>gid</code>在不同的用户命名空间可能是不同的。一个进程在在一个用户命名空间外可能是一个普通的非特权用户,同时在另一个用户命名空间内可能是uid &#x3D; 0的root。换句话说,这个进程对一个用户命名空间内的操作具有完全的权限,但是对用户命名空间外的操作没有权限</p>
+<h2 id="嵌套用户命名空间"><a href="#嵌套用户命名空间" class="headerlink" title="嵌套用户命名空间"></a>嵌套用户命名空间</h2><p>用户名称空间可以嵌套,也就是说除了初始根用户命名空间之外,每个用户命名空间都有一个父用户命名空间,并且可以具有零个或多个子用户命名空间,父用户命名空间通过<code>unshare</code>、<code>clone</code>,配合使用<code>CLONE_NEWUSER</code>标志创建子用户命名空间。内核（&gt;3.11)限制用户命名空间最多嵌套32层,超出限制会报<code>EUSERS</code></p>
+<p>每一个进程都是一个用户命名空间的成员,一个进程通过<code>fork</code>或者<code>clone</code>但是不使用<code>CLONE_NEWUSER</code>就会和父进程一样作为同一个用户命名空间的成员。一个进程可以通过<code>setns</code>加入另一个用户命名空间,前提是这个进程在这个用户命名空间有<code>CAP_SYS_ADMIN</code>能力,切换后这个进程将在这个用户命名空间有全部能力</p>
+<p>ioctl中的<code>NS_GET_PARENT</code>用于获取用户命名空间的父子关系(ioctl_ns)</p>
+<h2 id="用户命名空间能力"><a href="#用户命名空间能力" class="headerlink" title="用户命名空间能力"></a>用户命名空间能力</h2><p>通过<code>clone</code>或者<code>unshare</code>创建一个新的用户命名空间,或者通过<code>setns</code>加入一个已经存在的用户命名空间都会使这个进程获得这个用户命名空间的全部能力集,并且这个进程在父用户命名空间或切换之前的用户命名空间没有任何能力,即使新的用户命名空间是由root创建或切换的</p>
+<p>在用户命名空间中调用<code>execve</code>通常将以正常的方式重新计算新进程的能力,因此除非uid&#x3D;0或者文件的<code>inheritable capabilities mask</code>不为空,能力都将被丢掉</p>
+<p><code>clone</code>,<code>unshare</code>,<code>setns</code>创建&#x2F;切换用户命名空间都将导致<code>securebits</code>标志位变成默认值(全关),因为切换到新的用户命名空间的进程在原用户命名空间将失去所有能力,所以即使将<code>securebits</code>标志位恢复,也没有办法通过两次<code>setns</code>在两个用户命名空间中切换。</p>
+<p>判断进程在用户命名空间能力规则如下</p>
+<ol>
+<li>如果进程是该用户命名空间的成员,并且<code>effective set</code>有能力,那么该进程在这个用户命名空间就有能力。通过执行<code>set-user-ID</code>或者有文件能力的可执行文件都可以让新进程获得能力,或者<code>clone</code>,<code>unshare</code>,<code>setns</code>创建新的用户命名空间</li>
+<li>如果进程在一个用户命名空间中有能力,那么它在所有子用户命名空间都有对应能力</li>
+<li>当进程创建用户命名空间时,内核将记录进程的<code>euid</code>作为该用户命名空间的拥有者,处于父用户命名空间并且<code>euid</code>与用户命名空间拥有者相匹配的进程将获得该用户命名空间以及将来子用户命名空间的全部能力,<code>ioctl</code>中<code>NS_GET_OWNER_UID</code>用于获取用户命名空间的拥有者的uid</li>
+</ol>
+<h2 id="用户命名空间内能力的影响"><a href="#用户命名空间内能力的影响" class="headerlink" title="用户命名空间内能力的影响"></a>用户命名空间内能力的影响</h2><p>在一个用户命名空间拥有能力意味着该进程可以对该用户命名空间所持有的其他命名空间的资源执行特权操作</p>
+<p>还有一些特权操作影响的资源不属于任何命名空间,例如：修改系统时间(CAP_SYS_TIME), 加载内核模块(CAP_SYS_MODULE),创建一个设备(CAP_MKNOD),只有初始用户命名空间的特权进程有能力执行上述操作</p>
+<p>在拥有<code>mount namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许在创建绑定挂载或者挂载以下文件系统</p>
+<ul>
+<li>&#x2F;proc (since Linux 3.8)</li>
+<li>&#x2F;sys (since Linux 3.8)</li>
+<li>devpts (since Linux 3.9)</li>
+<li>tmpfs(5) (since Linux 3.9)</li>
+<li>ramfs (since Linux 3.9)</li>
+<li>mqueue (since Linux 3.9)</li>
+<li>bpf (since Linux 4.4)</li>
+</ul>
+<p>在拥有<code>cgroup namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许挂载<code>cgroup version 2</code> 文件系统和<code>cgroup version 1 named hierarchies</code> (cgroup filesystems mounted with the “none,name&#x3D;” option)</p>
+<p>在拥有<code>cgroup namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许挂载<code>/proc</code></p>
+<p>但是要挂载基于块的文件系统只能是在初始用户命名空间拥有<code>CAP_SYS_ADMIN</code>的进程</p>
+<h2 id="用户命名空间和其他命名空间交互"><a href="#用户命名空间和其他命名空间交互" class="headerlink" title="用户命名空间和其他命名空间交互"></a>用户命名空间和其他命名空间交互</h2><p>从Linux3.8开始,非特权进程可以创建用户命名空间,其他类型的名称空间只需基于调用的用户命名空间中有<code>CAP_SYS_ADMIN</code>能力就可以创建</p>
+<p>创建其他命名空间时,它由创建进程所对应的用户命名空间所有。对于其他命名空间的特权操作要求进程具有必要的用户命名空间中的能力</p>
+<p>调用<code>clone</code>,<code>unshare</code>,如果<code>CLONE_NEWUSER</code>和其他<code>CLONE_*</code>一起声明,那么会保证首先创建用户命名空间,给其他命名空间的创建提供权限。这种参数的组合方式可以被非特权进程调用</p>
+<p>当一个新的命名空间创建(用户命名空间除外),内核都会记录这个进程的用户命名空间作为新创建的命名空间的拥有者(这种关联不能被改变),当一个进程要特权操作一个命名空间隔离的资源时,内核就会检查这个进程在要操作的那个命名空间对应用户命名空间有没有相关能力。例如,一个进程想要修改主机名(sethostname),该资源由<code>uts namespace</code>管理,这是内核就会检查哪一个用户命名空间拥有当前要操作的<code>uts namespace</code>,并检查该进程在那个用户命名空间是否有对应的能力<code>CAP_SYS_ADMIN</code></p>
+<p>NS_GET_USERNS ioctl(2) 用于获取用户命名空间拥有哪些其他命名空间(ioctl_ns)</p>
+<h2 id="uid-map-gid-map"><a href="#uid-map-gid-map" class="headerlink" title="uid_map gid_map"></a>uid_map gid_map</h2><p>当一个用户命名空间被创建时,一开始并没有将<code>uid</code>, <code>gid</code>映射到父命名空间,<code>/proc/[pid]/uid_map</code>,<code>/proc/[pid]/gid_map</code>用于将命名空间内的<code>uid</code>,<code>gid</code>映射。这些文件只能被写入一次</p>
+<p>映射文件映射了pid的进程和打开map文件的进程的uid&#x2F;gid,不同用户命名空间下的进程打开同一个map文件可能看到不同的结果</p>
+<p>这个文件在用户命名空间创建之初是空的,映射文件中的每一行指定两个用户名称空间之间一系列连续用户ID的1:1映射,每行中的规范采用由空格分隔的三个数字的形式。前两个数字分别指定两个用户命名空间中的起始用户ID,第三个数字指定映射的长度</p>
+<p>第一个字段描述了pid所在用户命名空间id映射的开始位置,如果这两个进程(pid和打开map的进程)位于不同的用户命名空间中,字段2是打开map进程对应的用户命名空间对应id范围的开始位置,如果这两个进程位于同一个用户命名空间,字段2是该用户命名空间的父命名空间对应id范围的开始位置,一般打开<code>/proc/self/uid_map</code>就是查看当前进程的用户命名空间和父用户命名空间的id映射关系</p>
+<p><code>getuid</code>,<code>getgid</code>,<code>stat</code>等用于身份认证的系统调用都将返回映射到调用用户命名空间的id</p>
+<p>当进程访问文件时,其用户和组ID映射到初始用户命名空间中,以进行权限检查和在创建文件时分配ID,当进程调用<code>stat</code>获取文件的uid,gid时,这些ID又会以相反的方向映射回对应的命名空间</p>
+<p>初始用户名称空间没有父名称空间,但为了一致性,内核为以下对象提供了虚拟用户和组ID映射文件：<br>    cat &#x2F;proc&#x2F;$$&#x2F;uid_map<br>    0          0 4294967295<br>    (2^32 - 1)为未映射,类似(uid_t) -1没有这个用户</p>
+<h2 id="定义uid-map-gid-map"><a href="#定义uid-map-gid-map" class="headerlink" title="定义uid_map gid_map"></a>定义uid_map gid_map</h2><p>在创建用户命名空间后,可以将这个用户命名空间中的某个进程的map文件写入一次,去定义id的映射,尝试多次写入会导致<code>EPERM</code></p>
+<h3 id="写入规则"><a href="#写入规则" class="headerlink" title="写入规则"></a>写入规则</h3><ul>
+<li>三个字段必须都是有效值,而且最后一个字短必须大于0</li>
+<li>每一行都以换行符终止</li>
+<li>4.14内核限制写入5行,4.15之后限制写入340行,写入的字节数必须小于系统页面,写入必须在开头,不能用leesk,pwrite偏移写文件</li>
+<li>3.8之前的内核要求映射的范围不能有重叠,连续行的字段1和字段2必须以升序数字顺序排列,3.9取消了这个限制</li>
+<li>最少一行要被写入文件</li>
+</ul>
+<p>违反上述规则的写入失败,错误为<code>EINVAL</code>  </p>
+<h3 id="针对进程的写入条件"><a href="#针对进程的写入条件" class="headerlink" title="针对进程的写入条件"></a>针对进程的写入条件</h3><ol>
+<li>写入的进行必须要有对应pid进程所在用户命名空间的<code>CAP_SETUID</code>,<code>CAP_SETGID</code></li>
+<li>写入进程必须位于进程pid的用户命名空间中,或位于进程pid的父用户命名空间中</li>
+<li>映射的ID必须在父命名空间也有映射关系</li>
+<li>以下两条满足其一:<ol>
+<li>写入进程在父用户命名空间中都具有<code>CAP_SETUID</code>,<code>CAP_SETGID</code>功能, 没有其他限制:该进程可以映射到父用户命名空间中的任意uid(gid)</li>
+<li>否则,以下所有限制均适用: <ul>
+<li>写入的数据必须由单行组成,映射写入进程在父用户命名空间的euid和要映射的命名空间的uid</li>
+<li>写入进程必须与创建用户命名空间的进程有相同的euid</li>
+<li>在gid映射的情况下,必须首先通过向<code>/proc/[pid]/setgroups</code>写入<code>deny</code>来拒绝使用<code>setgroups</code>系统调用</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p>违反上述规则的写入将失败,并返回错误<code>EPERM</code></p>
+<h2 id="对修改uid-gid系统调用的影响"><a href="#对修改uid-gid系统调用的影响" class="headerlink" title="对修改uid gid系统调用的影响"></a>对修改uid gid系统调用的影响</h2><p>如果map文件没有,那么修改uid,gid会失败,否则,只有映射的id可以被修改</p>
+<p>user IDs 系统调用: <code>setuid</code>, <code>setfsuid</code>,<code>setreuid</code>,<code>setresuid</code>. group IDs 系统调用:<code>setgid</code>,<code>setfsgid</code>,<code>setregid</code>, <code>setresgid</code>,<code>setgroups</code></p>
+<p>在写<code>/proc/[pid]/uid_map</code>之前在<code>/proc/[pid]/setgroups</code>写入<code>deny</code>将永久禁用用户命名空间的<code>setgroups</code>,并且允许在父用户命名空间没有<code>CAP_SETGID</code>能力的进程写<code>/proc/[pid]/gid_map</code></p>
+<h2 id="x2F-proc-x2F-pid-x2F-setgroups"><a href="#x2F-proc-x2F-pid-x2F-setgroups" class="headerlink" title="&#x2F;proc&#x2F;[pid]&#x2F;setgroups"></a>&#x2F;proc&#x2F;[pid]&#x2F;setgroups</h2><p>如果这个文件的值是<code>allow</code>,那么pid对应用户命名空间的进程有能力执行<code>setgroups</code>,如果文件的值是<code>deny</code>则相反。注意,如果没有写<code>/proc/[pid]/gid_map</code>那么无论<code>/proc/[pid]/setgroups</code>值是多少,进程有没有能力都无法执行<code>setgroups</code></p>
+<p>在写入<code>/proc/[pid]/gid_map</code>之前,pid对应用户命名空间的特权进程(CAP_SYS_ADMIN)有权限在这个文件写入<code>allow</code>或者<code>deny</code></p>
+<p>这个文件的默认值是<code>allow</code></p>
+<p>一旦<code>/proc/[pid]/gid_map</code>被写入,同时,setgroups的值是<code>allow</code>,那么就无法通过写入<code>deny</code>去关闭<code>setgroups</code>(EPERM)</p>
+<p>一旦<code>setgroups</code>的值是<code>deny</code>,那么就无法通过写入<code>allow</code>去开启<code>setgroups</code>(EPERM)</p>
+<p>限制的本质是<code>/proc/[pid]/gid_map</code>是否设置了(没设置就是<code>deny</code>),也就是说进程的<code>setgroups</code>权限不能从<code>allow</code> -&gt; <code>deny</code>,只能从<code>deny</code> -&gt; <code>allow</code></p>
+<p>子用户命名空间从其父命名空间继承<code>/proc/[pid]/setgroups</code>设置</p>
+<p><code>/proc/[pid]/setgroups</code>是3.19引入的内核,但是已经被移植到很多早期的版本中。因为它解决了涉及具有<code>rwx---rwx</code>等权限文件的访问权限问题,这些文件给所属组的权限比其他人要少,着就意味着一旦通过<code>setgroups</code>将进程的组都丢掉就可以让进程访问到它本来无法访问的文件。对于早期的用户命名空间来说这不是个问题,因为只有特权进程<code>CAP_SETGID</code>有能力调用<code>setgroups</code>,但是引入非特权用户创建用户命名空间后,就会导致本来没有特权的用户通过子命名空间获取到了能力,然后通过<code>setgroups</code>让进程访问到了本来没有权限访问的文件,<code>/proc/[pid]/setgroups</code>很好的通过拒绝任何非特权用户(CAP_SETGID)的路径使用<code>setgroup</code></p>
+<h2 id="未映射的uid-gid"><a href="#未映射的uid-gid" class="headerlink" title="未映射的uid gid"></a>未映射的uid gid</h2><p>在用户命名空间中有可以遇到未映射的id,比如在还没有写入<code>uid_map</code>之前调用<code>getuid</code>,这时会返回<code>overflow user ID</code>,默认值是65534(<code>/proc/sys/kernel/overflowuid</code>)</p>
+<p>未映射的uid gid未转换为相应的溢出ID值。查看时uid&#x2F;gid map,其中第二个字段没有映射,该字段显示为4294967295</p>
+<p>影响的系统调用<br><code>The cases where unmapped IDs are mapped in this fashion include system calls that return user IDs (getuid(2), getgid(2), and similar), cre‐        dentials passed over a UNIX domain socket, credentials returned by stat(2), waitid(2), and the System V IPC &quot;ctl&quot; IPC_STAT operations, cre‐        dentials  exposed  by  /proc/[pid]/status  and the files in /proc/sysvipc/*, credentials returned via the si_uid field in the siginfo_t re‐        ceived with a signal (see sigaction(2)), credentials written to the process accounting file (see acct(5)), and  credentials  returned  with        POSIX message queue notifications (see mq_notify(3)).</code></p>
+<h2 id="文件访问"><a href="#文件访问" class="headerlink" title="文件访问"></a>文件访问</h2><p>为了在非特权进程访问文件时确定权限,进程凭UID、GID和文件的mode属性都映射回根用户命名空间中,然后进行比较以确定进程对文件的权限,其他类似身份认证+权限掩码的权限判断方式也是如此,比如System V IPC</p>
+<h2 id="文件相关操作的能力"><a href="#文件相关操作的能力" class="headerlink" title="文件相关操作的能力"></a>文件相关操作的能力</h2><p>有些能力允许进程在对不属于自己的文件操作时通过内核的限制: <code>CAP_CHOWN</code>,<code>CAP_DAC_OVERRIDE</code>,<code>CAP_DAC_READ_SEARCH</code>,<code>CAP_FOWNER</code>,<code>CAP_FSETID</code></p>
+<p>在一个用户命名空间中要生效需要满足</p>
+<ul>
+<li>进程的<code>Effective set</code>在用户命名空间中有上述对应能力</li>
+<li>文件的uid,gid都在用户命名空间中被映射(CAP_FOWNER只需要映射uid)</li>
+</ul>
+<h2 id="Set-user-ID-set-group-ID-程序"><a href="#Set-user-ID-set-group-ID-程序" class="headerlink" title="Set-user-ID set-group-ID 程序"></a>Set-user-ID set-group-ID 程序</h2><p>当在用户命名空间执行了一个<code>set-user-id</code>或者<code>set-group-id</code>的程序时,如果这个id在用户命名空间中没有被映射,那么新的程序被执行时就会忽略set-user-ID set-group-ID标志位,而使用原来的euid egid</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>在用户命名空间中,不可能获得比的根用户更多的能力<br>内核选项:CONFIG_USER_NS</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/14/user-namespace/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-capabilities" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
