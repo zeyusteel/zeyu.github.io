@@ -145,6 +145,119 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-head-first-go-02条件和循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/22/head-first-go-02%E6%9D%A1%E4%BB%B6%E5%92%8C%E5%BE%AA%E7%8E%AF/">Head First Go - 02条件和循环</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/22/head-first-go-02%E6%9D%A1%E4%BB%B6%E5%92%8C%E5%BE%AA%E7%8E%AF/" class="archive-article-date">
+  	<time datetime="2022-07-22T00:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="调用方法"><a href="#调用方法" class="headerlink" title="调用方法"></a>调用方法</h2><p><code>值.方法名(参数)</code> 类比调用另一个包的函数 <code>包.函数(参数)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> now time.Time = time.Now() <span class="comment">//time.Now()返回time.Time类型</span></span><br><span class="line">	<span class="keyword">var</span> year <span class="type">int</span> = now.Year() <span class="comment">//time.Time有一个方法 Year 通过now变量调用</span></span><br><span class="line">	fmt.Println(year)</span><br><span class="line">	broken := <span class="string">&quot;G# r#cks!&quot;</span></span><br><span class="line">	replacer := strings.NewReplacer(<span class="string">&quot;#&quot;</span>, <span class="string">&quot;o&quot;</span>)</span><br><span class="line">	fixed := replacer.Replace(broken)</span><br><span class="line">	fmt.Println(fixed)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="函数或方法多个返回值"><a href="#函数或方法多个返回值" class="headerlink" title="函数或方法多个返回值"></a>函数或方法多个返回值</h2><p>Go中的函数或方法可以返回任意数量的返回值</p>
+<ol>
+<li><p>使用<code>_</code>空白标识符作为占位符</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">        <span class="string">&quot;bufio&quot;</span></span><br><span class="line">        <span class="string">&quot;fmt&quot;</span></span><br><span class="line">        <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Print(<span class="string">&quot;Enter&quot;</span>)</span><br><span class="line">        reader := bufio.NewReader(os.Stdin)</span><br><span class="line">        input, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        fmt.Println(input)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>if语句进行错误处理<br>if的条件语句不需要() 但是要{}</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">        <span class="string">&quot;bufio&quot;</span></span><br><span class="line">        <span class="string">&quot;fmt&quot;</span></span><br><span class="line">        <span class="string">&quot;os&quot;</span></span><br><span class="line">        <span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Print(<span class="string">&quot;Enter&quot;</span>)</span><br><span class="line">        reader := bufio.NewReader(os.Stdin)</span><br><span class="line">        input, err := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                log.Fatal(err)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Println(input)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="要避免变量名与类型名、内置函数名、包名重复-否则会导致被变量名覆盖"><a href="#要避免变量名与类型名、内置函数名、包名重复-否则会导致被变量名覆盖" class="headerlink" title="要避免变量名与类型名、内置函数名、包名重复,否则会导致被变量名覆盖"></a>要避免变量名与类型名、内置函数名、包名重复,否则会导致被变量名覆盖</h2></li>
+</ol>
+<h2 id="变量作用域"><a href="#变量作用域" class="headerlink" title="变量作用域"></a>变量作用域</h2><p>和C差不多</p>
+<h2 id="短变量声明要求必须有一个变量是新的，新变量被视为声明，其他旧变量视为赋值"><a href="#短变量声明要求必须有一个变量是新的，新变量被视为声明，其他旧变量视为赋值" class="headerlink" title="短变量声明要求必须有一个变量是新的，新变量被视为声明，其他旧变量视为赋值"></a>短变量声明要求必须有一个变量是新的，新变量被视为声明，其他旧变量视为赋值</h2><h2 id="包的导入路径"><a href="#包的导入路径" class="headerlink" title="包的导入路径"></a>包的导入路径</h2><p>导入路径只是一个独特的字符串，用于标识包以及在导入语句中使 用的包。一旦导入了包，就可以通过其包名来引用它,但导入路径和包名称不必相同</p>
+<p>Go语言不要求包名与其导入路径有任何关系。但按照惯例，导入路径的最后(或唯一)一段也用作包名</p>
+<table>
+<thead>
+<tr>
+<th>导入路径</th>
+<th>包名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fmt</td>
+<td>fmt</td>
+</tr>
+<tr>
+<td>math&#x2F;rand</td>
+<td>rand</td>
+</tr>
+</tbody></table>
+<h2 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h2><p>for后面不用() 但是要{}</p>
+<blockquote>
+<p>for 初始化语句;条件表达式<code>(返回true false)</code>;标志语句 {</p>
+<p>}</p>
+</blockquote>
+<p>初始化和标志(post)语句是可选的</p>
+<p><code>break</code>, <code>continue</code>和C一样</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// guess challenges players to guess a random number.</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bufio&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;math/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	seconds := time.Now().Unix() <span class="comment">//获取当前时间</span></span><br><span class="line">	rand.Seed(seconds)<span class="comment">//播种随机数生成器</span></span><br><span class="line">	target := rand.Intn(<span class="number">100</span>) + <span class="number">1</span> <span class="comment">//0 ~ 100的随机数</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;I&#x27;ve chosen a random number between 1 and 100.&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;Can you guess it?&quot;</span>)</span><br><span class="line"></span><br><span class="line">	reader := bufio.NewReader(os.Stdin)</span><br><span class="line">	success := <span class="literal">false</span></span><br><span class="line">	<span class="keyword">for</span> guesses := <span class="number">0</span>; guesses &lt; <span class="number">10</span>; guesses++ &#123; <span class="comment">//10次输入机会</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;You have&quot;</span>, <span class="number">10</span>-guesses, <span class="string">&quot;guesses left.&quot;</span>)</span><br><span class="line">		fmt.Print(<span class="string">&quot;Make a guess: &quot;</span>)</span><br><span class="line">		input, err := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatal(err)</span><br><span class="line">		&#125;</span><br><span class="line">		input = strings.TrimSpace(input) <span class="comment">//删除换行</span></span><br><span class="line">		guess, err := strconv.Atoi(input) <span class="comment">//字符串转整数</span></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatal(err)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> guess &lt; target &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;Oops. Your guess was LOW.&quot;</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> guess &gt; target &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;Oops. Your guess was HIGH.&quot;</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			success = <span class="literal">true</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;Good job! You guessed it!&quot;</span>)</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !success &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Sorry, you didn&#x27;t guess my number. It was:&quot;</span>, target)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>字符串转数字 <code>strconv.ParseFloat</code><br>去除空白字符 <code>strings.TrimSpace</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/22/head-first-go-02%E6%9D%A1%E4%BB%B6%E5%92%8C%E5%BE%AA%E7%8E%AF/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-head-first-go-01语法基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -851,11 +964,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
