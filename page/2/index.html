@@ -145,6 +145,92 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-head-first-go-03函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/">Head First Go - 03函数</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/" class="archive-article-date">
+  	<time datetime="2022-07-25T00:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="函数定义和调用"><a href="#函数定义和调用" class="headerlink" title="函数定义和调用"></a>函数定义和调用</h3><blockquote>
+<p>func 函数名(参数名 类型) 返回类型 {<br>return<br>}</p>
+</blockquote>
+<p>Go不像C++有缺省参数,如果希望调用函数来接受参数，必须在函数声明中声明一个或多个参数，包括每个参数的类型。所传递的参数的数量和类型必须始终与规定的参数的数量和类型相匹配，否则将出现编译错误</p>
+<p>Go要求带返回类型的函数结尾必须有return</p>
+<p>目前没有发现Go中的函数必须要声明,函数定义的顺序不影响函数使用</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	noReturn()</span><br><span class="line">	rc := haveReturn()</span><br><span class="line">	fmt.Println(<span class="string">&quot;rc=&quot;</span>, rc)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">noReturn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;no return\n&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">haveReturn</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;have return\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="多个返回值"><a href="#多个返回值" class="headerlink" title="多个返回值"></a>多个返回值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">abc</span><span class="params">(num <span class="type">int</span>)</span></span> (rc <span class="type">int</span>, err <span class="type">error</span>) &#123; <span class="comment">//返回值可以写变量名称方便阅读代码，多个返回值必须加括号</span></span><br><span class="line">	<span class="keyword">if</span> num &gt; <span class="number">5</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>, fmt.Errorf(<span class="string">&quot;bad num&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	rc, err := abc(<span class="number">7</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;rc=%d\n&quot;</span>, rc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><p>和C差不多，只不过C声明变量时类型在变量名称前面(int* rc),Go类型在变量名称后面(var rc *int), *的位置也相反</p>
+<h3 id="Go是一种“值传递”语言-函数形参从函数调用中接收实参的副本"><a href="#Go是一种“值传递”语言-函数形参从函数调用中接收实参的副本" class="headerlink" title="Go是一种“值传递”语言,函数形参从函数调用中接收实参的副本"></a>Go是一种“值传递”语言,函数形参从函数调用中接收实参的副本</h3><h3 id="在Go中，返回一个指向函数局-部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值"><a href="#在Go中，返回一个指向函数局-部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值" class="headerlink" title="在Go中，返回一个指向函数局 部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值"></a>在Go中，返回一个指向函数局 部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">retPointer</span><span class="params">()</span></span> *<span class="type">int</span> &#123;</span><br><span class="line">	val := <span class="number">5</span></span><br><span class="line">	<span class="keyword">return</span> &amp;val</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> rc *<span class="type">int</span> = retPointer()</span><br><span class="line">	fmt.Println(*rc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Printf-Sprintf"><a href="#Printf-Sprintf" class="headerlink" title="Printf Sprintf"></a>Printf Sprintf</h2><p>和C差不多</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A float: %f\n&quot;</span>, <span class="number">3.1415</span>)			<span class="comment">//浮点</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;An integer: %d\n&quot;</span>, <span class="number">15</span>)			<span class="comment">//整数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A string: %s\n&quot;</span>, <span class="string">&quot;hello&quot;</span>)			<span class="comment">//字符串</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A boolean: %t\n&quot;</span>, <span class="literal">false</span>)			<span class="comment">//bool</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Values: %v %v %v\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//任意类型</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Values: %#v %#v %#v\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//任意类型，按代码中显示的格式进行格式化</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Types: %T %T %T\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//返回值的类型</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Percent sign: %%\n&quot;</span>)			<span class="comment">//返回%</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-head-first-go-02条件和循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -964,11 +1050,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
