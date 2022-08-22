@@ -145,6 +145,83 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-01docker架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/">Docker - 01Docker架构</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/" class="archive-article-date">
+  	<time datetime="2022-08-22T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>根据官方的定义，Docker是以Docker容器为资源分割和调度的基本单位，封装整个软件运行时环境，为开发者和系统管理员设计的，用于构建、发布和运行分布式应用的平台。它是一个跨平台、可移植并且简单易用的容器解决方案</p>
+<p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4.png"></p>
+<p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84.jpeg"></p>
+<p>Docker的设计理念是希望用户能够保证一个容器只运行一个进程，即只提供一种服务。然而，对于用户而言，单一容器是无法满足需求的。通常用户需要利用多个容器，分别提供不同的服务，并在不同容器间互连通信，最后形成一个Docker集群。Docker基于轻量级虚拟化技术，其易用、跨平台、可移植的特性使其在集群系统的搭建方面有着得天独厚的优势,因此Docker可以实现分布式应用集群的快速、准确、自动化部署</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-head-first-go-18其他" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -963,105 +1040,6 @@
 
 
   
-    <article id="post-head-first-go-09定义类型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/">Head First Go - 09定义类型</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
-  	<time datetime="2022-08-06T07:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="定义基础类型"><a href="#定义基础类型" class="headerlink" title="定义基础类型"></a>定义基础类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"><span class="keyword">type</span> myTypeB <span class="type">float64</span></span><br></pre></td></tr></table></figure>
-
-<p>虽然myTypeA,和myTypeB都是同一基础类型，但是不能把另一个类型的值赋给它</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"><span class="keyword">type</span> myTypeB <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a myTypeA</span><br><span class="line">	<span class="keyword">var</span> b myTypeB</span><br><span class="line"></span><br><span class="line">	a = <span class="number">1.1</span> <span class="comment">//基础类型可以直接赋值，不过最好也用转换</span></span><br><span class="line">	b = <span class="number">2.1</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	fmt.Println(b)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//不能直接赋值,需要类型转换</span></span><br><span class="line">	<span class="comment">//a = b</span></span><br><span class="line">	a = myTypeA(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>一个定义类型提供所有与基础类型相同的运算</li>
-<li>一个定义类型可以被用来与字面值一起用于运算</li>
-<li>但是定义类型不能用来与不同类型的值一起运算，即使它们是来自相同的基础类型</li>
-</ul>
-<h2 id="定义方法"><a href="#定义方法" class="headerlink" title="定义方法"></a>定义方法</h2><p>可以为指定的类型定义方法</p>
-<p>一旦方法被定义在了某个类型，它就能被该类型的任何值调用</p>
-<p><code>func</code> (<code>接收器</code> <code>类型</code>) <code>函数名</code>() { }</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//将hello定义在了myTypeA上</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myTypeA)</span></span> hello() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">1.1</span></span><br><span class="line">	test.hello()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>接收器的参数类似C++的this指针</li>
-<li>按照惯例，Go开发者通常使用一个字母作为名称——小写的接收器类型名称的首字母</li>
-<li>方法和类型必须定义在同一包中</li>
-<li>Go使用接收器参数来代替self和this，self和this是隐含的，而Go显式地声明一个接收器参数</li>
-</ul>
-<h2 id="导出方法"><a href="#导出方法" class="headerlink" title="导出方法"></a>导出方法</h2><p>就像其他的函数，方法名称以大写字母开头，则认为是导出的</p>
-<h2 id="指针类型的接收器参数"><a href="#指针类型的接收器参数" class="headerlink" title="指针类型的接收器参数"></a>指针类型的接收器参数</h2><p>就像其他的参数一样，接收器参数接收一个原值的拷贝。如果你的方法需要修改接收器，你应该在接收器参数上使用指针类型，并且修改指针指向的值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *myTypeA)</span></span> helloA() &#123;</span><br><span class="line">	*m = <span class="number">0</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, *m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">1.1</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    不需要修改方法的调用。当你用一个非指针的变量调用一个需要指针的接收器的方法的时候，Go会自动为你将非指针类型转换为指针类型。同样指针类型也会自动转换为非指针类型，如果你调用一个要求值类型的接收器，Go会自动帮你获取指针指向的值，然后传递给方法</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	test.helloA()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>你需要将值保存在变量中，允许Go能得到一个指向它的指针</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *myTypeA)</span></span> hello() &#123;</span><br><span class="line">	*m = <span class="number">0</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, *m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myTypeA)</span></span> hi() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;hi&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">15</span></span><br><span class="line">	fmt.Println(&amp;test)</span><br><span class="line">	test.hi()</span><br><span class="line">	test.hello()</span><br><span class="line"></span><br><span class="line">	myTypeA(<span class="number">15</span>).hi()</span><br><span class="line">	<span class="comment">//myTypeA(15).hello() cannot take the address of myTypeA(15) </span></span><br><span class="line">	<span class="comment">//fmt.Println(&amp;myTypeA(15)) cannot take the address of myTypeA(15) </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1152,6 +1130,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">日常</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
