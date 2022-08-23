@@ -6,14 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2020/8 | zeyu的博客</title>
+  <title>C-05数组 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zeyu的博客">
-<meta property="og:url" content="http://example.com/archives/2020/08/index.html">
+  <meta name="description" content="写在前面先定义后使用,定义不能有变量 数组名为地址常量，不能放在赋值语句左边 一维数组初始化  类型名 数组名[常量表达式] &#x3D; &amp;#123;    ，  ，   ，&amp;#125; 少定义的自动补零,初值不给则为随机值） 1int a[]&#x3D;&amp;#123;1,3,4&amp;#125;;&#x2F;&#x2F;（初值给了数组长度可以省略）  二维数组定义 类型名  数组名 [常量表达式1][常量表达式2]（【行】【列】）初始化 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C-05数组">
+<meta property="og:url" content="http://example.com/2020/08/05/c-05%E6%95%B0%E7%BB%84/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="写在前面先定义后使用,定义不能有变量 数组名为地址常量，不能放在赋值语句左边 一维数组初始化  类型名 数组名[常量表达式] &#x3D; &amp;#123;    ，  ，   ，&amp;#125; 少定义的自动补零,初值不给则为随机值） 1int a[]&#x3D;&amp;#123;1,3,4&amp;#125;;&#x2F;&#x2F;（初值给了数组长度可以省略）  二维数组定义 类型名  数组名 [常量表达式1][常量表达式2]（【行】【列】）初始化 1">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/photos/src/c/05-strcat.png">
+<meta property="og:image" content="http://example.com/photos/src/c/05-strcpy.png">
+<meta property="og:image" content="http://example.com/photos/src/c/05-strcmp.png">
+<meta property="og:image" content="http://example.com/photos/src/c/05-strlen.png">
+<meta property="article:published_time" content="2020-08-05T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-23T05:07:33.920Z">
+<meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/photos/src/c/05-strcat.png">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
   
@@ -143,150 +153,57 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-c-05数组" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/08/c-08%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2020-08-08T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-08</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">C-08指针</a>
+    <h1 class="article-title" itemprop="name">
+      C-05数组
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/" class="archive-article-date">
-  	<time datetime="2020-08-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/">C-07预编译</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/" class="archive-article-date">
-  	<time datetime="2020-08-06T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/">C-06函数</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/" class="archive-article-date">
+        
+        <a href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/" class="archive-article-date">
   	<time datetime="2020-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-05</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/">C-05数组</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p><strong>先定义后使用,定义不能有变量</strong></p>
+<p><strong>数组名为地址常量，不能放在赋值语句左边</strong></p>
+<h2 id="一维数组"><a href="#一维数组" class="headerlink" title="一维数组"></a>一维数组</h2><p>初始化 </p>
+<p><code>类型名 数组名[常量表达式] = &#123;    ，  ，   ，&#125;</code> 少定义的自动补零,初值不给则为随机值）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[]=&#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;<span class="comment">//（初值给了数组长度可以省略）</span></span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
+<h2 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h2><p>定义</p>
+<p><code>类型名  数组名 [常量表达式1][常量表达式2]</code>（【行】【列】）<br>初始化</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;;</span><br><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;,&#123;<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;&#125;;</span><br><span class="line"><span class="type">int</span> a[][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;;<span class="comment">//（初值给了可以省略行数）</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>c语言没有字符串变量</p>
+<p>字符数组存放字符串要有一个元素存放‘\0’   </p>
+<p>“” &#x3D; “\0”</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> a[]=<span class="string">&quot;abcd&quot;</span>;       <span class="comment">//长度 = 5</span></span><br><span class="line"><span class="type">char</span> a[]=&#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>&#125;; <span class="comment">//长度 = 4 （单引号无&#x27;\0&#x27;）是字符数组，不是字符串</span></span><br><span class="line"><span class="type">char</span> a[]=&#123;<span class="string">&quot;abcd&quot;</span>&#125;;     <span class="comment">//长度 = 5</span></span><br><span class="line"><span class="type">const</span> <span class="type">char</span> *x = <span class="string">&quot;abc&quot;</span>;   <span class="comment">//x指向的字符串被当作静态常量，不可修改</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="字符串存储"><a href="#字符串存储" class="headerlink" title="字符串存储"></a>字符串存储</h3><p>char a[10];</p>
+<ol>
+<li>scanf(“%s”,a); (空格或回车都结束)</li>
+<li>#include&lt;stdio.h&gt; gets(a); (只有回车才结束) puts(a) (‘\0’转换成‘\n’)</li>
+<li>字符数组</li>
+<li>strcpy(a,”kljafha;fk”);</li>
+</ol>
+<p><img src="/../photos/src/c/05-strcat.png"><br><img src="/../photos/src/c/05-strcpy.png"><br><img src="/../photos/src/c/05-strcmp.png"><br><img src="/../photos/src/c/05-strlen.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -298,171 +215,115 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/020/08/05/c-05%E6%95%B0%E7%BB%84/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/" class="archive-article-date">
-  	<time datetime="2020-08-04T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-04</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          C-06函数
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C-04循环</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/">C-04循环</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/" class="archive-article-date">
-  	<time datetime="2020-08-03T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/">C-03选择</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/02/c-02C%E8%AF%AD%E8%A8%80%E7%BB%84%E6%88%90%E5%8F%8A%E6%95%B0%E6%8D%AE/" class="archive-article-date">
-  	<time datetime="2020-08-02T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/02/c-02C%E8%AF%AD%E8%A8%80%E7%BB%84%E6%88%90%E5%8F%8A%E6%95%B0%E6%8D%AE/">C-02C语言组成及数据</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/02/c-01%E6%95%B0%E5%88%B6%E5%BA%94%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-08-02T00:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/02/c-01%E6%95%B0%E5%88%B6%E5%BA%94%E7%94%A8/">C-01数制应用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -485,8 +346,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
