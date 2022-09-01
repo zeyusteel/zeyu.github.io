@@ -145,6 +145,201 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-head-first-go-11接口" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">Head First Go - 11接口</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
+  	<time datetime="2022-08-08T01:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>一个接口是特定值预期具有的一组方法</p>
+<p>如果一个类型包含接口中声明的所有方法，那么它可以在任何需要接口的地方使用，而不需要更多的声明</p>
+<p>方法名称、参数类型(可能没有)和返回值(可能没有)都需要与接口中定义的一致。除了接口中列出的方法之外，类型还可以有更多的方法，但是它不能缺少接口中的任何方法，否则就不满足那个接口</p>
+<p>一个类型可以满足多个接口，一个接口(通常应该)可以有多个类型满足它</p>
+<pre><code>type 接口名 interface &#123;  
+    funcA  
+    funcB  
+&#125;
+</code></pre>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">//定义一个接口，有两个方法</span></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">	outPutWithString(str <span class="type">string</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> intf myInterface</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这两个类型恰好都满足这个接口，就可以赋值成功</span></span><br><span class="line"></span><br><span class="line">	intf = myType(<span class="number">15</span>)</span><br><span class="line">	intf.outPut()</span><br><span class="line"></span><br><span class="line">	intf = myAnotherType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	intf.outPut() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="接口变量"><a href="#接口变量" class="headerlink" title="接口变量"></a>接口变量</h2><p>接口变量和普通变量没什么区别，也可以当函数参数或返回值</p>
+<p>如果一个类型声明了指针接收器方法，你就只能将那个类型的指针传递给接口变量</p>
+<h2 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h2><p>可以通过类型断言将接口变量转换为它对应的类型变量</p>
+<p><code>类型变量, bool = 接口变量.(类型)</code></p>
+<p>bool等于true说明断言成功</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testFunc</span><span class="params">(intf myInterface)</span></span> &#123;</span><br><span class="line">	intf.outPut()</span><br><span class="line">	another,ok := intf.(myAnotherType)</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		another.outPutWithString(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;type err&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	testFunc(myType(<span class="number">15</span>))</span><br><span class="line">	testFunc(myAnotherType(<span class="string">&quot;hhh&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="error接口"><a href="#error接口" class="headerlink" title="error接口"></a>error接口</h2><p>error是一个接口类型 </p>
+<pre><code>type error interface &#123;  
+       Error() string  
+&#125;  
+</code></pre>
+<p>error类型像int或者string一样是一个“预定义标识符”，它不属于任何包。它是“全局块”的一部分，这意味着它在任何地方可用，不用考虑当前包信息</p>
+<p>可以自定义满足error接口的类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myErrorType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myErrorType)</span></span> Error() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="type">string</span>(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err <span class="type">error</span> <span class="comment">//声明一个error接口变量</span></span><br><span class="line"></span><br><span class="line">	err = myErrorType(<span class="string">&quot;wtf&quot;</span>) <span class="comment">//我们的类型方法满足error接口,可以赋值</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(err.Error())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="stringer"><a href="#stringer" class="headerlink" title="stringer"></a>stringer</h2><p>fmt包定义了fmt.Stringer接口:允许任何类型决定在输出时如何展示</p>
+<pre><code>type Stringer interface &#123;  
+    String() string  
+&#125;  
+</code></pre>
+<p>许多在fmt包中的函数都会判断传入的参数是否满足stringer接口，如果满足就调用String方法。这些函数包括Print、Println和Printf等</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;--- &quot;</span> + <span class="type">string</span>(m) + <span class="string">&quot; ---&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	value := myType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	fmt.Println(value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="空接口"><a href="#空接口" class="headerlink" title="空接口"></a>空接口</h2><p>fmt.Println能接收任意类型,因为它声明了空接口<code>Interface&#123;&#125;</code></p>
+<p>Interface{}类型称为空接口，用来接收任何类型的值。不需要实现 任何方法来满足空接口，所以所有的类型都满足它</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> myTpyeFunc() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;myTypeFunc&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//空接口作为函数参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(empty <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(empty)</span><br><span class="line"></span><br><span class="line">	mt, ok := empty.(myType) <span class="comment">//空接口无法调用任何方法,通过断言转换成对应的类型</span></span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		mt.myTpyeFunc()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test(<span class="number">123</span>)</span><br><span class="line">	test(myType(<span class="string">&quot;abc&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-head-first-go-10封装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">Head First Go - 10封装</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/" class="archive-article-date">
+  	<time datetime="2022-08-07T02:20:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>Go通过限制struct中成员是否能导出配合该strcut类型定义相关的方法实现封装</p>
+<h3 id="setter"><a href="#setter" class="headerlink" title="setter"></a>setter</h3><p>setter方法是用来设置封装字段值的方法</p>
+<p>setter方法需要指针接收器</p>
+<p>setter方法通常被命名为setX, X为被设置字段的名称</p>
+<h3 id="getter"><a href="#getter" class="headerlink" title="getter"></a>getter</h3><p>getter方法是用于获取封装字段的方法</p>
+<p>getter方法通常被命名为X, X为被设置字段的名称 (一般习惯前面不加get)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> abc</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;errors&quot;</span></span><br><span class="line">	<span class="string">&quot;unicode/utf8&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Abc <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> SetName(name <span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> utf8.RuneCountInString(name) &gt; <span class="number">20</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">&quot;out of len&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	a.name = name</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> Name() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> a.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌入-struct"><a href="#嵌入-struct" class="headerlink" title="嵌入 struct"></a>嵌入 struct</h2><p>当子struct嵌入到父strcut,子struct未导出的字段不会被提升</p>
+<p>当子struct嵌入到父strcut,子struct导出的方法会被提升</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line">	st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line">	<span class="comment">//通过类型名访问也可以</span></span><br><span class="line">	fmt.Println(st.Abc.Name())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意当struct嵌入了多个子struct时，导出方法可能会有重名的情况,这时直接调用导出方法会无法编译通过,需要加上类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//abc包中的Abc和def包中的Def都定义了setName()和Name()</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">	<span class="string">&quot;def&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">	def.Def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	err := st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    正确使用</span></span><br><span class="line"><span class="comment">    err := st.Abc.SetName(&quot;zeyu&quot;)</span></span><br><span class="line"><span class="comment">	if err != nil &#123;</span></span><br><span class="line"><span class="comment">		log.Fatal(err)</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">	fmt.Println(st.Abc.Name())</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//./test.go:22:11: ambiguous selector st.SetName</span></span><br><span class="line"><span class="comment">//./test.go:27:16: ambiguous selector st.Name</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-head-first-go-09定义类型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -282,8 +477,7 @@
 <h2 id="struct-字面量"><a href="#struct-字面量" class="headerlink" title="struct 字面量"></a>struct 字面量</h2><p>和映射差不多</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	age <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := myType&#123;name : <span class="string">&quot;aaa&quot;</span>, age: <span class="number">15</span>&#125;</span><br><span class="line">	fmt.Println(st.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="struct-嵌入"><a href="#struct-嵌入" class="headerlink" title="struct 嵌入"></a>struct 嵌入</h2><p>没法直接用字面量<code>&#123; &#123;&#125; &#125;</code>给嵌套的结构体赋值 </p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stb <span class="keyword">struct</span> &#123;</span><br><span class="line">	b <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sta <span class="keyword">struct</span> &#123;</span><br><span class="line">	a <span class="type">int</span></span><br><span class="line">	sub stb </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := sta&#123;a: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">	st.sub = stb&#123;b : <span class="number">15</span>&#125; <span class="comment">//直接填充整个子struct</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line"></span><br><span class="line">	st.sub.b = <span class="number">100</span> <span class="comment">//给子strcut成员赋值</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="struct-嵌入"><a href="#struct-嵌入" class="headerlink" title="struct 嵌入"></a>struct 嵌入</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stb <span class="keyword">struct</span> &#123;</span><br><span class="line">	b <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sta <span class="keyword">struct</span> &#123;</span><br><span class="line">	a <span class="type">int</span></span><br><span class="line">	sub stb </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := sta&#123;a: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">	st.sub = stb&#123;b : <span class="number">15</span>&#125; <span class="comment">//直接填充整个子struct</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line"></span><br><span class="line">	st.sub.b = <span class="number">100</span> <span class="comment">//给子strcut成员赋值</span></span><br><span class="line">	fmt.Println(st.sub.b)</span><br><span class="line"></span><br><span class="line">	ta := sta&#123;a: <span class="number">10</span>, sub: stb&#123;b: <span class="number">15</span>&#125;&#125; <span class="comment">//直接赋值嵌套结构体</span></span><br><span class="line">	fmt.Println(ta.sub.b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="匿名struct"><a href="#匿名struct" class="headerlink" title="匿名struct"></a>匿名struct</h2><p>一个内部struct使用匿名字段的方式存储在了外部的struct中，这被称为嵌入了外部struct。嵌入struct的字段被提升到了外部struct，可以像访问外部struct的字段一样访问它们</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stb <span class="keyword">struct</span> &#123;</span><br><span class="line">	b <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sta <span class="keyword">struct</span> &#123;</span><br><span class="line">	a <span class="type">int</span></span><br><span class="line">	stb <span class="comment">//只写类型名 </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	st := sta&#123;a: <span class="number">1</span>&#125;</span><br><span class="line">    <span class="comment">//当你声明一个匿名字段时，你可以使用字段类型名称作为字段名称</span></span><br><span class="line">	st.stb = stb&#123;b : <span class="number">15</span>&#125;</span><br><span class="line">	fmt.Println(st.stb.b)</span><br><span class="line"></span><br><span class="line">	st.stb.b = <span class="number">100</span></span><br><span class="line">	fmt.Println(st.stb.b)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//可以像访问外部字段一样访问嵌入的strcut字段</span></span><br><span class="line">	st.b = <span class="number">50</span></span><br><span class="line">	fmt.Println(st.b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
@@ -932,281 +1126,6 @@
 
 
   
-    <article id="post-head-first-go-01语法基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/">Head First Go - 01语法基础</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/" class="archive-article-date">
-  	<time datetime="2022-07-19T15:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>开了一个新坑 <strong>Ready ~~~ Go!</strong> ( ^ @ ^ )</p>
-<hr>
-<h2 id="认识Go"><a href="#认识Go" class="headerlink" title="认识Go"></a>认识Go</h2><p>一般Go文件都是由以下三部分组成</p>
-<ol>
-<li>package子句</li>
-<li>import语句</li>
-<li>代码片段</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">//表示文件所有的代码都属于main包</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span> <span class="comment">//包含了fmt包</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123; <span class="comment">//首先运行main函数</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello, Go&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://go.dev/play/">代码测试网站</a></p>
-<h2 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h2><p>包名.函数名(参数)</p>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>和C区别不大诶</p>
-<h2 id="符文-rune"><a href="#符文-rune" class="headerlink" title="符文(rune)"></a>符文(rune)</h2><p>就是单个字符，Go中用Unicode存储符文</p>
-<h2 id="布尔"><a href="#布尔" class="headerlink" title="布尔"></a>布尔</h2><p>true false</p>
-<h2 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h2><p>字面意思</p>
-<h2 id="数学运算比较"><a href="#数学运算比较" class="headerlink" title="数学运算比较"></a>数学运算比较</h2><p>和C差不多，比较结果返回bool</p>
-<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Go也是静态类型，在运行之前类型就要确定,如果使用了错误类型Go会编译失败</p>
-<p><code>reflect</code>包中的<code>TypeOf</code>可以输出类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123.456</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&quot;zeyu&quot;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&#x27;z&#x27;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="literal">false</span>))</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h2><p><code>var</code> 变量名称 类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test <span class="type">int</span> <span class="comment">//单个变量声明</span></span><br><span class="line">	test = <span class="number">4</span>     <span class="comment">//单个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testa, testb <span class="type">string</span>     <span class="comment">//多个变量声明</span></span><br><span class="line">	testa, testb = <span class="string">&quot;hhh&quot;</span>, <span class="string">&quot;xxx&quot;</span> <span class="comment">//多个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testc, testd <span class="type">float64</span> = <span class="number">1.1</span>, <span class="number">1.2</span> <span class="comment">//声明同时赋值</span></span><br><span class="line">	<span class="keyword">var</span> teste, testf = <span class="number">5</span>, <span class="string">&quot;www&quot;</span>         <span class="comment">//声明同时赋值 省略类型</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">	fmt.Println(testa)</span><br><span class="line">	fmt.Println(testb)</span><br><span class="line">	fmt.Println(testc)</span><br><span class="line">	fmt.Println(testd)</span><br><span class="line">	fmt.Println(teste)</span><br><span class="line">	fmt.Println(testf)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="零值"><a href="#零值" class="headerlink" title="零值"></a>零值</h2><p>对于没有赋值的变量默认是零值<br>字符串变量的零值是空字符串，bool变量的零值是false,int,float64的零值是0</p>
-<h2 id="短变量声明"><a href="#短变量声明" class="headerlink" title="短变量声明"></a>短变量声明</h2><p>如果声明的时候就知道变量的初值，可以使用短变量声明，省略<code>val</code>和类型 赋值符号变为<code>:=</code></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test := <span class="number">5</span> <span class="comment">//短变量声明</span></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="变量声明规范"><a href="#变量声明规范" class="headerlink" title="变量声明规范"></a>变量声明规范</h2><ol>
-<li>一个变量只能声明一次</li>
-<li>不能给未声明的变量赋值</li>
-<li>只能给变量赋相同类型的值</li>
-<li>声明同时赋值要求变量数量和值一一对应</li>
-<li>所有声明的变量都必须在程序中使用,否则因该删除声明</li>
-</ol>
-<h2 id="命名规则"><a href="#命名规则" class="headerlink" title="命名规则"></a>命名规则</h2><p>名称必须以字母开头，可以有任意数量的额外字母和数字<br>变量、函数、类型的名称如果以大写字母开头，则认为它是导出的,可以通过其他包访问，否则认为是未导出的，只能在当前包使用<br>名称一般用驼峰式  </p>
-<h2 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h2><p>使用不同类型的值直接比较会报错<br>赋值的类型和变量类型不匹配也会报错  </p>
-<p>解决办法是使用转换  <code>类型(变量)</code></p>
-<h2 id="运行Go"><a href="#运行Go" class="headerlink" title="运行Go"></a>运行Go</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">fmt</span> hello.go //重新格式化 </span><br><span class="line">go build hello.go //编译为二进制</span><br><span class="line">./hello</span><br></pre></td></tr></table></figure>
-
-<p>go run hello.go &#x2F;&#x2F;编译并运行，不保存可执行文件</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-user-namespace" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/14/user-namespace/">User Namespace</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/14/user-namespace/" class="archive-article-date">
-  	<time datetime="2022-07-14T00:49:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>用户命名空间隔离了安全相关的标识和属性,尤其是<code>uid</code>和<code>gid</code>(credentials)、根目录、密钥(keyrings)、能力(capabilities)。一个进程的<code>uid</code>,<code>gid</code>在不同的用户命名空间可能是不同的。一个进程在在一个用户命名空间外可能是一个普通的非特权用户,同时在另一个用户命名空间内可能是uid &#x3D; 0的root。换句话说,这个进程对一个用户命名空间内的操作具有完全的权限,但是对用户命名空间外的操作没有权限</p>
-<h2 id="嵌套用户命名空间"><a href="#嵌套用户命名空间" class="headerlink" title="嵌套用户命名空间"></a>嵌套用户命名空间</h2><p>用户名称空间可以嵌套,也就是说除了初始根用户命名空间之外,每个用户命名空间都有一个父用户命名空间,并且可以具有零个或多个子用户命名空间,父用户命名空间通过<code>unshare</code>、<code>clone</code>,配合使用<code>CLONE_NEWUSER</code>标志创建子用户命名空间。内核（&gt;3.11)限制用户命名空间最多嵌套32层,超出限制会报<code>EUSERS</code></p>
-<p>每一个进程都是一个用户命名空间的成员,一个进程通过<code>fork</code>或者<code>clone</code>但是不使用<code>CLONE_NEWUSER</code>就会和父进程一样作为同一个用户命名空间的成员。一个进程可以通过<code>setns</code>加入另一个用户命名空间,前提是这个进程在这个用户命名空间有<code>CAP_SYS_ADMIN</code>能力,切换后这个进程将在这个用户命名空间有全部能力</p>
-<p>ioctl中的<code>NS_GET_PARENT</code>用于获取用户命名空间的父子关系(ioctl_ns)</p>
-<h2 id="用户命名空间能力"><a href="#用户命名空间能力" class="headerlink" title="用户命名空间能力"></a>用户命名空间能力</h2><p>通过<code>clone</code>或者<code>unshare</code>创建一个新的用户命名空间,或者通过<code>setns</code>加入一个已经存在的用户命名空间都会使这个进程获得这个用户命名空间的全部能力集,并且这个进程在父用户命名空间或切换之前的用户命名空间没有任何能力,即使新的用户命名空间是由root创建或切换的</p>
-<p>在用户命名空间中调用<code>execve</code>通常将以正常的方式重新计算新进程的能力,因此除非uid&#x3D;0或者文件的<code>inheritable capabilities mask</code>不为空,能力都将被丢掉</p>
-<p><code>clone</code>,<code>unshare</code>,<code>setns</code>创建&#x2F;切换用户命名空间都将导致<code>securebits</code>标志位变成默认值(全关),因为切换到新的用户命名空间的进程在原用户命名空间将失去所有能力,所以即使将<code>securebits</code>标志位恢复,也没有办法通过两次<code>setns</code>在两个用户命名空间中切换。</p>
-<p>判断进程在用户命名空间能力规则如下</p>
-<ol>
-<li>如果进程是该用户命名空间的成员,并且<code>effective set</code>有能力,那么该进程在这个用户命名空间就有能力。通过执行<code>set-user-ID</code>或者有文件能力的可执行文件都可以让新进程获得能力,或者<code>clone</code>,<code>unshare</code>,<code>setns</code>创建新的用户命名空间</li>
-<li>如果进程在一个用户命名空间中有能力,那么它在所有子用户命名空间都有对应能力</li>
-<li>当进程创建用户命名空间时,内核将记录进程的<code>euid</code>作为该用户命名空间的拥有者,处于父用户命名空间并且<code>euid</code>与用户命名空间拥有者相匹配的进程将获得该用户命名空间以及将来子用户命名空间的全部能力,<code>ioctl</code>中<code>NS_GET_OWNER_UID</code>用于获取用户命名空间的拥有者的uid</li>
-</ol>
-<h2 id="用户命名空间内能力的影响"><a href="#用户命名空间内能力的影响" class="headerlink" title="用户命名空间内能力的影响"></a>用户命名空间内能力的影响</h2><p>在一个用户命名空间拥有能力意味着该进程可以对该用户命名空间所持有的其他命名空间的资源执行特权操作</p>
-<p>还有一些特权操作影响的资源不属于任何命名空间,例如：修改系统时间(CAP_SYS_TIME), 加载内核模块(CAP_SYS_MODULE),创建一个设备(CAP_MKNOD),只有初始用户命名空间的特权进程有能力执行上述操作</p>
-<p>在拥有<code>mount namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许在创建绑定挂载或者挂载以下文件系统</p>
-<ul>
-<li>&#x2F;proc (since Linux 3.8)</li>
-<li>&#x2F;sys (since Linux 3.8)</li>
-<li>devpts (since Linux 3.9)</li>
-<li>tmpfs(5) (since Linux 3.9)</li>
-<li>ramfs (since Linux 3.9)</li>
-<li>mqueue (since Linux 3.9)</li>
-<li>bpf (since Linux 4.4)</li>
-</ul>
-<p>在拥有<code>cgroup namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许挂载<code>cgroup version 2</code> 文件系统和<code>cgroup version 1 named hierarchies</code> (cgroup filesystems mounted with the “none,name&#x3D;” option)</p>
-<p>在拥有<code>pid namespace</code>的用户命名空间内拥有<code>CAP_SYS_ADMIN</code>的进程允许挂载<code>/proc</code></p>
-<p>但是要挂载基于块的文件系统只能是在初始用户命名空间拥有<code>CAP_SYS_ADMIN</code>的进程</p>
-<h2 id="用户命名空间和其他命名空间交互"><a href="#用户命名空间和其他命名空间交互" class="headerlink" title="用户命名空间和其他命名空间交互"></a>用户命名空间和其他命名空间交互</h2><p>从Linux3.8开始,非特权进程可以创建用户命名空间,其他类型的名称空间只需基于调用的用户命名空间中有<code>CAP_SYS_ADMIN</code>能力就可以创建</p>
-<p>创建其他命名空间时,它由创建进程所对应的用户命名空间所有。对于其他命名空间的特权操作要求进程具有必要的用户命名空间中的能力</p>
-<p>调用<code>clone</code>,<code>unshare</code>,如果<code>CLONE_NEWUSER</code>和其他<code>CLONE_*</code>一起声明,那么会保证首先创建用户命名空间,给其他命名空间的创建提供权限。这种参数的组合方式可以被非特权进程调用</p>
-<p>当一个新的命名空间创建(用户命名空间除外),内核都会记录这个进程的用户命名空间作为新创建的命名空间的拥有者(这种关联不能被改变),当一个进程要特权操作一个命名空间隔离的资源时,内核就会检查这个进程在要操作的那个命名空间对应用户命名空间有没有相关能力。例如,一个进程想要修改主机名(sethostname),该资源由<code>uts namespace</code>管理,这是内核就会检查哪一个用户命名空间拥有当前要操作的<code>uts namespace</code>,并检查该进程在那个用户命名空间是否有对应的能力<code>CAP_SYS_ADMIN</code></p>
-<p>NS_GET_USERNS ioctl(2) 用于获取用户命名空间拥有哪些其他命名空间(ioctl_ns)</p>
-<h2 id="uid-map-gid-map"><a href="#uid-map-gid-map" class="headerlink" title="uid_map gid_map"></a>uid_map gid_map</h2><p>当一个用户命名空间被创建时,一开始并没有将<code>uid</code>, <code>gid</code>映射到父命名空间,<code>/proc/[pid]/uid_map</code>,<code>/proc/[pid]/gid_map</code>用于将命名空间内的<code>uid</code>,<code>gid</code>映射。这些文件只能被写入一次</p>
-<p>映射文件映射了pid的进程和打开map文件的进程的uid&#x2F;gid,不同用户命名空间下的进程打开同一个map文件可能看到不同的结果</p>
-<p>这个文件在用户命名空间创建之初是空的,映射文件中的每一行指定两个用户名称空间之间一系列连续用户ID的1:1映射,每行中的规范采用由空格分隔的三个数字的形式。前两个数字分别指定两个用户命名空间中的起始用户ID,第三个数字指定映射的长度</p>
-<p>第一个字段描述了pid所在用户命名空间id映射的开始位置,如果这两个进程(pid和打开map的进程)位于不同的用户命名空间中,字段2是打开map进程对应的用户命名空间对应id范围的开始位置,如果这两个进程位于同一个用户命名空间,字段2是该用户命名空间的父命名空间对应id范围的开始位置,一般打开<code>/proc/self/uid_map</code>就是查看当前进程的用户命名空间和父用户命名空间的id映射关系</p>
-<p><code>getuid</code>,<code>getgid</code>,<code>stat</code>等用于身份认证的系统调用都将返回映射到调用用户命名空间的id</p>
-<p>当进程访问文件时,其用户和组ID映射到初始用户命名空间中,以进行权限检查和在创建文件时分配ID,当进程调用<code>stat</code>获取文件的uid,gid时,这些ID又会以相反的方向映射回对应的命名空间</p>
-<p>初始用户名称空间没有父名称空间,但为了一致性,内核为以下对象提供了虚拟用户和组ID映射文件：<br>    cat &#x2F;proc&#x2F;$$&#x2F;uid_map<br>    0          0 4294967295<br>    (2^32 - 1)为未映射,类似(uid_t) -1没有这个用户</p>
-<h2 id="定义uid-map-gid-map"><a href="#定义uid-map-gid-map" class="headerlink" title="定义uid_map gid_map"></a>定义uid_map gid_map</h2><p>在创建用户命名空间后,可以将这个用户命名空间中的某个进程的map文件写入一次,去定义id的映射,尝试多次写入会导致<code>EPERM</code></p>
-<h3 id="写入规则"><a href="#写入规则" class="headerlink" title="写入规则"></a>写入规则</h3><ul>
-<li>三个字段必须都是有效值,而且最后一个字短必须大于0</li>
-<li>每一行都以换行符终止</li>
-<li>4.14内核限制写入5行,4.15之后限制写入340行,写入的字节数必须小于系统页面,写入必须在开头,不能用leesk,pwrite偏移写文件</li>
-<li>3.8之前的内核要求映射的范围不能有重叠,连续行的字段1和字段2必须以升序数字顺序排列,3.9取消了这个限制</li>
-<li>最少一行要被写入文件</li>
-</ul>
-<p>违反上述规则的写入失败,错误为<code>EINVAL</code>  </p>
-<h3 id="针对进程的写入条件"><a href="#针对进程的写入条件" class="headerlink" title="针对进程的写入条件"></a>针对进程的写入条件</h3><ol>
-<li>写入的进行必须要有对应pid进程所在用户命名空间的<code>CAP_SETUID</code>,<code>CAP_SETGID</code></li>
-<li>写入进程必须位于进程pid的用户命名空间中,或位于进程pid的父用户命名空间中</li>
-<li>映射的ID必须在父命名空间也有映射关系</li>
-<li>以下两条满足其一:<ol>
-<li>写入进程在父用户命名空间中都具有<code>CAP_SETUID</code>,<code>CAP_SETGID</code>功能, 没有其他限制:该进程可以映射到父用户命名空间中的任意uid(gid)</li>
-<li>否则,以下所有限制均适用: <ul>
-<li>写入的数据必须由单行组成,映射写入进程在父用户命名空间的euid和要映射的命名空间的uid</li>
-<li>写入进程必须与创建用户命名空间的进程有相同的euid</li>
-<li>在gid映射的情况下,必须首先通过向<code>/proc/[pid]/setgroups</code>写入<code>deny</code>来拒绝使用<code>setgroups</code>系统调用</li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-<p>违反上述规则的写入将失败,并返回错误<code>EPERM</code></p>
-<h2 id="对修改uid-gid系统调用的影响"><a href="#对修改uid-gid系统调用的影响" class="headerlink" title="对修改uid gid系统调用的影响"></a>对修改uid gid系统调用的影响</h2><p>如果map文件没有,那么修改uid,gid会失败,否则,只有映射的id可以被修改</p>
-<p>user IDs 系统调用: <code>setuid</code>, <code>setfsuid</code>,<code>setreuid</code>,<code>setresuid</code>. group IDs 系统调用:<code>setgid</code>,<code>setfsgid</code>,<code>setregid</code>, <code>setresgid</code>,<code>setgroups</code></p>
-<p>在写<code>/proc/[pid]/uid_map</code>之前在<code>/proc/[pid]/setgroups</code>写入<code>deny</code>将永久禁用用户命名空间的<code>setgroups</code>,并且允许在父用户命名空间没有<code>CAP_SETGID</code>能力的进程写<code>/proc/[pid]/gid_map</code></p>
-<h2 id="x2F-proc-x2F-pid-x2F-setgroups"><a href="#x2F-proc-x2F-pid-x2F-setgroups" class="headerlink" title="&#x2F;proc&#x2F;[pid]&#x2F;setgroups"></a>&#x2F;proc&#x2F;[pid]&#x2F;setgroups</h2><p>如果这个文件的值是<code>allow</code>,那么pid对应用户命名空间的进程有能力执行<code>setgroups</code>,如果文件的值是<code>deny</code>则相反。注意,如果没有写<code>/proc/[pid]/gid_map</code>那么无论<code>/proc/[pid]/setgroups</code>值是多少,进程有没有能力都无法执行<code>setgroups</code></p>
-<p>在写入<code>/proc/[pid]/gid_map</code>之前,pid对应用户命名空间的特权进程(CAP_SYS_ADMIN)有权限在这个文件写入<code>allow</code>或者<code>deny</code></p>
-<p>这个文件的默认值是<code>allow</code></p>
-<p>一旦<code>/proc/[pid]/gid_map</code>被写入,同时,setgroups的值是<code>allow</code>,那么就无法通过写入<code>deny</code>去关闭<code>setgroups</code>(EPERM)</p>
-<p>一旦<code>setgroups</code>的值是<code>deny</code>,那么就无法通过写入<code>allow</code>去开启<code>setgroups</code>(EPERM)</p>
-<p>限制的本质是<code>/proc/[pid]/gid_map</code>是否设置了(没设置就是<code>deny</code>),也就是说进程的<code>setgroups</code>权限不能从<code>allow</code> -&gt; <code>deny</code>,只能从<code>deny</code> -&gt; <code>allow</code></p>
-<p>子用户命名空间从其父命名空间继承<code>/proc/[pid]/setgroups</code>设置</p>
-<p><code>/proc/[pid]/setgroups</code>是3.19引入的内核,但是已经被移植到很多早期的版本中。因为它解决了涉及具有<code>rwx---rwx</code>等权限文件的访问权限问题,这些文件给所属组的权限比其他人要少,着就意味着一旦通过<code>setgroups</code>将进程的组都丢掉就可以让进程访问到它本来无法访问的文件。对于早期的用户命名空间来说这不是个问题,因为只有特权进程<code>CAP_SETGID</code>有能力调用<code>setgroups</code>,但是引入非特权用户创建用户命名空间后,就会导致本来没有特权的用户通过子命名空间获取到了能力,然后通过<code>setgroups</code>让进程访问到了本来没有权限访问的文件,<code>/proc/[pid]/setgroups</code>很好的通过拒绝任何非特权用户(CAP_SETGID)的路径使用<code>setgroup</code></p>
-<h2 id="未映射的uid-gid"><a href="#未映射的uid-gid" class="headerlink" title="未映射的uid gid"></a>未映射的uid gid</h2><p>在用户命名空间中有可以遇到未映射的id,比如在还没有写入<code>uid_map</code>之前调用<code>getuid</code>,这时会返回<code>overflow user ID</code>,默认值是65534(<code>/proc/sys/kernel/overflowuid</code>)</p>
-<p>未映射的uid gid未转换为相应的溢出ID值。查看时uid&#x2F;gid map,其中第二个字段没有映射,该字段显示为4294967295</p>
-<p>影响的系统调用<br><code>The cases where unmapped IDs are mapped in this fashion include system calls that return user IDs (getuid(2), getgid(2), and similar), cre‐        dentials passed over a UNIX domain socket, credentials returned by stat(2), waitid(2), and the System V IPC &quot;ctl&quot; IPC_STAT operations, cre‐        dentials  exposed  by  /proc/[pid]/status  and the files in /proc/sysvipc/*, credentials returned via the si_uid field in the siginfo_t re‐        ceived with a signal (see sigaction(2)), credentials written to the process accounting file (see acct(5)), and  credentials  returned  with        POSIX message queue notifications (see mq_notify(3)).</code></p>
-<h2 id="文件访问"><a href="#文件访问" class="headerlink" title="文件访问"></a>文件访问</h2><p>为了在非特权进程访问文件时确定权限,进程凭UID、GID和文件的mode属性都映射回根用户命名空间中,然后进行比较以确定进程对文件的权限,其他类似身份认证+权限掩码的权限判断方式也是如此,比如System V IPC</p>
-<h2 id="文件相关操作的能力"><a href="#文件相关操作的能力" class="headerlink" title="文件相关操作的能力"></a>文件相关操作的能力</h2><p>有些能力允许进程在对不属于自己的文件操作时通过内核的限制: <code>CAP_CHOWN</code>,<code>CAP_DAC_OVERRIDE</code>,<code>CAP_DAC_READ_SEARCH</code>,<code>CAP_FOWNER</code>,<code>CAP_FSETID</code></p>
-<p>在一个用户命名空间中要生效需要满足</p>
-<ul>
-<li>进程的<code>Effective set</code>在用户命名空间中有上述对应能力</li>
-<li>文件的uid,gid都在用户命名空间中被映射(CAP_FOWNER只需要映射uid)</li>
-</ul>
-<h2 id="Set-user-ID-set-group-ID-程序"><a href="#Set-user-ID-set-group-ID-程序" class="headerlink" title="Set-user-ID set-group-ID 程序"></a>Set-user-ID set-group-ID 程序</h2><p>当在用户命名空间执行了一个<code>set-user-id</code>或者<code>set-group-id</code>的程序时,如果这个id在用户命名空间中没有被映射,那么新的程序被执行时就会忽略set-user-ID set-group-ID标志位,而使用原来的euid egid</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>在用户命名空间中,不可能获得比的根用户更多的能力<br>内核选项:CONFIG_USER_NS</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/14/user-namespace/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1296,11 +1215,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
               </li>
              
               <li class="article-tag-list-item">

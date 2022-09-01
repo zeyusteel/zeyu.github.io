@@ -6,13 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: C | zeyu的博客</title>
+  <title>Docker - 02Client | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zeyu的博客">
-<meta property="og:url" content="http://example.com/tags/C/index.html">
+  <meta name="description" content="写在前面自从20.10版本,原来Docker-CE的仓库就不再使用，而是分成了Docker CLI和Docker Engine,后续涉及源码的地方都将基于20.10展开 Docker Client1​​docker [OPTIONS] COMMAND [arg...]​​  docker client入口函数在cmd&#x2F;docker&#x2F;docker.go 01 初始化DockerCli调用cli&#x2F;co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker - 02Client">
+<meta property="og:url" content="http://example.com/2022/08/30/docker-02client/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="写在前面自从20.10版本,原来Docker-CE的仓库就不再使用，而是分成了Docker CLI和Docker Engine,后续涉及源码的地方都将基于20.10展开 Docker Client1​​docker [OPTIONS] COMMAND [arg...]​​  docker client入口函数在cmd&#x2F;docker&#x2F;docker.go 01 初始化DockerCli调用cli&#x2F;co">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-30T01:00:00.000Z">
+<meta property="article:modified_time" content="2022-09-01T00:48:29.786Z">
+<meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -143,405 +148,170 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-docker-02client" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker - 02Client
+    </h1>
+  
+
+        
+        <a href="/2022/08/30/docker-02client/" class="archive-article-date">
+  	<time datetime="2022-08-30T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-30</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>20.10</code>展开</p>
+<h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
+
+<p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
+<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个cli,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
+<p><code>DockerCli</code>将作为客户端的上下文存在于整个生命周期</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DockerCli <span class="keyword">struct</span> &#123;</span><br><span class="line">	configFile         *configfile.ConfigFile</span><br><span class="line">	in                 *streams.In</span><br><span class="line">	out                *streams.Out</span><br><span class="line">	err                io.Writer</span><br><span class="line">	client             client.APIClient</span><br><span class="line">	serverInfo         ServerInfo</span><br><span class="line">	clientInfo         *ClientInfo</span><br><span class="line">	contentTrust       <span class="type">bool</span></span><br><span class="line">	contextStore       store.Store</span><br><span class="line">	currentContext     <span class="type">string</span></span><br><span class="line">	dockerEndpoint     docker.Endpoint</span><br><span class="line">	contextStoreConfig store.Config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="02-runDocker"><a href="#02-runDocker" class="headerlink" title="02 runDocker"></a>02 runDocker</h3><ol>
+<li>初始化命令模版: 在<code>newDockerCommand</code>中初始化命令行模版,命令模版:<code>vendor/github.com/spf13/cobra/command.go/command</code></li>
+<li>初始化<code>Flags</code>并关联<code>Options</code>: <code>cli/flags/common.go/InstallFlags</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CommonOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Debug      <span class="type">bool</span></span><br><span class="line">    Hosts      []<span class="type">string</span></span><br><span class="line">    LogLevel   <span class="type">string</span></span><br><span class="line">    TLS        <span class="type">bool</span></span><br><span class="line">    TLSVerify  <span class="type">bool</span></span><br><span class="line">    TLSOptions *tlsconfig.Options</span><br><span class="line">    Context    <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>初始化命令: <code>cli/command/commands/commands.go/AddCommands</code>,<code>cli/command/container</code>下包含容器相关的命令,<code>cli/command/image</code>下包含镜像相关的命令,以此类推</li>
+<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将os.Args的<code>Options</code>切分后面就是<code>args</code></li>
+<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和daemon通信)</li>
+<li>解析<code>os.Args</code>后面的args,匹配相关命令</li>
+<li>执行匹配到的命令</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/24/json/" class="archive-article-date">
-  	<time datetime="2020-08-24T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/24/json/">json</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/08/30/docker-02client/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/10/c-09%E7%BB%93%E6%9E%84%E4%BD%93/" class="archive-article-date">
-  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2022/09/01/docker-03daemon/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Docker - 03Daemon
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Docker - 01Docker架构</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/10/c-09%E7%BB%93%E6%9E%84%E4%BD%93/">C-09结构体</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/" class="archive-article-date">
-  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">C-10位运算和文件</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/08/c-08%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2020-08-08T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">C-08指针</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/" class="archive-article-date">
-  	<time datetime="2020-08-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/">C-07预编译</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/" class="archive-article-date">
-  	<time datetime="2020-08-06T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/">C-06函数</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/" class="archive-article-date">
-  	<time datetime="2020-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/">C-05数组</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/" class="archive-article-date">
-  	<time datetime="2020-08-04T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/">C-04循环</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/" class="archive-article-date">
-  	<time datetime="2020-08-03T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/">C-03选择</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/02/c-02C%E8%AF%AD%E8%A8%80%E7%BB%84%E6%88%90%E5%8F%8A%E6%95%B0%E6%8D%AE/" class="archive-article-date">
-  	<time datetime="2020-08-02T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/02/c-02C%E8%AF%AD%E8%A8%80%E7%BB%84%E6%88%90%E5%8F%8A%E6%95%B0%E6%8D%AE/">C-02C语言组成及数据</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/tags/C/page/2/">2</a><a class="extend next" rel="next" href="/tags/C/page/2/">Next &amp;raquo;</a>
-    </nav>
   
 
 
@@ -565,9 +335,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

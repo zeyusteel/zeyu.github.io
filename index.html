@@ -145,6 +145,169 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-03daemon" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/09/01/docker-03daemon/">Docker - 03Daemon</a>
+    </h1>
+  
+
+        
+        <a href="/2022/09/01/docker-03daemon/" class="archive-article-date">
+  	<time datetime="2022-09-01T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/09/01/docker-03daemon/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-docker-02client" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/30/docker-02client/">Docker - 02Client</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/30/docker-02client/" class="archive-article-date">
+  	<time datetime="2022-08-30T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>20.10</code>展开</p>
+<h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
+
+<p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
+<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个cli,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
+<p><code>DockerCli</code>将作为客户端的上下文存在于整个生命周期</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DockerCli <span class="keyword">struct</span> &#123;</span><br><span class="line">	configFile         *configfile.ConfigFile</span><br><span class="line">	in                 *streams.In</span><br><span class="line">	out                *streams.Out</span><br><span class="line">	err                io.Writer</span><br><span class="line">	client             client.APIClient</span><br><span class="line">	serverInfo         ServerInfo</span><br><span class="line">	clientInfo         *ClientInfo</span><br><span class="line">	contentTrust       <span class="type">bool</span></span><br><span class="line">	contextStore       store.Store</span><br><span class="line">	currentContext     <span class="type">string</span></span><br><span class="line">	dockerEndpoint     docker.Endpoint</span><br><span class="line">	contextStoreConfig store.Config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="02-runDocker"><a href="#02-runDocker" class="headerlink" title="02 runDocker"></a>02 runDocker</h3><ol>
+<li>初始化命令模版: 在<code>newDockerCommand</code>中初始化命令行模版,命令模版:<code>vendor/github.com/spf13/cobra/command.go/command</code></li>
+<li>初始化<code>Flags</code>并关联<code>Options</code>: <code>cli/flags/common.go/InstallFlags</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CommonOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Debug      <span class="type">bool</span></span><br><span class="line">    Hosts      []<span class="type">string</span></span><br><span class="line">    LogLevel   <span class="type">string</span></span><br><span class="line">    TLS        <span class="type">bool</span></span><br><span class="line">    TLSVerify  <span class="type">bool</span></span><br><span class="line">    TLSOptions *tlsconfig.Options</span><br><span class="line">    Context    <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>初始化命令: <code>cli/command/commands/commands.go/AddCommands</code>,<code>cli/command/container</code>下包含容器相关的命令,<code>cli/command/image</code>下包含镜像相关的命令,以此类推</li>
+<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将os.Args的<code>Options</code>切分后面就是<code>args</code></li>
+<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和daemon通信)</li>
+<li>解析<code>os.Args</code>后面的args,匹配相关命令</li>
+<li>执行匹配到的命令</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/30/docker-02client/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-01docker架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -200,7 +363,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
         		</li>
       		
 		</ul>
@@ -863,201 +1026,6 @@
 
 
   
-    <article id="post-head-first-go-11接口" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">Head First Go - 11接口</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
-  	<time datetime="2022-08-08T01:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>一个接口是特定值预期具有的一组方法</p>
-<p>如果一个类型包含接口中声明的所有方法，那么它可以在任何需要接口的地方使用，而不需要更多的声明</p>
-<p>方法名称、参数类型(可能没有)和返回值(可能没有)都需要与接口中定义的一致。除了接口中列出的方法之外，类型还可以有更多的方法，但是它不能缺少接口中的任何方法，否则就不满足那个接口</p>
-<p>一个类型可以满足多个接口，一个接口(通常应该)可以有多个类型满足它</p>
-<pre><code>type 接口名 interface &#123;  
-    funcA  
-    funcB  
-&#125;
-</code></pre>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">//定义一个接口，有两个方法</span></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">	outPutWithString(str <span class="type">string</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> intf myInterface</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这两个类型恰好都满足这个接口，就可以赋值成功</span></span><br><span class="line"></span><br><span class="line">	intf = myType(<span class="number">15</span>)</span><br><span class="line">	intf.outPut()</span><br><span class="line"></span><br><span class="line">	intf = myAnotherType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	intf.outPut() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="接口变量"><a href="#接口变量" class="headerlink" title="接口变量"></a>接口变量</h2><p>接口变量和普通变量没什么区别，也可以当函数参数或返回值</p>
-<p>如果一个类型声明了指针接收器方法，你就只能将那个类型的指针传递给接口变量</p>
-<h2 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h2><p>可以通过类型断言将接口变量转换为它对应的类型变量</p>
-<p><code>类型变量, bool = 接口变量.(类型)</code></p>
-<p>bool等于true说明断言成功</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testFunc</span><span class="params">(intf myInterface)</span></span> &#123;</span><br><span class="line">	intf.outPut()</span><br><span class="line">	another,ok := intf.(myAnotherType)</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		another.outPutWithString(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;type err&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	testFunc(myType(<span class="number">15</span>))</span><br><span class="line">	testFunc(myAnotherType(<span class="string">&quot;hhh&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="error接口"><a href="#error接口" class="headerlink" title="error接口"></a>error接口</h2><p>error是一个接口类型 </p>
-<pre><code>type error interface &#123;  
-       Error() string  
-&#125;  
-</code></pre>
-<p>error类型像int或者string一样是一个“预定义标识符”，它不属于任何包。它是“全局块”的一部分，这意味着它在任何地方可用，不用考虑当前包信息</p>
-<p>可以自定义满足error接口的类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myErrorType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myErrorType)</span></span> Error() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="type">string</span>(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err <span class="type">error</span> <span class="comment">//声明一个error接口变量</span></span><br><span class="line"></span><br><span class="line">	err = myErrorType(<span class="string">&quot;wtf&quot;</span>) <span class="comment">//我们的类型方法满足error接口,可以赋值</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(err.Error())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="stringer"><a href="#stringer" class="headerlink" title="stringer"></a>stringer</h2><p>fmt包定义了fmt.Stringer接口:允许任何类型决定在输出时如何展示</p>
-<pre><code>type Stringer interface &#123;  
-    String() string  
-&#125;  
-</code></pre>
-<p>许多在fmt包中的函数都会判断传入的参数是否满足stringer接口，如果满足就调用String方法。这些函数包括Print、Println和Printf等</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;--- &quot;</span> + <span class="type">string</span>(m) + <span class="string">&quot; ---&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	value := myType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	fmt.Println(value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="空接口"><a href="#空接口" class="headerlink" title="空接口"></a>空接口</h2><p>fmt.Println能接收任意类型,因为它声明了空接口<code>Interface&#123;&#125;</code></p>
-<p>Interface{}类型称为空接口，用来接收任何类型的值。不需要实现 任何方法来满足空接口，所以所有的类型都满足它</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> myTpyeFunc() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;myTypeFunc&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//空接口作为函数参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(empty <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(empty)</span><br><span class="line"></span><br><span class="line">	mt, ok := empty.(myType) <span class="comment">//空接口无法调用任何方法,通过断言转换成对应的类型</span></span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		mt.myTpyeFunc()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test(<span class="number">123</span>)</span><br><span class="line">	test(myType(<span class="string">&quot;abc&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-head-first-go-10封装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">Head First Go - 10封装</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/" class="archive-article-date">
-  	<time datetime="2022-08-07T02:20:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>Go通过限制struct中成员是否能导出配合该strcut类型定义相关的方法实现封装</p>
-<h3 id="setter"><a href="#setter" class="headerlink" title="setter"></a>setter</h3><p>setter方法是用来设置封装字段值的方法</p>
-<p>setter方法需要指针接收器</p>
-<p>setter方法通常被命名为setX, X为被设置字段的名称</p>
-<h3 id="getter"><a href="#getter" class="headerlink" title="getter"></a>getter</h3><p>getter方法是用于获取封装字段的方法</p>
-<p>getter方法通常被命名为X, X为被设置字段的名称 (一般习惯前面不加get)</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> abc</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;errors&quot;</span></span><br><span class="line">	<span class="string">&quot;unicode/utf8&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Abc <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> SetName(name <span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> utf8.RuneCountInString(name) &gt; <span class="number">20</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">&quot;out of len&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	a.name = name</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> Name() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> a.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="嵌入-struct"><a href="#嵌入-struct" class="headerlink" title="嵌入 struct"></a>嵌入 struct</h2><p>当子struct嵌入到父strcut,子struct未导出的字段不会被提升</p>
-<p>当子struct嵌入到父strcut,子struct导出的方法会被提升</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line">	st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line">	<span class="comment">//通过类型名访问也可以</span></span><br><span class="line">	fmt.Println(st.Abc.Name())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>注意当struct嵌入了多个子struct时，导出方法可能会有重名的情况,这时直接调用导出方法会无法编译通过,需要加上类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//abc包中的Abc和def包中的Def都定义了setName()和Name()</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">	<span class="string">&quot;def&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">	def.Def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	err := st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    正确使用</span></span><br><span class="line"><span class="comment">    err := st.Abc.SetName(&quot;zeyu&quot;)</span></span><br><span class="line"><span class="comment">	if err != nil &#123;</span></span><br><span class="line"><span class="comment">		log.Fatal(err)</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">	fmt.Println(st.Abc.Name())</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//./test.go:22:11: ambiguous selector st.SetName</span></span><br><span class="line"><span class="comment">//./test.go:27:16: ambiguous selector st.Name</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1147,11 +1115,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
               </li>
              
               <li class="article-tag-list-item">
