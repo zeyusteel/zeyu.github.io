@@ -165,7 +165,73 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd [OPTIONS]</span><br></pre></td></tr></table></figure>
+
+<p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
+<p>dockerd将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
+<ol>
+<li><p>装载cobra命令模版<code>cmd/dockerd/newDaemonCommand</code></p>
+</li>
+<li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
+</li>
+<li><p>初始化各项参数,TLS、日志等级……</p>
+</li>
+<li><p>linux下检测<code>euid</code>是不是<code>root</code></p>
+</li>
+<li><p>设置umask</p>
+</li>
+<li><p>创建docker根目录,默认<code>/var/lib/docker</code>,以及docker exec目录,默认<code>/var/run/docker</code></p>
+</li>
+<li><p>检测pid文件</p>
+</li>
+<li><p>配置<code>API server</code>和监听端口</p>
+</li>
+<li><p>初始化<code>ContainerD</code>以及退出清理函数</p>
+</li>
+<li><p><code>NewDaemon</code>创建daemon对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>将<code>api server</code>的应答接口与daemon对象绑定,<code>initRouter(routerOptions)</code></p>
+</li>
+<li><p>通过<code>goroutine</code>启动<code>api servier</code>监听 </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
+<li><p>daemon结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
+</li>
+</ol>
+<h3 id="NewDaemon"><a href="#NewDaemon" class="headerlink" title="NewDaemon"></a>NewDaemon</h3><p><code>NewDaemon</code>会进一步初始化<code>docker daemon</code>,并返回<code>Daemon</code>对象,Daemon对象将响应<code>api servier</code>执行具体的操作</p>
+<ol>
+<li>设置默认<code>mtu</code> 1500 </li>
+<li>初始化<code>registry service</code></li>
+<li>对配置参数进行校验,对一些产生冲突的参数一起使用时报错并退出</li>
+<li>检测内核版本和系统</li>
+<li>创建<code>/var/lib/docker/containers</code></li>
+<li>创建<code>/var/lib/docker/runtimes</code>, 初始化runtimes</li>
+<li>设置<code>grpc</code>,创建<code>containerdCli</code></li>
+<li>创建插件管理器 </li>
+<li>创建<code>graphDrivers</code><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>创建volumeService</li>
+<li>创建imageService</li>
+<li>创建容器客户端libcontainerd</li>
+</ol>
+<h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
+<li>v20.10.12</li>
+<li>aarch linux20.04</li>
+</ul>
+<ol>
+<li><p>工程目录下添加<code>sources.list</code>文件</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">deb http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>替换apt源，修改<code>Dockerfile</code></p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">ARG</span> APT_MIRROR</span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -ri <span class="string">&quot;s/(httpredir|deb).debian.org/<span class="variable">$&#123;APT_MIRROR:-deb.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list \</span></span><br><span class="line"><span class="language-bash">&amp;&amp; sed -ri <span class="string">&quot;s/(security).debian.org/<span class="variable">$&#123;APT_MIRROR:-security.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># 添加源</span></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> sources.list /etc/apt/sources.list</span></span><br><span class="line"><span class="keyword">ENV</span> GO111MODULE=off</span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure></li>
+<li><p>修改<code>hack/dockerfile/install/containerd.installer</code>中git clone命令</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">install_containerd() (</span><br><span class="line">    echo &quot;Install containerd version $CONTAINERD_VERSION&quot;</span><br><span class="line">    git clone https://ghproxy.com/https://github.com/containerd/containerd.git &quot;$GOPATH/src/github.com/containerd/containerd&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li><p><code>hack/dockerfile/install/proxy.installer</code>,<code>hack/dockerfile/install/runc.installer</code>,<code>hack/dockerfile/install/tini.installer</code>也同样修改<code>git clone</code>命令,在rul前面添加<code>https://ghproxy.com/</code>代理</p>
+</li>
+<li><p><code>hack/dockerfile/install/rootlesskit.installer</code>添加<code>go env</code>代理</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_install_rootlesskit() (</span><br><span class="line">    //...</span><br><span class="line"> export GOPROXY=&quot;https://goproxy.cn&quot;</span><br><span class="line">    for f in rootlesskit rootlesskit-docker-proxy; do</span><br><span class="line">    //...</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>sudo make binary</code>,可执行文件在<code>bundles/binary-daemon</code></p>
+</li>
+</ol>
+
       
 
       
@@ -238,7 +304,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>20.10</code>展开</p>
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>v20.10.12</code>展开</p>
 <h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
 
 <p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
@@ -254,6 +320,17 @@
 <li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和daemon通信)</li>
 <li>解析<code>os.Args</code>后面的args,匹配相关命令</li>
 <li>执行匹配到的命令</li>
+</ol>
+<h2 id="源码编译cli"><a href="#源码编译cli" class="headerlink" title="源码编译cli"></a>源码编译cli</h2><p>cli是在docker容器中编译的,但是通过dockerfile构建容器时可能会遇到网络问题导致部分依赖拉取失败</p>
+<ol>
+<li><p>修改<code>dockerfiles/Dockerfile.binary-native</code>,换源</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">FROM</span>    golang:$&#123;GO_VERSION&#125;-alpine</span><br><span class="line"><span class="comment">#换源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g&#x27;</span> /etc/apk/repositories</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">     apk add -U git bash coreutils gcc musl-dev</span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改<code>dockerfiles/Dockerfile.dev</code>,添加代理, <code>GOPROXY=https://goproxy.cn,direct</code></p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">FROM</span> golang AS esc</span><br><span class="line"><span class="keyword">ARG</span> ESC_VERSION=v0.<span class="number">2.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/mjibson/esc@<span class="variable">$&#123;ESC_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS gotestsum</span><br><span class="line"><span class="keyword">ARG</span> GOTESTSUM_VERSION=v0.<span class="number">4.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install gotest.tools/gotestsum@<span class="variable">$&#123;GOTESTSUM_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS vndr</span><br><span class="line"><span class="keyword">ARG</span> VNDR_VERSION=v0.<span class="number">1.2</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/LK4D4/vndr@<span class="variable">$&#123;VNDR_VERSION&#125;</span></span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>sudo make -f docker.Makefile binary</code>, 最后二进制文件在工作目录下的<code>build</code></p>
+</li>
 </ol>
 
       
@@ -332,24 +409,19 @@
 <h2 id="docker命令"><a href="#docker命令" class="headerlink" title="docker命令"></a>docker命令</h2><p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4.png"></p>
 <p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84.jpeg"></p>
 <p>Docker的设计理念是希望用户能够保证一个容器只运行一个进程，即只提供一种服务。然而，对于用户而言，单一容器是无法满足需求的。通常用户需要利用多个容器，分别提供不同的服务，并在不同容器间互连通信，最后形成一个Docker集群。Docker基于轻量级虚拟化技术，其易用、跨平台、可移植的特性使其在集群系统的搭建方面有着得天独厚的优势,因此Docker可以实现分布式应用集群的快速、准确、自动化部署</p>
-<h2 id="docker架构"><a href="#docker架构" class="headerlink" title="docker架构"></a>docker架构</h2><p><img src="/../photos/src/docker/01-docker%E6%9E%B6%E6%9E%84.png"></p>
-<h3 id="docker-daemon"><a href="#docker-daemon" class="headerlink" title="docker daemon"></a>docker daemon</h3><p>是一个<code>API Server</code>,负责接收由<code>Docker client</code>发送的请求,同一分发调度</p>
-<h3 id="docker-client"><a href="#docker-client" class="headerlink" title="docker client"></a>docker client</h3><p>任何遵循了<code>Docker API</code>的客户端都可以被称为docker client</p>
-<h3 id="image-management"><a href="#image-management" class="headerlink" title="image management"></a>image management</h3><p><code>distribution</code>、<code>registry</code>、<code>layer</code>、<code>image</code>、<code>reference</code>等模块实现了Docker镜像的管理</p>
-<ol>
-<li><code>distribution</code>负责与<code>Docker registry</code>交互，上传下载镜像以及存储与<code>v2 registry</code>有关的元数据。</li>
-<li><code>registry</code>模块负责与<code>Docker registry</code>有关的身份验证、镜像查找、镜像验证以及管理<code>registry mirror</code>等交互操作。</li>
-<li><code>image</code>模块负责与镜像元数据有关的存储、查找，镜像层的索引、查找以及镜像tar包有关的导入、导出等操作。</li>
-<li><code>reference</code>负责存储本地所有镜像的<code>repository</code>和<code>tag</code>名，并维护与镜像ID之间的映射关系。</li>
-<li><code>layer</code>模块负责与镜像层和容器层元数据有关的增删查改，并负责将镜像层的增删查改操作映射到实际存储镜像层文件系统的<code>graphdriver</code>模块</li>
-</ol>
-<h3 id="dirver"><a href="#dirver" class="headerlink" title="dirver"></a>dirver</h3><p><code>docker daemon</code>将收到的请求转译成统一的操作接口,<code>Docker</code>把这些操作分成了容器执行驱动、<code>volume</code>存储驱动、镜像存储驱动3种，分别对应<code>execdriver</code>、<code>volumedriver</code>和<code>graphdriver</code></p>
-<ol>
-<li><code>execdriver</code>是对Linux操作系统的<code>namespaces</code>、<code>cgroups</code>、<code>apparmor</code>、<code>SELinux</code>等容器运行所需的系统操作进行的一层二次封装,目前默认实现是基于<code>libcontainer</code></li>
+<h2 id="docker架构"><a href="#docker架构" class="headerlink" title="docker架构"></a>docker架构</h2><h3 id="docker-client"><a href="#docker-client" class="headerlink" title="docker client"></a>docker client</h3><p>任何遵循了<code>Docker API</code>的客户端都可以被称为docker client</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/docker/docker/api/types&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/docker/docker/client&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getContainerList</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	cli, err := client.NewClientWithOpts(client.FromEnv)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	opts := types.ContainerListOptions&#123;&#125;</span><br><span class="line">	opts.All = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">	containers, err := cli.ContainerList(context.Background(), opts)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, container := <span class="keyword">range</span> containers &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%s %s\n&quot;</span>, container.ID[:<span class="number">10</span>], container.Image)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getImageList</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	cli, err := client.NewClientWithOpts(client.FromEnv)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	images, err := cli.ImageList(context.Background(), types.ImageListOptions&#123;&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, image := <span class="keyword">range</span> images &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%s &quot;</span>, image.ID)</span><br><span class="line">		<span class="keyword">for</span> _, val := <span class="keyword">range</span> image.RepoTags &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;%s \n&quot;</span>, val)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	getContainerList()</span><br><span class="line">	getImageList()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-daemon"><a href="#docker-daemon" class="headerlink" title="docker daemon"></a>docker daemon</h3><p>是一个<code>API Server</code>,负责接收由<code>Docker client</code>发送的请求,统一分发调度</p>
+<h4 id="ImageService"><a href="#ImageService" class="headerlink" title="ImageService"></a>ImageService</h4><p>实现了Docker镜像的管理</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ImageService provides a backend for image management</span></span><br><span class="line"><span class="keyword">type</span> ImageService <span class="keyword">struct</span> &#123;</span><br><span class="line">	containers                containerStore</span><br><span class="line">	distributionMetadataStore metadata.Store</span><br><span class="line">	downloadManager           *xfer.LayerDownloadManager</span><br><span class="line">	eventsService             *daemonevents.Events</span><br><span class="line">	imageStore                image.Store          </span><br><span class="line">	layerStores               <span class="keyword">map</span>[<span class="type">string</span>]layer.Store <span class="comment">// By operating system</span></span><br><span class="line">	pruneRunning              <span class="type">int32</span></span><br><span class="line">	referenceStore            dockerreference.Store</span><br><span class="line">	registryService           registry.Service</span><br><span class="line">	trustKey                  libtrust.PrivateKey</span><br><span class="line">	uploadManager             *xfer.LayerUploadManager</span><br><span class="line">	leases                    leases.Manager</span><br><span class="line">	content                   content.Store</span><br><span class="line">	contentNamespace          <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="DistributionServices"><a href="#DistributionServices" class="headerlink" title="DistributionServices"></a>DistributionServices</h4><p>负责镜像的存储</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DistributionServices provides daemon image storage services</span></span><br><span class="line"><span class="keyword">type</span> DistributionServices <span class="keyword">struct</span> &#123;</span><br><span class="line">	DownloadManager   distribution.RootFSDownloadManager</span><br><span class="line">	V2MetadataService metadata.V2MetadataService</span><br><span class="line">	LayerStore        layer.Store <span class="comment">// <span class="doctag">TODO:</span> lcow</span></span><br><span class="line">	ImageStore        image.Store</span><br><span class="line">	ReferenceStore    dockerreference.Store</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="dirver"><a href="#dirver" class="headerlink" title="dirver"></a>dirver</h4><ol>
 <li><code>volumedriver</code>是volume数据卷存储操作的最终执行者，负责volume的增删改查,docker默认策略是将卷都存在本地的Docker根目录下的<code>volumes</code></li>
-<li><code>graphdriver</code>是所有与容器镜像相关操作的最终执行者。<code>graphdriver</code>会在<code>Docker</code>工作目录下维护一组与镜像层对应的目录，并记下镜像层之间的关系以及与具体的<code>graphdriver</code>实现相关的元数据,这样，用户对镜像的操作最终会被映射成对这些目录文件以及元数据的增删改查，从而屏蔽掉不同文件存储实现对于上层调用者的影响,在Linux环境下，目前Docker已经支持的graphdriver包括aufs、btrfs、zfs、devicemapper、overlay和vfs</li>
+<li><code>graphdriver</code>是所有与容器镜像相关操作的最终执行者。<code>graphdriver</code>会在<code>Docker</code>工作目录下维护一组与镜像层对应的目录，并记下镜像层之间的关系以及与具体的<code>graphdriver</code>实现相关的元数据,这样，用户对镜像的操作最终会被映射成对这些目录文件以及元数据的增删改查，从而屏蔽掉不同文件存储实现对于上层调用者的影响,在Linux环境下，目前Docker已经支持的graphdriver包括btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs</li>
 </ol>
-<h3 id="network"><a href="#network" class="headerlink" title="network"></a>network</h3><p>在Docker 1.9版本以前，网络是通过<code>networkdriver</code>模块以及<code>libcontainer</code>库完成的，现在这部分功能已经分离成一个<code>libnetwork</code>库独立维护了,<code>libnetwork</code>抽象出了容器网络模型(Container Network Model, CNM), CNM提供了沙盒、端点、网络这三种对象</p>
 
       
 
@@ -1115,11 +1187,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -8,13 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Docker - 03Daemon | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaemon  初始化各项参">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Docker - 03Daemon">
 <meta property="og:url" content="http://example.com/2022/09/01/docker-03daemon/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaemon  初始化各项参">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-01T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-09-01T00:48:17.479Z">
+<meta property="article:modified_time" content="2022-09-16T00:47:13.252Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -166,7 +168,73 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd [OPTIONS]</span><br></pre></td></tr></table></figure>
+
+<p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
+<p>dockerd将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
+<ol>
+<li><p>装载cobra命令模版<code>cmd/dockerd/newDaemonCommand</code></p>
+</li>
+<li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
+</li>
+<li><p>初始化各项参数,TLS、日志等级……</p>
+</li>
+<li><p>linux下检测<code>euid</code>是不是<code>root</code></p>
+</li>
+<li><p>设置umask</p>
+</li>
+<li><p>创建docker根目录,默认<code>/var/lib/docker</code>,以及docker exec目录,默认<code>/var/run/docker</code></p>
+</li>
+<li><p>检测pid文件</p>
+</li>
+<li><p>配置<code>API server</code>和监听端口</p>
+</li>
+<li><p>初始化<code>ContainerD</code>以及退出清理函数</p>
+</li>
+<li><p><code>NewDaemon</code>创建daemon对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>将<code>api server</code>的应答接口与daemon对象绑定,<code>initRouter(routerOptions)</code></p>
+</li>
+<li><p>通过<code>goroutine</code>启动<code>api servier</code>监听 </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
+<li><p>daemon结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
+</li>
+</ol>
+<h3 id="NewDaemon"><a href="#NewDaemon" class="headerlink" title="NewDaemon"></a>NewDaemon</h3><p><code>NewDaemon</code>会进一步初始化<code>docker daemon</code>,并返回<code>Daemon</code>对象,Daemon对象将响应<code>api servier</code>执行具体的操作</p>
+<ol>
+<li>设置默认<code>mtu</code> 1500 </li>
+<li>初始化<code>registry service</code></li>
+<li>对配置参数进行校验,对一些产生冲突的参数一起使用时报错并退出</li>
+<li>检测内核版本和系统</li>
+<li>创建<code>/var/lib/docker/containers</code></li>
+<li>创建<code>/var/lib/docker/runtimes</code>, 初始化runtimes</li>
+<li>设置<code>grpc</code>,创建<code>containerdCli</code></li>
+<li>创建插件管理器 </li>
+<li>创建<code>graphDrivers</code><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>创建volumeService</li>
+<li>创建imageService</li>
+<li>创建容器客户端libcontainerd</li>
+</ol>
+<h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
+<li>v20.10.12</li>
+<li>aarch linux20.04</li>
+</ul>
+<ol>
+<li><p>工程目录下添加<code>sources.list</code>文件</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">deb http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>替换apt源，修改<code>Dockerfile</code></p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">ARG</span> APT_MIRROR</span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -ri <span class="string">&quot;s/(httpredir|deb).debian.org/<span class="variable">$&#123;APT_MIRROR:-deb.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list \</span></span><br><span class="line"><span class="language-bash">&amp;&amp; sed -ri <span class="string">&quot;s/(security).debian.org/<span class="variable">$&#123;APT_MIRROR:-security.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># 添加源</span></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> sources.list /etc/apt/sources.list</span></span><br><span class="line"><span class="keyword">ENV</span> GO111MODULE=off</span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure></li>
+<li><p>修改<code>hack/dockerfile/install/containerd.installer</code>中git clone命令</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">install_containerd() (</span><br><span class="line">    echo &quot;Install containerd version $CONTAINERD_VERSION&quot;</span><br><span class="line">    git clone https://ghproxy.com/https://github.com/containerd/containerd.git &quot;$GOPATH/src/github.com/containerd/containerd&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li><p><code>hack/dockerfile/install/proxy.installer</code>,<code>hack/dockerfile/install/runc.installer</code>,<code>hack/dockerfile/install/tini.installer</code>也同样修改<code>git clone</code>命令,在rul前面添加<code>https://ghproxy.com/</code>代理</p>
+</li>
+<li><p><code>hack/dockerfile/install/rootlesskit.installer</code>添加<code>go env</code>代理</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_install_rootlesskit() (</span><br><span class="line">    //...</span><br><span class="line"> export GOPROXY=&quot;https://goproxy.cn&quot;</span><br><span class="line">    for f in rootlesskit rootlesskit-docker-proxy; do</span><br><span class="line">    //...</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>sudo make binary</code>,可执行文件在<code>bundles/binary-daemon</code></p>
+</li>
+</ol>
+
       
 
       
@@ -369,11 +437,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
