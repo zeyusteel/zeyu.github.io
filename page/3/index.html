@@ -1090,6 +1090,164 @@ unzip  testzip.zip
 
 
   
+    <article id="post-linux-vim" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/21/linux-vim/">Linux Vim</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/21/linux-vim/" class="archive-article-date">
+  	<time datetime="2020-09-21T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>跳转到指定行：</p>
+<pre><code>1. 88G （命令模式）
+
+2. :88  (末行模式)
+</code></pre>
+<p>跳转文件首：</p>
+<pre><code>gg （命令模式）
+</code></pre>
+<p>跳转文件尾：</p>
+<pre><code>G（命令模式）
+</code></pre>
+<p>自动格式化程序：</p>
+<pre><code>gg=G（命令模式）
+</code></pre>
+<p>大括号对应：</p>
+<pre><code>% （命令模式）
+</code></pre>
+<p>光标移至行首：</p>
+<pre><code>0 （命令模式）执行结束，工作模式不变。
+</code></pre>
+<p>光标移至行尾：</p>
+<pre><code>$ （命令模式）执行结束，工作模式不变。
+</code></pre>
+<p>删除 &#x3D; 剪切</p>
+<p>删除单个字符：</p>
+<pre><code>x （命令模式）执行结束，工作模式不变。
+</code></pre>
+<p>替换单个字符：</p>
+<pre><code>将待替换的字符用光标选中， r （命令模式），再按欲替换的字符
+</code></pre>
+<p>删除一个单词：</p>
+<pre><code>dw（命令模式）光标置于单词的首字母进行操作。
+</code></pre>
+<p>删除光标至行尾：</p>
+<pre><code>D 或者 d$（命令模式）
+</code></pre>
+<p>删除光标至行首：</p>
+<pre><code>d0 （命令模式）
+</code></pre>
+<p>删除指定区域：</p>
+<pre><code>按 V  v （命令模式）切换为 “可视模式”，使用 hjkl挪移光标来选中待删除区域。  按 d 删除该区域数据。y复制
+</code></pre>
+<p>删除指定1行：</p>
+<pre><code>在光标所在行，按 dd （命令模式）
+</code></pre>
+<p>删除指定N行：</p>
+<pre><code>在光标所待删除首行，按 Ndd （命令模式）
+</code></pre>
+<p>复制一行：</p>
+<pre><code>yy
+</code></pre>
+<p>粘贴：<br>    p：向后、P：向前。</p>
+<p>查找：<br>    1. 找 设想 内容：</p>
+<pre><code>    命令模式下， 按 “/” 输入欲搜索关键字，回车。使用 n N 检索下一个。
+
+2. 找 看到的内容：
+
+    命令模式下，将光标置于单词任意一个字符上，按 “*”/ “#” 
+</code></pre>
+<p>单行替换：</p>
+<pre><code>将光标置于待替换行上， 进入末行模式，输入 :s /原数据/新数据
+</code></pre>
+<p>通篇替换：</p>
+<pre><code>末行模式， :%s /原数据/新数据/g   g:不加，只替换每行首个。   sed 
+</code></pre>
+<p>指定行的替换：</p>
+<pre><code>末行模式， :起始行号，终止行号s /原数据/新数据/g   g:不加，只替换每行首个。
+
+    :29,35s /printf/println/g
+</code></pre>
+<p>撤销:   u</p>
+<p>反撤销：ctrl+r（命令模式）</p>
+<p>分屏：<br>    sp：横屏分。 Ctrl+ww 切换。</p>
+<pre><code>vsp：竖屏分。Ctrl+ww 切换。
+</code></pre>
+<p>跳转至 man 手册：</p>
+<pre><code>将光标置于待查看函数单词上，使用 K（命令模式）跳转。 指定卷， nK
+</code></pre>
+<p>查看宏定义：</p>
+<pre><code>将光标置于待查看宏定义单词上，使用 [d 查看定义语句。
+</code></pre>
+<p>在末行模式执行shell命令：</p>
+<pre><code>:!命令		:! ls -l 
+</code></pre>
+<p><img src="/../photos/src/linux/vim01.png"><br><img src="/../photos/src/linux/vim02.png"><br><img src="/../photos/src/linux/vim03.png"><br><img src="/../photos/src/linux/vim04.png"><br><img src="/../photos/src/linux/vim05.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/21/linux-vim/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-json" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1220,107 +1378,6 @@ unzip  testzip.zip
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/08/10/c-09%E7%BB%93%E6%9E%84%E4%BD%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-c-10位运算和文件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">C-10位运算和文件</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/" class="archive-article-date">
-  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>位运算的操作对象只能是整形或字符型</p>
-<h3 id="amp-按位与"><a href="#amp-按位与" class="headerlink" title="&amp; 按位与"></a>&amp; 按位与</h3><p>全1为1 ，有0为0  （清零）</p>
-<h3 id="按位或"><a href="#按位或" class="headerlink" title="| 按位或"></a>| 按位或</h3><p>全1为1，全0为0 </p>
-<h3 id="按位异或"><a href="#按位异或" class="headerlink" title="^ 按位异或"></a>^ 按位异或</h3><p>相异为1，相同为0</p>
-<h3 id="按位取反（单目运算符）"><a href="#按位取反（单目运算符）" class="headerlink" title="~ 按位取反（单目运算符）"></a>~ 按位取反（单目运算符）</h3><p>~24</p>
-<h3 id="《-按位左移"><a href="#《-按位左移" class="headerlink" title="《 按位左移"></a>《 按位左移</h3><p>将二进制位按位左移n位</p>
-<p>5&lt;&lt;2 (5左移两位&#x3D;5 * 2^2)</p>
-<h3 id="》按位右移"><a href="#》按位右移" class="headerlink" title="》按位右移"></a>》按位右移</h3><h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><h3 id="文件分类"><a href="#文件分类" class="headerlink" title="文件分类"></a>文件分类</h3><ol>
-<li>文本文件</li>
-<li>二进制文件</li>
-</ol>
-<p>c语言按字符（字节）存储文件</p>
-<h3 id="文件类型指针"><a href="#文件类型指针" class="headerlink" title="文件类型指针"></a>文件类型指针</h3><p>FILE 就是文件类型，是一个结构体类型</p>
-<p>FILE *fp;</p>
-<h3 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h3><p><img src="/../photos/src/c/10-open.png"></p>
-<h3 id="关闭文件"><a href="#关闭文件" class="headerlink" title="关闭文件"></a>关闭文件</h3><p><img src="/../photos/src/c/10-close.png"></p>
-<h3 id="fputc"><a href="#fputc" class="headerlink" title="fputc"></a>fputc</h3><p><img src="/../photos/src/c/10-fputc.png"></p>
-<h3 id="fgetc"><a href="#fgetc" class="headerlink" title="fgetc"></a>fgetc</h3><p><img src="/../photos/src/c/10-fgetc.png"></p>
-<h3 id="fputs"><a href="#fputs" class="headerlink" title="fputs"></a>fputs</h3><p><img src="/../photos/src/c/10-fputs.png"></p>
-<h3 id="fgets"><a href="#fgets" class="headerlink" title="fgets"></a>fgets</h3><p><img src="/../photos/src/c/10-fgets.png"></p>
-<h3 id="fread-fwrite"><a href="#fread-fwrite" class="headerlink" title="fread fwrite"></a>fread fwrite</h3><p><img src="/../photos/src/c/10-frw.png"></p>
-<h3 id="fprintf-fscanf"><a href="#fprintf-fscanf" class="headerlink" title="fprintf fscanf"></a>fprintf fscanf</h3><p><img src="/../photos/src/c/10-fprintf.png"></p>
-<h3 id="feof"><a href="#feof" class="headerlink" title="feof"></a>feof</h3><p><img src="/../photos/src/c/10-feof.png"></p>
-<h3 id="rewind"><a href="#rewind" class="headerlink" title="rewind"></a>rewind</h3><p><img src="/../photos/src/c/10-rewind.png"></p>
-<h3 id="fseek"><a href="#fseek" class="headerlink" title="fseek"></a>fseek</h3><p><img src="/../photos/src/c/10-fseek.png"><br><img src="/../photos/src/c/10-fseek2.png"></p>
-<h3 id="ftell"><a href="#ftell" class="headerlink" title="ftell"></a>ftell</h3><p><img src="/../photos/src/c/10-ftell.png"><br><img src="/../photos/src/c/10-ftell2.png"></p>
-<h3 id="fflush"><a href="#fflush" class="headerlink" title="fflush"></a>fflush</h3><p><img src="/../photos/src/c/10-fflush.png"></p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="/../photos/src/c/10-summary.png"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">展开全文 >></a>
         </p>
       
 
