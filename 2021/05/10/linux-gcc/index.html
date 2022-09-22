@@ -6,19 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Linux Command | zeyu的博客</title>
+  <title>Linux gcc | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="系统目录结构 bin:存放二进制可执行文件,date boot:存放开机启动程序 dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件 home:存放普通用户 etc:用户信息和系统配置文件passwd、group lib:库文件:libc.so.6 root:管理员宿主目录（家目录） usr:用户资源管理目录  media:Linux识别光驱,U盘自动挂载    mnt">
+  <meta name="description" content="gcc编译： 4步骤： 预处理、编译、汇编、连接。  -I：	指定头文件所在目录位置。  -c：	只做预处理、编译、汇编。得到 二进制 文件！！！  -g：	编译时添加调试语句。 主要支持 gdb 调试。  -Wall： 显示所有警告信息。  -D：	向程序中“动态”注册宏定义。   #define NAME VALUE   生成静态库：      ar  rcs libtest.a test.o">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux Command">
-<meta property="og:url" content="http://example.com/2021/02/27/linux-command/index.html">
+<meta property="og:title" content="Linux gcc">
+<meta property="og:url" content="http://example.com/2021/05/10/linux-gcc/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="系统目录结构 bin:存放二进制可执行文件,date boot:存放开机启动程序 dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件 home:存放普通用户 etc:用户信息和系统配置文件passwd、group lib:库文件:libc.so.6 root:管理员宿主目录（家目录） usr:用户资源管理目录  media:Linux识别光驱,U盘自动挂载    mnt">
+<meta property="og:description" content="gcc编译： 4步骤： 预处理、编译、汇编、连接。  -I：	指定头文件所在目录位置。  -c：	只做预处理、编译、汇编。得到 二进制 文件！！！  -g：	编译时添加调试语句。 主要支持 gdb 调试。  -Wall： 显示所有警告信息。  -D：	向程序中“动态”注册宏定义。   #define NAME VALUE   生成静态库：      ar  rcs libtest.a test.o">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-27T02:00:00.000Z">
-<meta property="article:modified_time" content="2022-09-20T15:01:19.569Z">
+<meta property="og:image" content="http://example.com/photos/src/linux/gcc01.png">
+<meta property="og:image" content="http://example.com/photos/src/linux/gcc02.png">
+<meta property="og:image" content="http://example.com/photos/src/linux/gcc03.png">
+<meta property="og:image" content="http://example.com/photos/src/linux/gcc04.png">
+<meta property="og:image" content="http://example.com/photos/src/linux/gcc05.png">
+<meta property="article:published_time" content="2021-05-10T03:00:00.000Z">
+<meta property="article:modified_time" content="2022-09-22T08:46:17.022Z">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/photos/src/linux/gcc01.png">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
   
@@ -148,189 +154,190 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-linux-command" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-linux-gcc" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Linux Command
+      Linux gcc
     </h1>
   
 
         
-        <a href="/2021/02/27/linux-command/" class="archive-article-date">
-  	<time datetime="2021-02-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-27</time>
+        <a href="/2021/05/10/linux-gcc/" class="archive-article-date">
+  	<time datetime="2021-05-10T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-10</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h2><ul>
-<li>bin:存放二进制可执行文件,date</li>
-<li>boot:存放开机启动程序</li>
-<li>dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件</li>
-<li>home:存放普通用户</li>
-<li>etc:用户信息和系统配置文件passwd、group</li>
-<li>lib:库文件:libc.so.6</li>
-<li>root:管理员宿主目录（家目录）</li>
-<li>usr:用户资源管理目录 </li>
-<li>media:Linux识别光驱,U盘自动挂载   </li>
-<li>mnt:用户手动挂载</li>
+        <p>gcc编译：</p>
+<pre><code>4步骤： 预处理、编译、汇编、连接。
+
+-I：	指定头文件所在目录位置。
+
+-c：	只做预处理、编译、汇编。得到 二进制 文件！！！
+
+-g：	编译时添加调试语句。 主要支持 gdb 调试。
+
+-Wall： 显示所有警告信息。
+
+-D：	向程序中“动态”注册宏定义。   #define NAME VALUE
+</code></pre>
+<p><img src="/../photos/src/linux/gcc01.png"><br><img src="/../photos/src/linux/gcc02.png"></p>
+<p>生成静态库： </p>
+<pre><code>    ar  rcs libtest.a test.o 
+
+    nm libtest.a   查看信息
+</code></pre>
+<p><img src="/../photos/src/linux/gcc03.png"></p>
+<p>生成动态库：</p>
+<p>   (生成与位置无关的代码 -fPIC） 使用 gcc -shared 制作动态库</p>
+<pre><code>gcc -fPIC -c test.c  -o test.o   	
+gcc  -shared -o libtest.so test.o 
+</code></pre>
+<p>解决动态库无法加载的问题：</p>
+<ul>
+<li>放到lib目录中</li>
+<li>临时 export LD_LIBRARY_PATH &#x3D; 动态库路径</li>
+<li>永久  .bashrc 添加 2(动态库路径要用绝对路径)   更新： source .bashrc</li>
+<li>&#x2F;etc&#x2F;ld.so.conf 添加动态库路径   更新：sudo  ldconfig</li>
 </ul>
-<h2 id="用户目录"><a href="#用户目录" class="headerlink" title="用户目录"></a>用户目录</h2><ul>
-<li><code>$</code> 普通用户</li>
-<li><code>#</code> 超级用户</li>
-<li><code>cd -</code> 回到上一次的工作目录</li>
-<li><code>.</code> 当前目录</li>
-<li><code>..</code> 上一级目录</li>
-<li><code>ls -a</code> 打开隐藏文件</li>
-<li><code>ls -l</code> 文件详细信息</li>
-</ul>
-<h2 id="系统文件类型："><a href="#系统文件类型：" class="headerlink" title="系统文件类型："></a>系统文件类型：</h2><ul>
-<li>普通文件：-</li>
-<li>目录文件：d</li>
-<li>字符设备文件：c</li>
-<li>块设备文件：b</li>
-<li>软连接：l</li>
-<li>管道文件：p</li>
-<li>套接字：s</li>
-<li>未知文件</li>
-</ul>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
-<li>which	    查看命令所在路径</li>
-<li>touch	    创建文件</li>
-<li>rm		删除目录&#x2F;文件 </li>
-<li>rm -r 	递归删除</li>
-<li>cp -r		拷贝目录&#x2F;文件</li>
-<li>cat		查看文件内容</li>
-<li>more less 查看大文件</li>
-<li>head tail 查看头尾</li>
-<li>tac		逆序查看文件内容</li>
-<li>more	    分屏查看内容</li>
-<li>mkdir -p  创建多层目录</li>
-<li>du -h     文件夹大小</li>
-<li>df -h     查看磁盘</li>
-</ul>
-<h2 id="软连接（快捷方式）"><a href="#软连接（快捷方式）" class="headerlink" title="软连接（快捷方式）"></a>软连接（快捷方式）</h2><p>ln -s file file.soft (创建时务必对源文件使用 绝对路径，可以搬运)</p>
-<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>ln file file.hard</p>
-<p>操作系统给每一个文件赋予唯一的inode,当有相同inode的文件存在时,彼此同步;删除时,只将硬链接计数减一。减为0时,inode被释放</p>
-<h2 id="文件属性和用户组"><a href="#文件属性和用户组" class="headerlink" title="文件属性和用户组"></a>文件属性和用户组</h2><p>创建用户：</p>
-<pre><code>sudo adduser 新用户名		--- useradd
+<p>运行可以执行程序 .&#x2F;a.out 出错！！！！ — ldd a.out –&gt; “not found”</p>
+<pre><code>error while loading shared libraries: libxxx.so: cannot open shared object file: No such file or directory
+
+原因：
+    链接器：	工作于链接阶段， 工作时需要 -l 和 -L
+
+    动态链接器：	工作于程序运行阶段，工作时需要提供动态库所在目录位置。
+
+解决方式：				
+
+    【1】 通过环境变量：  export LD_LIBRARY_PATH=动态库路径
+
+        ./a.out 成功！！！  （临时生效， 终端重启环境变量失效）
+
+    【2】 永久生效： 写入 终端配置文件。  .bashrc  建议使用绝对路径。
+
+        1) vi ~/.bashrc
+
+        2) 写入 export LD_LIBRARY_PATH=动态库路径  保存
+
+        3）. .bashrc/  source .bashrc / 重启 终端  ---&gt; 让修改后的.bashrc生效
+
+        4）./a.out 成功！！！ 
+
+    【3】 拷贝自定义动态库 到 /lib (标准C库所在目录位置)
+
+    【4】 配置文件法
+
+        1）sudo vi /etc/ld.so.conf
+
+        2) 写入 动态库绝对路径  保存
+
+        3）sudo ldconfig -v  使配置文件生效。
+
+        4）./a.out 成功！！！--- 使用 ldd  a.out 查看
 </code></pre>
-<p>修改文件所属用户：</p>
-<pre><code>sudo chown 新用户名 待修改文件。
+<p>gdb</p>
+<p>基础指令：<br>    -g：使用该参数编译可以执行文件，得到调试表。</p>
+<pre><code>gdb ./a.out
 
-sudo chown wangwu a.c
+list： list 1  列出源码。根据源码指定 行号设置断点。
+
+b：	b 20	在20行位置设置断点。
+
+run/r:	运行程序
+
+n/next: 下一条指令（会越过函数）
+
+s/step: 下一条指令（会进入函数）
+
+p/print：p i  查看变量的值。
+
+continue：继续执行断点后续指令。
+
+finish：结束当前函数调用。 
+
+quit：退出gdb当前调试。
 </code></pre>
-<p>删除用户：</p>
-<pre><code>sudo deluser 用户名  (-r 删除用户目录)
+<p>其他指令：</p>
+<pre><code>run：使用run查找段错误出现位置。
+
+set args： 设置main函数命令行参数 （在 start、run 之前）
+
+run 字串1 字串2 ...: 设置main函数命令行参数
+
+info b: 查看断点信息表
+
+b 20 if i = 5：	设置条件断点。
+
+ptype：查看变量类型。
+
+bt：列出当前程序正存活着的栈帧。
+
+frame： 根据栈帧编号，切换栈帧。
+
+display：设置跟踪变量
+
+undisplay：取消设置跟踪变量。 使用跟踪变量的编号。
 </code></pre>
-<p>创建用户组：</p>
-<pre><code>sudo addgroup 新组名
+<p>Makefile</p>
+<pre><code>命名：makefile	 Makefile  --- make 命令
+
+1 个规则：
+
+    目标：依赖条件
+    （一个tab缩进）命令
+
+    1. 目标的时间必须晚于依赖条件的时间，否则，更新目标
+
+    2. 依赖条件如果不存在，找寻新的规则去产生依赖条件。
+
+ALL：指定 makefile 的终极目标。
+
+
+2 个函数：
+
+    src = $(wildcard ./*.c): 匹配当前工作目录下的所有.c 文件。将文件名组成列表，赋值给变量 src。  src = add.c sub.c div1.c 
+
+    obj = $(patsubst %.c, %.o, $(src)): 将参数3中，包含参数1的部分，替换为参数2。 obj = add.o sub.o div1.o
+
+clean:	(没有依赖)
+
+    -rm -rf $(obj) a.out	“-”：作用是，删除不存在文件时，不报错。顺序执行结束。
+
+3 个自动变量：
+
+    $@: 在规则的命令中，表示规则中的目标。
+
+    $^: 在规则的命令中，表示所有依赖条件。
+
+    $&lt;: 在规则的命令中，表示第一个依赖条件。如果将该变量应用在模式规则中，它可将依赖条件列表中的依赖依次取出，套用模式规则。
+
+模式规则：
+
+    %.o:%.c
+       gcc -c $&lt; -o %@
+
+静态模式规则：
+
+    $(obj):%.o:%.c
+       gcc -c $&lt; -o %@	
+
+伪目标：
+
+    .PHONY: clean ALL
+
+参数：
+    -n：模拟执行make、make clean 命令。
+
+    -f：指定文件执行 make 命令。				xxxx.mk
 </code></pre>
-<p>修改文件所属用户组：</p>
-<pre><code>sudo chgrp 新用户组名 待修改文件。
-
-sudo chgrp g88 a.c
-</code></pre>
-<p> 删除组：</p>
-<pre><code>sudo delgroup 用户组名 
-</code></pre>
-<p>使用chown 一次修改所有者和所属组：</p>
-<pre><code>sudo chown 所有者：所属组  待操作文件。
-
-chmod u(user)/ g(group) /o(others)/a(all) + r/w/x  文件
-</code></pre>
-<h2 id="查找与检索"><a href="#查找与检索" class="headerlink" title="查找与检索"></a>查找与检索</h2><p>find<br>    -type 按文件类型搜索  d&#x2F;p&#x2F;s&#x2F;c&#x2F;b&#x2F;l&#x2F; f(文件)</p>
-<pre><code>-name 按文件名搜索
-
-    find ./ -name &quot;*file*.jpg&quot;
-
--maxdepth 指定搜索深度。应作为第一个参数出现。
-
-    find ./ -maxdepth 1 -name &quot;*file*.jpg&quot;
-
-
--size 按文件大小搜索. 单位：k、M、G
-
-    find /home/itcast -size +20M -size -50M
-
--atime、mtime、ctime 天  amin、mmin、cmin 分钟。
-
--exec：将find搜索的结果集执行某一指定命令。
-
-    find /usr/ -name &quot;*tmp*&quot; -exec ls -ld &#123;&#125; \;
-
--ok: 以交互式的方式 将find搜索的结果集执行某一指定命令
-
-
--xargs：将find搜索的结果集执行某一指定命令。  当结果集数量过大时，可以分片映射。
-
-    find /usr/ -name &quot;*tmp*&quot; | xargs ls -ld 
-
--print0：
-    find /usr/ -name &quot;*tmp*&quot; -print0 | xargs  -0 ls -ld 
-</code></pre>
-<p>grep(按内容查找)</p>
-<pre><code>grep -r &quot;copy&quot; ./ -n
-
--n参数：:显示行号    -r ：递归
-</code></pre>
-<p>检索进程结果集</p>
-<pre><code>ps aux | grep &#39;cupsd&#39;  
-</code></pre>
-<h2 id="安装与卸载"><a href="#安装与卸载" class="headerlink" title="安装与卸载"></a>安装与卸载</h2><p>软件安装：</p>
-<pre><code>1. 联网
-
-2. 更新软件资源列表到本地。  sudo apt-get update
-
-3. 安装 sudo apt-get install 软件名
-
-4. 卸载	sudo apt-get remove 软件名
-
-5. 使用软件包（.deb） 安装：	sudo dpkg -i 安装包名。
-</code></pre>
-<h2 id="压缩解压"><a href="#压缩解压" class="headerlink" title="压缩解压"></a>压缩解压</h2><p>tar</p>
-<pre><code>c 创建 -- 压缩
-x 释放 -- 解压
-v 显示提示信息
-f 指定压缩文件名
-z 使用gzip压缩
-j 使用bizp2方式压缩
-</code></pre>
-<p>tar压缩:</p>
-<pre><code>tar zcvf  test.tar.gz  file1 dir2   使用 gzip方式压缩。
-
-tar jcvf  test.tar.gz  file1 dir2   使用 bzip方式压缩。
-</code></pre>
-<p>tar解压：</p>
-<pre><code>将压缩命令中的 c --&gt; x
-
-    tar zxvf  test.tar.gz   使用 gzip方式解压缩。
-
-    tar jxvf  test.tar.gz   使用 bzip2方式解压缩。
-</code></pre>
-<p>rar压缩：</p>
-<pre><code>rar a  压缩包名（带.rar后缀） 压缩材料。
-
-rar a   testrar.rar	stdio.h test2.mp3
-</code></pre>
-<p>rar解压：</p>
-<pre><code>rar x 压缩包名（带.rar后缀）
-</code></pre>
-<p>zip压缩：</p>
-<pre><code>zip -r 压缩包名（带.zip后缀） 压缩材料。
-
-zip -r testzip.zip dir stdio.h test2.mp3
-</code></pre>
-<p>zip解压：</p>
-<pre><code>unzip 压缩包名（带.zip后缀） 
-
-unzip  testzip.zip 
-</code></pre>
+<p><img src="/../photos/src/linux/gcc04.png"><br><img src="/../photos/src/linux/gcc05.png"></p>
 
       
 
@@ -400,7 +407,7 @@ unzip  testzip.zip
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/021/02/27/linux-command/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/021/05/10/linux-gcc/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -414,18 +421,18 @@ unzip  testzip.zip
   
 <nav id="article-nav">
   
-    <a href="/2021/05/10/linux-gcc/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/05/11/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Linux gcc
+          Hello World
         
       </div>
     </a>
   
   
-    <a href="/2020/11/29/linux-shell/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Linux Shell</div>
+    <a href="/2021/02/27/linux-command/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Linux Command</div>
       <i class="icon-circle-right"></i>
     </a>
   
