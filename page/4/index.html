@@ -665,7 +665,7 @@ unzip  testzip.zip
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">json</a>
         		</li>
       		
 		</ul>
@@ -862,6 +862,206 @@ unzip  testzip.zip
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-01继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/10/cpp-01%E7%BB%A7%E6%89%BF/">C++ 继承</a>
+    </h1>
+  
+
+        
+        <a href="/2020/08/10/cpp-01%E7%BB%A7%E6%89%BF/" class="archive-article-date">
+  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="C-特性"><a href="#C-特性" class="headerlink" title="C++特性"></a>C++特性</h2><p>抽象 封装 继承 多态</p>
+<h2 id="成员类型"><a href="#成员类型" class="headerlink" title="成员类型"></a>成员类型</h2><ul>
+<li><p>公有成员类型</p>
+<p>  任何外部的函数都可以访问共有类型数据和函数</p>
+<p>  是类与外部的接口</p>
+</li>
+<li><p>私有类型成员</p>
+<p>  只允许本类中的函数访问，类外的任何函数不能访问</p>
+<p>  不写关键字，默认为私有成员</p>
+</li>
+<li><p>保护成员</p>
+<p>  与私有很像，差别在继承与派生时对派生类的影响不同</p>
+</li>
+</ul>
+<h2 id="内联成员函数"><a href="#内联成员函数" class="headerlink" title="内联成员函数"></a>内联成员函数</h2><pre><code>直接在类内写函数
+
+使用inline关键字
+</code></pre>
+<h2 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h2><pre><code>class 类名&#123;
+public:
+    类名（const 类名 &amp;对象名）；
+&#125;
+
+类名::类名（const 类名 &amp;对象名）
+&#123;
+&#125;
+</code></pre>
+<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><pre><code>~类名（）
+</code></pre>
+<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><p>友元都是单向的</p>
+<h2 id="友元函数"><a href="#友元函数" class="headerlink" title="友元函数"></a>友元函数</h2><pre><code>声明类外函数为本类朋友
+</code></pre>
+<h2 id="友元类"><a href="#友元类" class="headerlink" title="友元类"></a>友元类</h2><pre><code>friend class B;  (对B类授权可以访问自己)
+</code></pre>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>继承与派生概述</p>
+<ul>
+<li>继承与派生是同一过程从不同的角度看<ul>
+<li>保持已有类的特性而构造新类的过程称为继承</li>
+<li>在已有类的基础上新增自己的特性而产生新类的过程称为派生</li>
+</ul>
+</li>
+<li>被继承的已有类称为基类（或父类）</li>
+<li>派生出的新类称为派生类（或子类）</li>
+<li>直接参与派生出某类的基类称为直接基类</li>
+<li>基类的基类甚至更高层的基类称为间接基类</li>
+</ul>
+<p>派生是为了解决原有程序无法完全解决问题，对程序的改造</p>
+<p>派生类的构成</p>
+<ul>
+<li>吸收基类成员</li>
+<li>改造基类成员<ul>
+<li>如果派生类声明了一个和某基类成员同名的新成员，派生的新成员就隐藏或覆盖了外层同名成员</li>
+</ul>
+</li>
+<li>添加新的成员</li>
+</ul>
+<h3 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h3><ul>
+<li><p>公有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:访问属性在派生类中<strong>保持不变</strong> </li>
+<li>基类的<code>private</code>成员:不可直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:只能访问<code>public</code>成员。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>私有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>private</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>保护继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>protected</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>不要重新定义继承来的非虚函数</strong></p>
+<h2 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h2><p>基类的构造函数不被继承,派生类需要编写自己的构造函数</p>
+<h3 id="单继承时构造函数"><a href="#单继承时构造函数" class="headerlink" title="单继承时构造函数"></a>单继承时构造函数</h3><pre><code>派生类名:派生类名(基类所需的型参,本类成员所需的型参):基类名(参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="多继承时构造函数"><a href="#多继承时构造函数" class="headerlink" title="多继承时构造函数"></a>多继承时构造函数</h3><pre><code>派生类名:派生类名(参数表):基类名1(基类1初始化参数表),基类名2(基类2初始化参数表),基类名n(基类n初始化参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="构造函数的执行顺序"><a href="#构造函数的执行顺序" class="headerlink" title="构造函数的执行顺序"></a>构造函数的执行顺序</h3><ol>
+<li>调用基类的构造函数,<ul>
+<li>顺序按照它们被继承时声明的顺序(从左向右)</li>
+</ul>
+</li>
+<li>对初始化列表中的成员进行初始化<ul>
+<li>顺序按照它们在类中定义的顺序</li>
+<li>对象成员初始化时自动调用其所属类的构造函数,由初始化列表提供参数</li>
+</ul>
+</li>
+<li>执行派生类的构造函数体中的内容</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> : <span class="keyword">public</span> BaseB, <span class="keyword">public</span> BaseA &#123; <span class="comment">//顺序 BaseB -&gt; BaseA</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Demo</span>(<span class="type">int</span> a, std::string str) : <span class="built_in">BaseA</span>(), <span class="built_in">BaseB</span>(),  <span class="comment">//和这里的顺序无关</span></span><br><span class="line">        <span class="built_in">m_a</span>(a),</span><br><span class="line">        <span class="built_in">m_b</span>(str) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:       <span class="comment">//顺序 m_a -&gt;  m_b</span></span><br><span class="line">    CItemA m_a;</span><br><span class="line">    CItemB m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>析构函数与构造函数顺序相反</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/08/10/cpp-01%E7%BB%A7%E6%89%BF/">展开全文 >></a>
         </p>
       
 
@@ -1161,102 +1361,6 @@ unzip  testzip.zip
 
 
   
-    <article id="post-c-05数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/">C-05数组</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/" class="archive-article-date">
-  	<time datetime="2020-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p><strong>先定义后使用,定义不能有变量</strong></p>
-<p><strong>数组名为地址常量，不能放在赋值语句左边</strong></p>
-<h2 id="一维数组"><a href="#一维数组" class="headerlink" title="一维数组"></a>一维数组</h2><p>初始化 </p>
-<p><code>类型名 数组名[常量表达式] = &#123;    ，  ，   ，&#125;</code> 少定义的自动补零,初值不给则为随机值）</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[]=&#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;<span class="comment">//（初值给了数组长度可以省略）</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h2><p>定义</p>
-<p><code>类型名  数组名 [常量表达式1][常量表达式2]</code>（【行】【列】）<br>初始化</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;;</span><br><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;,&#123;<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;&#125;;</span><br><span class="line"><span class="type">int</span> a[][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;;<span class="comment">//（初值给了可以省略行数）</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>c语言没有字符串变量</p>
-<p>字符数组存放字符串要有一个元素存放‘\0’   </p>
-<p>“” &#x3D; “\0”</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> a[]=<span class="string">&quot;abcd&quot;</span>;       <span class="comment">//长度 = 5</span></span><br><span class="line"><span class="type">char</span> a[]=&#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>&#125;; <span class="comment">//长度 = 4 （单引号无&#x27;\0&#x27;）是字符数组，不是字符串</span></span><br><span class="line"><span class="type">char</span> a[]=&#123;<span class="string">&quot;abcd&quot;</span>&#125;;     <span class="comment">//长度 = 5</span></span><br><span class="line"><span class="type">const</span> <span class="type">char</span> *x = <span class="string">&quot;abc&quot;</span>;   <span class="comment">//x指向的字符串被当作静态常量，不可修改</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="字符串存储"><a href="#字符串存储" class="headerlink" title="字符串存储"></a>字符串存储</h3><p>char a[10];</p>
-<ol>
-<li>scanf(“%s”,a); (空格或回车都结束)</li>
-<li>#include&lt;stdio.h&gt; gets(a); (只有回车才结束) puts(a) (‘\0’转换成‘\n’)</li>
-<li>字符数组</li>
-<li>strcpy(a,”kljafha;fk”);</li>
-</ol>
-<p><img src="/../photos/src/c/05-strcat.png"><br><img src="/../photos/src/c/05-strcpy.png"><br><img src="/../photos/src/c/05-strcmp.png"><br><img src="/../photos/src/c/05-strlen.png"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/05/c-05%E6%95%B0%E7%BB%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -1358,7 +1462,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
