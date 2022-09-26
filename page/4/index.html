@@ -145,6 +145,334 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-linux-command" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/27/linux-command/">Linux Command</a>
+    </h1>
+  
+
+        
+        <a href="/2021/02/27/linux-command/" class="archive-article-date">
+  	<time datetime="2021-02-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h2><ul>
+<li>bin:存放二进制可执行文件,date</li>
+<li>boot:存放开机启动程序</li>
+<li>dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件</li>
+<li>home:存放普通用户</li>
+<li>etc:用户信息和系统配置文件passwd、group</li>
+<li>lib:库文件:libc.so.6</li>
+<li>root:管理员宿主目录（家目录）</li>
+<li>usr:用户资源管理目录 </li>
+<li>media:Linux识别光驱,U盘自动挂载   </li>
+<li>mnt:用户手动挂载</li>
+</ul>
+<h2 id="用户目录"><a href="#用户目录" class="headerlink" title="用户目录"></a>用户目录</h2><ul>
+<li><code>$</code> 普通用户</li>
+<li><code>#</code> 超级用户</li>
+<li><code>cd -</code> 回到上一次的工作目录</li>
+<li><code>.</code> 当前目录</li>
+<li><code>..</code> 上一级目录</li>
+<li><code>ls -a</code> 打开隐藏文件</li>
+<li><code>ls -l</code> 文件详细信息</li>
+</ul>
+<h2 id="系统文件类型："><a href="#系统文件类型：" class="headerlink" title="系统文件类型："></a>系统文件类型：</h2><ul>
+<li>普通文件：-</li>
+<li>目录文件：d</li>
+<li>字符设备文件：c</li>
+<li>块设备文件：b</li>
+<li>软连接：l</li>
+<li>管道文件：p</li>
+<li>套接字：s</li>
+<li>未知文件</li>
+</ul>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
+<li>which	    查看命令所在路径</li>
+<li>touch	    创建文件</li>
+<li>rm		删除目录&#x2F;文件 </li>
+<li>rm -r 	递归删除</li>
+<li>cp -r		拷贝目录&#x2F;文件</li>
+<li>cat		查看文件内容</li>
+<li>more less 查看大文件</li>
+<li>head tail 查看头尾</li>
+<li>tac		逆序查看文件内容</li>
+<li>more	    分屏查看内容</li>
+<li>mkdir -p  创建多层目录</li>
+<li>du -h     文件夹大小</li>
+<li>df -h     查看磁盘</li>
+</ul>
+<h2 id="软连接（快捷方式）"><a href="#软连接（快捷方式）" class="headerlink" title="软连接（快捷方式）"></a>软连接（快捷方式）</h2><p>ln -s file file.soft (创建时务必对源文件使用 绝对路径，可以搬运)</p>
+<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>ln file file.hard</p>
+<p>操作系统给每一个文件赋予唯一的inode,当有相同inode的文件存在时,彼此同步;删除时,只将硬链接计数减一。减为0时,inode被释放</p>
+<h2 id="文件属性和用户组"><a href="#文件属性和用户组" class="headerlink" title="文件属性和用户组"></a>文件属性和用户组</h2><p>创建用户：</p>
+<pre><code>sudo adduser 新用户名		--- useradd
+</code></pre>
+<p>修改文件所属用户：</p>
+<pre><code>sudo chown 新用户名 待修改文件。
+
+sudo chown wangwu a.c
+</code></pre>
+<p>删除用户：</p>
+<pre><code>sudo deluser 用户名  (-r 删除用户目录)
+</code></pre>
+<p>创建用户组：</p>
+<pre><code>sudo addgroup 新组名
+</code></pre>
+<p>修改文件所属用户组：</p>
+<pre><code>sudo chgrp 新用户组名 待修改文件。
+
+sudo chgrp g88 a.c
+</code></pre>
+<p> 删除组：</p>
+<pre><code>sudo delgroup 用户组名 
+</code></pre>
+<p>使用chown 一次修改所有者和所属组：</p>
+<pre><code>sudo chown 所有者：所属组  待操作文件。
+
+chmod u(user)/ g(group) /o(others)/a(all) + r/w/x  文件
+</code></pre>
+<h2 id="查找与检索"><a href="#查找与检索" class="headerlink" title="查找与检索"></a>查找与检索</h2><p>find<br>    -type 按文件类型搜索  d&#x2F;p&#x2F;s&#x2F;c&#x2F;b&#x2F;l&#x2F; f(文件)</p>
+<pre><code>-name 按文件名搜索
+
+    find ./ -name &quot;*file*.jpg&quot;
+
+-maxdepth 指定搜索深度。应作为第一个参数出现。
+
+    find ./ -maxdepth 1 -name &quot;*file*.jpg&quot;
+
+
+-size 按文件大小搜索. 单位：k、M、G
+
+    find /home/itcast -size +20M -size -50M
+
+-atime、mtime、ctime 天  amin、mmin、cmin 分钟。
+
+-exec：将find搜索的结果集执行某一指定命令。
+
+    find /usr/ -name &quot;*tmp*&quot; -exec ls -ld &#123;&#125; \;
+
+-ok: 以交互式的方式 将find搜索的结果集执行某一指定命令
+
+
+-xargs：将find搜索的结果集执行某一指定命令。  当结果集数量过大时，可以分片映射。
+
+    find /usr/ -name &quot;*tmp*&quot; | xargs ls -ld 
+
+-print0：
+    find /usr/ -name &quot;*tmp*&quot; -print0 | xargs  -0 ls -ld 
+</code></pre>
+<p>grep(按内容查找)</p>
+<pre><code>grep -r &quot;copy&quot; ./ -n
+
+-n参数：:显示行号    -r ：递归
+</code></pre>
+<p>检索进程结果集</p>
+<pre><code>ps aux | grep &#39;cupsd&#39;  
+</code></pre>
+<h2 id="安装与卸载"><a href="#安装与卸载" class="headerlink" title="安装与卸载"></a>安装与卸载</h2><p>软件安装：</p>
+<pre><code>1. 联网
+
+2. 更新软件资源列表到本地。  sudo apt-get update
+
+3. 安装 sudo apt-get install 软件名
+
+4. 卸载	sudo apt-get remove 软件名
+
+5. 使用软件包（.deb） 安装：	sudo dpkg -i 安装包名。
+</code></pre>
+<h2 id="压缩解压"><a href="#压缩解压" class="headerlink" title="压缩解压"></a>压缩解压</h2><p>tar</p>
+<pre><code>c 创建 -- 压缩
+x 释放 -- 解压
+v 显示提示信息
+f 指定压缩文件名
+z 使用gzip压缩
+j 使用bizp2方式压缩
+</code></pre>
+<p>tar压缩:</p>
+<pre><code>tar zcvf  test.tar.gz  file1 dir2   使用 gzip方式压缩。
+
+tar jcvf  test.tar.gz  file1 dir2   使用 bzip方式压缩。
+</code></pre>
+<p>tar解压：</p>
+<pre><code>将压缩命令中的 c --&gt; x
+
+    tar zxvf  test.tar.gz   使用 gzip方式解压缩。
+
+    tar jxvf  test.tar.gz   使用 bzip2方式解压缩。
+</code></pre>
+<p>rar压缩：</p>
+<pre><code>rar a  压缩包名（带.rar后缀） 压缩材料。
+
+rar a   testrar.rar	stdio.h test2.mp3
+</code></pre>
+<p>rar解压：</p>
+<pre><code>rar x 压缩包名（带.rar后缀）
+</code></pre>
+<p>zip压缩：</p>
+<pre><code>zip -r 压缩包名（带.zip后缀） 压缩材料。
+
+zip -r testzip.zip dir stdio.h test2.mp3
+</code></pre>
+<p>zip解压：</p>
+<pre><code>unzip 压缩包名（带.zip后缀） 
+
+unzip  testzip.zip 
+</code></pre>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/27/linux-command/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-linux-shell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/29/linux-shell/">Linux Shell</a>
+    </h1>
+  
+
+        
+        <a href="/2020/11/29/linux-shell/" class="archive-article-date">
+  	<time datetime="2020-11-29T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="shell-命令解析器"><a href="#shell-命令解析器" class="headerlink" title="shell 命令解析器"></a>shell 命令解析器</h2><p>shell – unix<br>bash – linux</p>
+<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><ul>
+<li><p><code>ctrl+a</code> 光标回首  </p>
+</li>
+<li><p><code>ctrl+e</code> 光标回尾  </p>
+</li>
+<li><p><code>ctrl+u</code> 清除  </p>
+</li>
+<li><p><code>ctrl + p</code>上</p>
+</li>
+<li><p><code>ctrl + n</code>下</p>
+</li>
+<li><p><code>ctrl + b</code>左</p>
+</li>
+<li><p><code>ctrl + f</code>右</p>
+</li>
+<li><p><code>ctrl + d</code>删除</p>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/29/linux-shell/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-vim" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -929,169 +1257,6 @@
 
 
   
-    <article id="post-c-04循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/">C-04循环</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/" class="archive-article-date">
-  	<time datetime="2020-08-04T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1. </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> () &#123;	</span><br><span class="line"><span class="comment">//**********；</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2. </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line"><span class="comment">//**********;</span></span><br><span class="line">&#125; <span class="keyword">while</span>();</span><br></pre></td></tr></table></figure>
-
-<p>3. </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (;;) <span class="comment">//死循环 &#123;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>break ：跳出</p>
-<p>continue :跳回</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/04/c-04%E5%BE%AA%E7%8E%AF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-c-03选择" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/">C-03选择</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/" class="archive-article-date">
-  	<time datetime="2020-08-03T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>关系运算符表达式都是逻辑值（0或1）</p>
-<p><code>0 &amp;&amp; __</code>（会短路后面的）</p>
-<p><code>1 || __</code> (会短路后面的）</p>
-<h2 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h2><p><img src="/../photos/src/c/03-%E8%BF%90%E7%AE%97%E7%AC%A6.png" alt="运算符"></p>
-<p><img src="/../photos/src/c/03-%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7.png" alt="运算符优先级"></p>
-<h2 id="格式化输出"><a href="#格式化输出" class="headerlink" title="格式化输出"></a>格式化输出</h2><p><img src="/../photos/src/c/03-%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA.png" alt="格式化输出"></p>
-<p><img src="/../photos/src/c/03-%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA2.png" alt="格式化输出"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/03/c-03%E9%80%89%E6%8B%A9/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -1181,19 +1346,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -762,6 +762,895 @@
 
 
   
+    <article id="post-linux-thread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/18/linux-thread/">Linux Thread</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/18/linux-thread/" class="archive-article-date">
+  	<time datetime="2021-05-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>线程概念：</p>
+<pre><code>进程：有独立的 进程地址空间。有独立的pcb。	分配资源的最小单位。
+
+线程：有独立的pcb。没有独立的进程地址空间。	最小单位的执行。
+
+ps -Lf 进程id 	---&gt; 线程号。LWP  --》cpu 执行的最小单位。
+</code></pre>
+<p>线程共享：</p>
+<pre><code>独享 栈空间（内核栈、用户栈）
+
+共享 ./text./data ./rodataa ./bsss heap  ---&gt; 共享【全局变量】（errno）
+</code></pre>
+<p>线程控制原语：</p>
+<pre><code>pthread_t pthread_self(void);	获取线程id。 线程id是在进程地址空间内部，用来标识线程身份的id号。
+
+    返回值：本线程id
+
+
+检查出错返回：  线程中。
+
+    fprintf(stderr, &quot;xxx error: %s\n&quot;, strerror(ret));
+
+
+int pthread_create(pthread_t *tid, const pthread_attr_t *attr, void *(*start_rountn)(void *), void *arg); 创建子线程。
+
+    参1：传出参数，表新创建的子线程 id
+
+    参2：线程属性。传NULL表使用默认属性。
+
+    参3：子线程回调函数。创建成功，ptherad_create函数返回时，该函数会被自动调用。
+    
+    参4：参3的参数。没有的话，传NULL
+
+    返回值：成功：0
+
+        失败：errno
+
+
+循环创建N个子线程：
+
+    for （i = 0； i &lt; 5; i++）
+
+        pthread_create(&amp;tid, NULL, tfn, (void *)i);   // 将 int 类型 i， 强转成 void *， 传参。	
+
+
+void pthread_exit(void *retval);  退出当前线程。
+
+    retval：退出值。 无退出值时，NULL
+
+    exit();	退出当前进程。
+
+    return: 返回到调用者那里去。
+
+    pthread_exit(): 退出当前线程。
+
+
+int pthread_join(pthread_t thread, void **retval);	阻塞 回收线程。
+
+    thread: 待回收的线程id
+
+    retval：传出参数。 回收的那个线程的退出值。
+
+        线程异常借助，值为 -1。
+
+    返回值：成功：0
+
+        失败：errno
+
+int pthread_detach(pthread_t thread);		设置线程分离
+
+    thread: 待分离的线程id
+
+
+    返回值：成功：0
+
+        失败：errno	
+
+int pthread_cancel(pthread_t thread);		杀死一个线程。  需要到达取消点（保存点）
+
+    thread: 待杀死的线程id
+    
+    返回值：成功：0
+
+        失败：errno
+
+    如果，子线程没有到达取消点， 那么 pthread_cancel 无效。
+
+    我们可以在程序中，手动添加一个取消点。使用 pthread_testcancel();
+
+    成功被 pthread_cancel() 杀死的线程，返回 -1.使用pthead_join 回收。
+
+
+线程控制原语					进程控制原语
+
+
+pthread_create()				fork();
+
+pthread_self()					getpid();
+
+pthread_exit()					exit(); 		/ return 
+
+pthread_join()					wait()/waitpid()
+
+pthread_cancel()				kill()
+
+pthread_detach()
+</code></pre>
+<p>线程属性：</p>
+<pre><code>设置分离属性。
+
+pthread_attr_t attr  	创建一个线程属性结构体变量
+
+pthread_attr_init(&amp;attr);	初始化线程属性
+
+pthread_attr_setdetachstate(&amp;attr,  PTHREAD_CREATE_DETACHED);		设置线程属性为 分离态
+
+pthread_create(&amp;tid, &amp;attr, tfn, NULL); 借助修改后的 设置线程属性 创建为分离态的新线程
+
+pthread_attr_destroy(&amp;attr);	销毁线程属性
+</code></pre>
+<p>线程同步：</p>
+<pre><code>协同步调，对公共区域数据按序访问。防止数据混乱，产生与时间有关的错误。
+</code></pre>
+<p>锁的使用：</p>
+<pre><code>建议锁！对公共数据进行保护。所有线程【应该】在访问公共数据前先拿锁再访问。但，锁本身不具备强制性。
+</code></pre>
+<p>使用mutex(互斥量、互斥锁)一般步骤：</p>
+<pre><code>pthread_mutex_t 类型。 
+
+1. pthread_mutex_t lock;  创建锁
+
+2  pthread_mutex_init; 初始化		1
+
+3. pthread_mutex_lock;加锁		1--	--&gt; 0
+
+4. 访问共享数据（stdout)		
+
+5. pthrad_mutext_unlock();解锁		0++	--&gt; 1
+
+6. pthead_mutex_destroy；销毁锁
+
+
+初始化互斥量：
+
+    pthread_mutex_t mutex;
+
+    1. pthread_mutex_init(&amp;mutex, NULL);   			动态初始化。
+
+    2. pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;	静态初始化。
+
+注意事项：
+
+    尽量保证锁的粒度， 越小越好。（访问共享数据前，加锁。访问结束【立即】解锁。）
+
+    互斥锁，本质是结构体。 我们可以看成整数。 初值为 1。（pthread_mutex_init() 函数调用成功。）
+
+    加锁： --操作， 阻塞线程。
+
+    解锁： ++操作， 换醒阻塞在锁上的线程。
+
+    try锁：尝试加锁，成功--。失败，返回。同时设置错误号 EBUSY
+</code></pre>
+<p>restrict关键字：</p>
+<pre><code>用来限定指针变量。被该关键字限定的指针变量所指向的内存操作，必须由本指针完成。
+</code></pre>
+<p>【死锁】：</p>
+<pre><code>是使用锁不恰当导致的现象：
+
+    1. 对一个锁反复lock。
+
+    2. 两个线程，各自持有一把锁，请求另一把。
+</code></pre>
+<p>读写锁：</p>
+<pre><code>锁只有一把。以读方式给数据加锁——读锁。以写方式给数据加锁——写锁。
+
+读共享，写独占。
+
+写锁优先级高。
+
+相较于互斥量而言，当读线程多的时候，提高访问效率
+
+pthread_rwlock_t  rwlock;
+
+pthread_rwlock_init(&amp;rwlock, NULL);
+
+pthread_rwlock_rdlock(&amp;rwlock);		try
+
+pthread_rwlock_wrlock(&amp;rwlock);		try
+
+pthread_rwlock_unlock(&amp;rwlock);
+
+pthread_rwlock_destroy(&amp;rwlock);
+</code></pre>
+<p>条件变量：</p>
+<pre><code>本身不是锁！  但是通常结合锁来使用。 mutex
+
+pthread_cond_t cond;
+
+初始化条件变量：
+
+    1. pthread_cond_init(&amp;cond, NULL);   			动态初始化。
+
+    2. pthread_cond_t cond = PTHREAD_COND_INITIALIZER;	静态初始化。
+
+阻塞等待条件：
+
+    pthread_cond_wait(&amp;cond, &amp;mutex);
+
+    作用：	1） 阻塞等待条件变量满足
+
+        2） 解锁已经加锁成功的信号量 （相当于 pthread_mutex_unlock(&amp;mutex)）
+
+        3)  当条件满足，函数返回时，重新加锁信号量 （相当于， pthread_mutex_lock(&amp;mutex);）
+
+
+pthread_cond_signal(): 唤醒阻塞在条件变量上的 (至少)一个线程。
+
+pthread_cond_broadcast()： 唤醒阻塞在条件变量上的 所有线程。
+
+
+【要求，能够借助条件变量，完成生成者消费者】
+</code></pre>
+<p>信号量： </p>
+<pre><code>应用于线程、进程间同步。
+
+相当于 初始化值为 N 的互斥量。  N值，表示可以同时访问共享数据区的线程数。
+
+函数：
+    sem_t sem;	定义类型。
+
+    int sem_init(sem_t *sem, int pshared, unsigned int value);
+
+    参数：
+        sem： 信号量 
+
+        pshared：	0： 用于线程间同步
+                
+                1： 用于进程间同步
+
+        value：N值。（指定同时访问的线程数）
+
+
+    sem_destroy();
+
+    sem_wait();		一次调用，做一次-- 操作， 当信号量的值为 0 时，再次 -- 就会阻塞。 （对比 pthread_mutex_lock）
+
+    sem_post();		一次调用，做一次++ 操作. 当信号量的值为 N 时, 再次 ++ 就会阻塞。（对比 pthread_mutex_unlock）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+</code></pre>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/18/linux-thread/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-linux-process" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/15/linux-process/">Linux Process</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/15/linux-process/" class="archive-article-date">
+  	<time datetime="2021-05-15T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>进程：</p>
+<pre><code>程序：死的。只占用磁盘空间。		
+
+进程；活的。运行起来的程序。占用内存、cpu等系统资源。
+</code></pre>
+<p>PCB进程控制块：</p>
+<pre><code>进程id
+
+文件描述符表
+
+进程状态：	初始态、就绪态、运行态、挂起态、终止态。
+
+进程工作目录位置
+
+*umask掩码 
+
+信号相关信息资源。
+
+用户id和组id
+</code></pre>
+<p>fork函数：</p>
+<pre><code>pid_t fork(void)
+
+创建子进程。父子进程各自返回。父进程返回子进程pid。 子进程返回 0.
+
+getpid();getppid();
+
+循环创建N个子进程模型。 每个子进程标识自己的身份。
+</code></pre>
+<p>父子进程相同：</p>
+<pre><code>刚fork后。 data段、text段、堆、栈、环境变量、全局变量、宿主目录位置、进程工作目录位置、信号处理方式
+</code></pre>
+<p>父子进程不同：</p>
+<pre><code>进程id、返回值、各自的父进程、进程创建时间、闹钟、未决信号集
+</code></pre>
+<p>父子进程共享：</p>
+<pre><code>读时共享、写时复制。———————— 全局变量。
+
+1. 文件描述符 2. mmap映射区。
+</code></pre>
+<p>gdb调试：</p>
+<pre><code>设置父进程调试路径：set follow-fork-mode parent (默认)
+
+设置子进程调试路径：set follow-fork-mode child
+</code></pre>
+<p>exec函数族：</p>
+<pre><code>使进程执行某一程序。成功无返回值，失败返回 -1
+
+int execlp(const char *file, const char *arg, ...);		借助 PATH 环境变量找寻待执行程序
+
+    参1： 程序名
+
+    参2： argv0
+
+    参3： argv1
+
+    ...： argvN
+
+    哨兵：NULL
+
+int execl(const char *path, const char *arg, ...);		自己指定待执行程序路径。
+
+int execvp();
+</code></pre>
+<p>ps ajx –&gt; pid ppid gid sid </p>
+<p>孤儿进程：</p>
+<pre><code>父进程先于子进终止，子进程沦为“孤儿进程”，会被 init 进程领养。
+</code></pre>
+<p>僵尸进程：</p>
+<pre><code>子进程终止，父进程尚未对子进程进行回收，在此期间，子进程为“僵尸进程”。  kill 对其无效。
+</code></pre>
+<p>wait函数：	回收子进程退出资源， 阻塞回收任意一个。</p>
+<pre><code>pid_t wait(int *status)
+
+参数：（传出） 回收进程的状态。
+
+返回值：成功： 回收进程的pid
+
+    失败： -1， errno
+
+函数作用1：	         阻塞等待子进程退出
+
+函数作用2：	清理子进程残留在内核的 pcb 资源
+
+函数作用3：	通过传出参数，得到子进程结束状态
+
+
+获取子进程正常终止值：
+
+    WIFEXITED(status) --》 为真 --》调用 WEXITSTATUS(status) --》 得到 子进程 退出值。
+
+获取导致子进程异常终止信号：
+
+    WIFSIGNALED(status) --》 为真 --》调用 WTERMSIG(status) --》 得到 导致子进程异常终止的信号编号。
+</code></pre>
+<p>waitpid函数：	指定某一个进程进行回收。可以设置非阻塞。			waitpid(-1, &amp;status, 0) &#x3D;&#x3D; wait(&amp;status);</p>
+<pre><code>pid_t waitpid(pid_t pid, int *status, int options)
+
+参数：
+    pid：指定回收某一个子进程pid
+
+        &gt; 0: 待回收的子进程pid
+
+        -1：任意子进程
+
+        0：同组的子进程。
+
+    status：（传出） 回收进程的状态。
+
+    options：WNOHANG 指定回收方式为，非阻塞。
+
+返回值：
+
+    &gt; 0 : 表成功回收的子进程 pid
+
+    0 : 函数调用时， 参3 指定了WNOHANG， 并且，没有子进程结束。
+
+    -1: 失败。errno
+</code></pre>
+<p>总结：</p>
+<pre><code>wait、waitpid	一次调用，回收一个子进程。
+
+想回收多个。while 
+</code></pre>
+<p>进程间通信的常用方式，特征：</p>
+<pre><code>管道：简单
+
+信号：开销小
+
+mmap映射：非血缘关系进程间
+
+socket（本地套接字）：稳定
+</code></pre>
+<p>管道： </p>
+<pre><code>实现原理： 内核借助环形队列机制，使用内核缓冲区实现。
+
+特质；	1. 伪文件
+
+    2. 管道中的数据只能一次读取。
+
+    3. 数据在管道中，只能单向流动。
+
+局限性：1. 自己写，不能自己读。
+
+    2. 数据不可以反复读。
+
+    3. 半双工通信。
+
+    4. 血缘关系进程间可用。
+</code></pre>
+<p><img src="/../photos/src/linux/pipe.png"></p>
+<p>pipe函数：	创建，并打开管道。</p>
+<pre><code>int pipe(int fd[2]);
+
+参数：	fd[0]: 读端。
+
+    fd[1]: 写端。
+
+返回值： 成功： 0
+
+     失败： -1 errno
+</code></pre>
+<p>管道的读写行为：</p>
+<pre><code>读管道：
+    1. 管道有数据，read返回实际读到的字节数。
+
+    2. 管道无数据：	1）无写端，read返回0 （类似读到文件尾）
+
+            2）有写端，read阻塞等待。
+
+写管道：
+    1. 无读端， 异常终止。 （SIGPIPE导致的）
+
+    2. 有读端：	1） 管道已满， 阻塞等待
+
+            2） 管道未满， 返回写出的字节个数。
+</code></pre>
+<p>pipe管道： 用于有血缘关系的进程间通信。  ps aux | grep 		ls | wc -l	</p>
+<pre><code>父子进程间通信：
+
+
+兄弟进程间通信：
+</code></pre>
+<p>fifo管道：可以用于无血缘关系的进程间通信。</p>
+<pre><code>命名管道：  mkfifo 
+
+无血缘关系进程间通信：
+
+    读端，open fifo O_RDONLY
+
+    写端，open fifo O_WRONLY
+</code></pre>
+<p>文件实现进程间通信：</p>
+<pre><code>打开的文件是内核中的一块缓冲区。多个无血缘关系的进程，可以同时访问该文件。
+</code></pre>
+<p>共享内存映射:</p>
+<p>void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);		创建共享内存映射</p>
+<pre><code>参数：
+    addr： 	指定映射区的首地址。通常传NULL，表示让系统自动分配
+
+    length：共享内存映射区的大小。（&lt;= 文件的实际大小）
+
+    prot：	共享内存映射区的读写属性。PROT_READ、PROT_WRITE、PROT_READ|PROT_WRITE
+
+    flags：	标注共享内存的共享属性。MAP_SHARED、MAP_PRIVATE
+
+    fd:	用于创建共享内存映射区的那个文件的 文件描述符。
+
+    offset：默认0，表示映射文件全部。偏移位置。需是 4k 的整数倍。
+
+返回值：
+
+    成功：映射区的首地址。
+
+    失败：MAP_FAILED (void*(-1))， errno
+</code></pre>
+<p>int munmap(void *addr, size_t length);		释放映射区。</p>
+<pre><code>addr：mmap 的返回值
+
+length：大小
+</code></pre>
+<p>使用注意事项：</p>
+<pre><code>1. 用于创建映射区的文件大小为 0，实际指定非0大小创建映射区，出 “总线错误”。
+
+2. 用于创建映射区的文件大小为 0，实际制定0大小创建映射区， 出 “无效参数”。
+
+3. 用于创建映射区的文件读写属性为，只读。映射区属性为 读、写。 出 “无效参数”。
+
+4. 创建映射区，需要read权限。当访问权限指定为 “共享”MAP_SHARED是， mmap的读写权限，应该 &lt;=文件的open权限。	只写不行。
+
+5. 文件描述符fd，在mmap创建映射区完成即可关闭。后续访问文件，用 地址访问。
+
+6. offset 必须是 4096的整数倍。（MMU 映射的最小单位 4k ）
+
+7. 对申请的映射区内存，不能越界访问。 
+
+8. munmap用于释放的 地址，必须是mmap申请返回的地址。
+
+9. 映射区访问权限为 “私有”MAP_PRIVATE, 对内存所做的所有修改，只在内存有效，不会反应到物理磁盘上。
+
+10.  映射区访问权限为 “私有”MAP_PRIVATE, 只需要open文件时，有读权限，用于创建映射区即可。
+</code></pre>
+<p>mmap函数的保险调用方式：</p>
+<pre><code>1. fd = open（&quot;文件名&quot;， O_RDWR）;
+
+2. mmap(NULL, 有效文件大小， PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+</code></pre>
+<p>父子进程使用 mmap 进程间通信：</p>
+<pre><code>父进程 先 创建映射区。 open（ O_RDWR） mmap( MAP_SHARED );
+
+指定 MAP_SHARED 权限
+
+fork() 创建子进程。
+
+一个进程读， 另外一个进程写。
+</code></pre>
+<p>无血缘关系进程间 mmap 通信：  				【会写】</p>
+<pre><code>两个进程 打开同一个文件，创建映射区。
+
+指定flags 为 MAP_SHARED。
+
+一个进程写入，另外一个进程读出。
+
+【注意】：无血缘关系进程间通信。mmap：数据可以重复读取。
+
+                fifo：数据只能一次读取。
+</code></pre>
+<p>匿名映射：只能用于 血缘关系进程间通信。</p>
+<pre><code>p = (int *)mmap(NULL, 40, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
+</code></pre>
+<p>信号共性：</p>
+<pre><code>简单、不能携带大量信息、满足条件才发送。
+</code></pre>
+<p>信号的特质：</p>
+<pre><code>信号是软件层面上的“中断”。一旦信号产生，无论程序执行到什么位置，必须立即停止运行，处理信号，处理结束，再继续执行后续指令。
+
+所有信号的产生及处理全部都是由【内核】完成的。
+</code></pre>
+<p>信号相关的概念：</p>
+<pre><code>产生信号：
+
+    1. 按键产生
+
+    2. 系统调用产生
+
+    3. 软件条件产生
+
+    4. 硬件异常产生
+
+    5. 命令产生
+
+概念：
+    未决：产生与递达之间状态。  
+
+    递达：产生并且送达到进程。直接被内核处理掉。
+
+    信号处理方式： 执行默认处理动作、忽略、捕捉（自定义）
+
+
+    阻塞信号集（信号屏蔽字）： 本质：位图。用来记录信号的屏蔽状态。一旦被屏蔽的信号，在解除屏蔽前，一直处于未决态。
+
+    未决信号集：本质：位图。用来记录信号的处理状态。该信号集中的信号，表示，已经产生，但尚未被处理。
+</code></pre>
+<p>信号4要素：</p>
+<pre><code>信号使用之前，应先确定其4要素，而后再用！！！
+
+编号、名称、对应事件、默认处理动作。
+</code></pre>
+<p>kill命令 和 kill函数：</p>
+<pre><code>int kill（pid_t pid, int signum）
+
+参数：
+    pid: 	&gt; 0:发送信号给指定进程
+
+        = 0：发送信号给跟调用kill函数的那个进程处于同一进程组的进程。
+
+        &lt; -1: 取绝对值，发送信号给该绝对值所对应的进程组的所有组员。
+
+        = -1：发送信号给，有权限发送的所有进程。
+
+    signum：待发送的信号
+
+返回值：
+    成功： 0
+
+    失败： -1 errno
+</code></pre>
+<p>alarm 函数：使用自然计时法。</p>
+<pre><code>定时发送SIGALRM给当前进程。
+
+unsigned int alarm(unsigned int seconds);
+
+    seconds：定时秒数
+
+    返回值：上次定时剩余时间。
+
+        无错误现象。
+
+    alarm（0）； 取消闹钟。
+
+time 命令 ： 查看程序执行时间。   实际时间 = 用户时间 + 内核时间 + 等待时间。  --》 优化瓶颈 IO
+</code></pre>
+<p>setitimer函数：</p>
+<pre><code>int setitimer(int which, const struct itimerval *new_value, struct itimerval *old_value);
+
+参数：
+    which：	ITIMER_REAL： 采用自然计时。 ——&gt; SIGALRM
+
+        ITIMER_VIRTUAL: 采用用户空间计时  ---&gt; SIGVTALRM
+
+        ITIMER_PROF: 采用内核+用户空间计时 ---&gt; SIGPROF
+    
+    new_value：定时秒数
+
+               类型：struct itimerval &#123;
+
+                           struct timeval &#123;
+                               time_t      tv_sec;         /* seconds */
+                               suseconds_t tv_usec;        /* microseconds */
+
+                       &#125;it_interval;---&gt; 周期定时秒数
+
+                            struct timeval &#123;
+                               time_t      tv_sec;         
+                               suseconds_t tv_usec;        
+
+                       &#125;it_value;  ---&gt; 第一次定时秒数  
+                    &#125;;
+
+    old_value：传出参数，上次定时剩余时间。
+
+    e.g.
+        struct itimerval new_t;	
+        struct itimerval old_t;	
+
+        new_t.it_interval.tv_sec = 0;
+        new_t.it_interval.tv_usec = 0;
+        new_t.it_value.tv_sec = 1;
+        new_t.it_value.tv_usec = 0;
+
+        int ret = setitimer(&amp;new_t, &amp;old_t);  定时1秒
+
+返回值：
+    成功： 0
+
+    失败： -1 errno
+</code></pre>
+<p>其他几个发信号函数：</p>
+<pre><code>int raise(int sig);
+
+void abort(void);
+</code></pre>
+<p>信号集操作函数：</p>
+<pre><code>sigset_t set;  自定义信号集。
+
+sigemptyset(sigset_t *set);	清空信号集
+
+sigfillset(sigset_t *set);	全部置1
+
+sigaddset(sigset_t *set, int signum);	将一个信号添加到集合中
+
+sigdelset(sigset_t *set, int signum);	将一个信号从集合中移除
+
+sigismember（const sigset_t *set，int signum); 判断一个信号是否在集合中。 在--》1， 不在--》0
+</code></pre>
+<p>设置信号屏蔽字和解除屏蔽：</p>
+<pre><code>int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+
+    how:	SIG_BLOCK:	设置阻塞
+
+        SIG_UNBLOCK:	取消阻塞
+
+        SIG_SETMASK:	用自定义set替换mask。
+
+    set：	自定义set
+
+    oldset：旧有的 mask。
+</code></pre>
+<p>查看未决信号集：</p>
+<pre><code>int sigpending(sigset_t *set);
+
+    set： 传出的 未决信号集。
+</code></pre>
+<p>【信号捕捉】：</p>
+<pre><code>signal();
+
+【sigaction();】 重点！！！
+
+    
+</code></pre>
+<p>信号捕捉特性：</p>
+<pre><code>1. 捕捉函数执行期间，信号屏蔽字 由 mask --&gt; sa_mask , 捕捉函数执行结束。 恢复回mask
+
+2. 捕捉函数执行期间，本信号自动被屏蔽(sa_flgs = 0).
+
+3. 捕捉函数执行期间，被屏蔽信号多次发送，解除屏蔽后只处理一次！
+</code></pre>
+<p>借助信号完成 子进程回收。</p>
+<p>守护进程：</p>
+<pre><code>daemon进程。通常运行与操作系统后台，脱离控制终端。一般不与用户直接交互。周期性的等待某个事件发生或周期性执行某一动作。
+
+不受用户登录注销影响。通常采用以d结尾的命名方式。
+</code></pre>
+<p>守护进程创建步骤：</p>
+<pre><code>1. fork子进程，让父进程终止。
+
+2. 子进程调用 setsid() 创建新会话
+
+3. 通常根据需要，改变工作目录位置 chdir()， 防止目录被卸载。
+
+4. 通常根据需要，重设umask文件权限掩码，影响新文件的创建权限。  022 -- 755	0345 --- 432   r---wx-w-   422
+
+5. 通常根据需要，关闭/重定向 文件描述符
+
+6. 守护进程 业务逻辑。while（）
+</code></pre>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/15/linux-process/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-io" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1420,334 +2309,6 @@ news: Network news subsystem.
 
 
   
-    <article id="post-linux-command" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/27/linux-command/">Linux Command</a>
-    </h1>
-  
-
-        
-        <a href="/2021/02/27/linux-command/" class="archive-article-date">
-  	<time datetime="2021-02-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h2><ul>
-<li>bin:存放二进制可执行文件,date</li>
-<li>boot:存放开机启动程序</li>
-<li>dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件</li>
-<li>home:存放普通用户</li>
-<li>etc:用户信息和系统配置文件passwd、group</li>
-<li>lib:库文件:libc.so.6</li>
-<li>root:管理员宿主目录（家目录）</li>
-<li>usr:用户资源管理目录 </li>
-<li>media:Linux识别光驱,U盘自动挂载   </li>
-<li>mnt:用户手动挂载</li>
-</ul>
-<h2 id="用户目录"><a href="#用户目录" class="headerlink" title="用户目录"></a>用户目录</h2><ul>
-<li><code>$</code> 普通用户</li>
-<li><code>#</code> 超级用户</li>
-<li><code>cd -</code> 回到上一次的工作目录</li>
-<li><code>.</code> 当前目录</li>
-<li><code>..</code> 上一级目录</li>
-<li><code>ls -a</code> 打开隐藏文件</li>
-<li><code>ls -l</code> 文件详细信息</li>
-</ul>
-<h2 id="系统文件类型："><a href="#系统文件类型：" class="headerlink" title="系统文件类型："></a>系统文件类型：</h2><ul>
-<li>普通文件：-</li>
-<li>目录文件：d</li>
-<li>字符设备文件：c</li>
-<li>块设备文件：b</li>
-<li>软连接：l</li>
-<li>管道文件：p</li>
-<li>套接字：s</li>
-<li>未知文件</li>
-</ul>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
-<li>which	    查看命令所在路径</li>
-<li>touch	    创建文件</li>
-<li>rm		删除目录&#x2F;文件 </li>
-<li>rm -r 	递归删除</li>
-<li>cp -r		拷贝目录&#x2F;文件</li>
-<li>cat		查看文件内容</li>
-<li>more less 查看大文件</li>
-<li>head tail 查看头尾</li>
-<li>tac		逆序查看文件内容</li>
-<li>more	    分屏查看内容</li>
-<li>mkdir -p  创建多层目录</li>
-<li>du -h     文件夹大小</li>
-<li>df -h     查看磁盘</li>
-</ul>
-<h2 id="软连接（快捷方式）"><a href="#软连接（快捷方式）" class="headerlink" title="软连接（快捷方式）"></a>软连接（快捷方式）</h2><p>ln -s file file.soft (创建时务必对源文件使用 绝对路径，可以搬运)</p>
-<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>ln file file.hard</p>
-<p>操作系统给每一个文件赋予唯一的inode,当有相同inode的文件存在时,彼此同步;删除时,只将硬链接计数减一。减为0时,inode被释放</p>
-<h2 id="文件属性和用户组"><a href="#文件属性和用户组" class="headerlink" title="文件属性和用户组"></a>文件属性和用户组</h2><p>创建用户：</p>
-<pre><code>sudo adduser 新用户名		--- useradd
-</code></pre>
-<p>修改文件所属用户：</p>
-<pre><code>sudo chown 新用户名 待修改文件。
-
-sudo chown wangwu a.c
-</code></pre>
-<p>删除用户：</p>
-<pre><code>sudo deluser 用户名  (-r 删除用户目录)
-</code></pre>
-<p>创建用户组：</p>
-<pre><code>sudo addgroup 新组名
-</code></pre>
-<p>修改文件所属用户组：</p>
-<pre><code>sudo chgrp 新用户组名 待修改文件。
-
-sudo chgrp g88 a.c
-</code></pre>
-<p> 删除组：</p>
-<pre><code>sudo delgroup 用户组名 
-</code></pre>
-<p>使用chown 一次修改所有者和所属组：</p>
-<pre><code>sudo chown 所有者：所属组  待操作文件。
-
-chmod u(user)/ g(group) /o(others)/a(all) + r/w/x  文件
-</code></pre>
-<h2 id="查找与检索"><a href="#查找与检索" class="headerlink" title="查找与检索"></a>查找与检索</h2><p>find<br>    -type 按文件类型搜索  d&#x2F;p&#x2F;s&#x2F;c&#x2F;b&#x2F;l&#x2F; f(文件)</p>
-<pre><code>-name 按文件名搜索
-
-    find ./ -name &quot;*file*.jpg&quot;
-
--maxdepth 指定搜索深度。应作为第一个参数出现。
-
-    find ./ -maxdepth 1 -name &quot;*file*.jpg&quot;
-
-
--size 按文件大小搜索. 单位：k、M、G
-
-    find /home/itcast -size +20M -size -50M
-
--atime、mtime、ctime 天  amin、mmin、cmin 分钟。
-
--exec：将find搜索的结果集执行某一指定命令。
-
-    find /usr/ -name &quot;*tmp*&quot; -exec ls -ld &#123;&#125; \;
-
--ok: 以交互式的方式 将find搜索的结果集执行某一指定命令
-
-
--xargs：将find搜索的结果集执行某一指定命令。  当结果集数量过大时，可以分片映射。
-
-    find /usr/ -name &quot;*tmp*&quot; | xargs ls -ld 
-
--print0：
-    find /usr/ -name &quot;*tmp*&quot; -print0 | xargs  -0 ls -ld 
-</code></pre>
-<p>grep(按内容查找)</p>
-<pre><code>grep -r &quot;copy&quot; ./ -n
-
--n参数：:显示行号    -r ：递归
-</code></pre>
-<p>检索进程结果集</p>
-<pre><code>ps aux | grep &#39;cupsd&#39;  
-</code></pre>
-<h2 id="安装与卸载"><a href="#安装与卸载" class="headerlink" title="安装与卸载"></a>安装与卸载</h2><p>软件安装：</p>
-<pre><code>1. 联网
-
-2. 更新软件资源列表到本地。  sudo apt-get update
-
-3. 安装 sudo apt-get install 软件名
-
-4. 卸载	sudo apt-get remove 软件名
-
-5. 使用软件包（.deb） 安装：	sudo dpkg -i 安装包名。
-</code></pre>
-<h2 id="压缩解压"><a href="#压缩解压" class="headerlink" title="压缩解压"></a>压缩解压</h2><p>tar</p>
-<pre><code>c 创建 -- 压缩
-x 释放 -- 解压
-v 显示提示信息
-f 指定压缩文件名
-z 使用gzip压缩
-j 使用bizp2方式压缩
-</code></pre>
-<p>tar压缩:</p>
-<pre><code>tar zcvf  test.tar.gz  file1 dir2   使用 gzip方式压缩。
-
-tar jcvf  test.tar.gz  file1 dir2   使用 bzip方式压缩。
-</code></pre>
-<p>tar解压：</p>
-<pre><code>将压缩命令中的 c --&gt; x
-
-    tar zxvf  test.tar.gz   使用 gzip方式解压缩。
-
-    tar jxvf  test.tar.gz   使用 bzip2方式解压缩。
-</code></pre>
-<p>rar压缩：</p>
-<pre><code>rar a  压缩包名（带.rar后缀） 压缩材料。
-
-rar a   testrar.rar	stdio.h test2.mp3
-</code></pre>
-<p>rar解压：</p>
-<pre><code>rar x 压缩包名（带.rar后缀）
-</code></pre>
-<p>zip压缩：</p>
-<pre><code>zip -r 压缩包名（带.zip后缀） 压缩材料。
-
-zip -r testzip.zip dir stdio.h test2.mp3
-</code></pre>
-<p>zip解压：</p>
-<pre><code>unzip 压缩包名（带.zip后缀） 
-
-unzip  testzip.zip 
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/27/linux-command/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-shell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/11/29/linux-shell/">Linux Shell</a>
-    </h1>
-  
-
-        
-        <a href="/2020/11/29/linux-shell/" class="archive-article-date">
-  	<time datetime="2020-11-29T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="shell-命令解析器"><a href="#shell-命令解析器" class="headerlink" title="shell 命令解析器"></a>shell 命令解析器</h2><p>shell – unix<br>bash – linux</p>
-<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><ul>
-<li><p><code>ctrl+a</code> 光标回首  </p>
-</li>
-<li><p><code>ctrl+e</code> 光标回尾  </p>
-</li>
-<li><p><code>ctrl+u</code> 清除  </p>
-</li>
-<li><p><code>ctrl + p</code>上</p>
-</li>
-<li><p><code>ctrl + n</code>下</p>
-</li>
-<li><p><code>ctrl + b</code>左</p>
-</li>
-<li><p><code>ctrl + f</code>右</p>
-</li>
-<li><p><code>ctrl + d</code>删除</p>
-</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/11/29/linux-shell/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1837,19 +2398,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
