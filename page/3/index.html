@@ -762,6 +762,710 @@
 
 
   
+    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
+  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
+<li>用<code>virtual</code>关键字说明的函数</li>
+<li>虚函数是实现运行时多态性基础</li>
+<li>C++中的虚函数是动态绑定的函数</li>
+<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
+</ul>
+<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
+<li>一般成员函数可以是虚函数</li>
+<li>构造函数不能是虚函数 </li>
+<li>析构函数可以是虚函数</li>
+</ul>
+<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
+<li><p>虚函数的声明</p>
+<p>  virtual 函数类型 函数名（形参表);</p>
+</li>
+<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
+</li>
+<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
+</li>
+<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
+</li>
+</ul>
+<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
+<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
+<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
+<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
+</ul>
+</li>
+<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
+<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
+<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
+</ul>
+<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">C++ 继承</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/" class="archive-article-date">
+  	<time datetime="2021-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="C-特性"><a href="#C-特性" class="headerlink" title="C++特性"></a>C++特性</h2><p>抽象 封装 继承 多态</p>
+<h2 id="成员类型"><a href="#成员类型" class="headerlink" title="成员类型"></a>成员类型</h2><ul>
+<li><p>公有成员类型</p>
+<p>  任何外部的函数都可以访问共有类型数据和函数</p>
+<p>  是类与外部的接口</p>
+</li>
+<li><p>私有类型成员</p>
+<p>  只允许本类中的函数访问，类外的任何函数不能访问</p>
+<p>  不写关键字，默认为私有成员</p>
+</li>
+<li><p>保护成员</p>
+<p>  与私有很像，差别在继承与派生时对派生类的影响不同</p>
+</li>
+</ul>
+<h2 id="内联成员函数"><a href="#内联成员函数" class="headerlink" title="内联成员函数"></a>内联成员函数</h2><pre><code>直接在类内写函数
+
+使用inline关键字
+</code></pre>
+<h2 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h2><pre><code>class 类名&#123;
+public:
+    类名（const 类名 &amp;对象名）；
+&#125;
+
+类名::类名（const 类名 &amp;对象名）
+&#123;
+&#125;
+</code></pre>
+<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><pre><code>~类名（）
+</code></pre>
+<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><p>友元都是单向的</p>
+<h2 id="友元函数"><a href="#友元函数" class="headerlink" title="友元函数"></a>友元函数</h2><pre><code>声明类外函数为本类朋友
+</code></pre>
+<h2 id="友元类"><a href="#友元类" class="headerlink" title="友元类"></a>友元类</h2><pre><code>friend class B;  (对B类授权可以访问自己)
+</code></pre>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>继承与派生概述</p>
+<ul>
+<li>继承与派生是同一过程从不同的角度看<ul>
+<li>保持已有类的特性而构造新类的过程称为继承</li>
+<li>在已有类的基础上新增自己的特性而产生新类的过程称为派生</li>
+</ul>
+</li>
+<li>被继承的已有类称为基类（或父类）</li>
+<li>派生出的新类称为派生类（或子类）</li>
+<li>直接参与派生出某类的基类称为直接基类</li>
+<li>基类的基类甚至更高层的基类称为间接基类</li>
+</ul>
+<p>派生是为了解决原有程序无法完全解决问题，对程序的改造</p>
+<p>派生类的构成</p>
+<ul>
+<li>吸收基类成员</li>
+<li>改造基类成员<ul>
+<li>如果派生类声明了一个和某基类成员同名的新成员，派生的新成员就隐藏或覆盖了外层同名成员</li>
+</ul>
+</li>
+<li>添加新的成员</li>
+</ul>
+<h3 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h3><ul>
+<li><p>公有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:访问属性在派生类中<strong>保持不变</strong> </li>
+<li>基类的<code>private</code>成员:不可直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:只能访问<code>public</code>成员。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>私有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>private</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>保护继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>protected</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>不要重新定义继承来的非虚函数</strong></p>
+<h2 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h2><p>基类的构造函数不被继承,派生类需要编写自己的构造函数</p>
+<h3 id="单继承时构造函数"><a href="#单继承时构造函数" class="headerlink" title="单继承时构造函数"></a>单继承时构造函数</h3><pre><code>派生类名:派生类名(基类所需的型参,本类成员所需的型参):基类名(参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="多继承时构造函数"><a href="#多继承时构造函数" class="headerlink" title="多继承时构造函数"></a>多继承时构造函数</h3><pre><code>派生类名:派生类名(参数表):基类名1(基类1初始化参数表),基类名2(基类2初始化参数表),基类名n(基类n初始化参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="构造函数的执行顺序"><a href="#构造函数的执行顺序" class="headerlink" title="构造函数的执行顺序"></a>构造函数的执行顺序</h3><ol>
+<li>调用基类的构造函数,<ul>
+<li>顺序按照它们被继承时声明的顺序(从左向右)</li>
+</ul>
+</li>
+<li>对初始化列表中的成员进行初始化<ul>
+<li>顺序按照它们在类中定义的顺序</li>
+<li>对象成员初始化时自动调用其所属类的构造函数,由初始化列表提供参数</li>
+</ul>
+</li>
+<li>执行派生类的构造函数体中的内容</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> : <span class="keyword">public</span> BaseB, <span class="keyword">public</span> BaseA &#123; <span class="comment">//顺序 BaseB -&gt; BaseA</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Demo</span>(<span class="type">int</span> a, std::string str) : <span class="built_in">BaseA</span>(), <span class="built_in">BaseB</span>(),  <span class="comment">//和这里的顺序无关</span></span><br><span class="line">        <span class="built_in">m_a</span>(a),</span><br><span class="line">        <span class="built_in">m_b</span>(str) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:       <span class="comment">//顺序 m_a -&gt;  m_b</span></span><br><span class="line">    CItemA m_a;</span><br><span class="line">    CItemB m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>析构函数与构造函数顺序相反</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-02变量和基本类型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/">C++ 02变量和基本类型</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2021-08-06T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="内置类型"><a href="#内置类型" class="headerlink" title="内置类型"></a>内置类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>最小尺寸</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>布尔类型</td>
+<td>8bits</td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td>字符</td>
+<td>8bits</td>
+</tr>
+<tr>
+<td><code>wchar_t</code></td>
+<td>宽字符</td>
+<td>16bits</td>
+</tr>
+<tr>
+<td><code>char16_t</code></td>
+<td>Unicode字符</td>
+<td>16bits</td>
+</tr>
+<tr>
+<td><code>char32_t</code></td>
+<td>Unicode字符</td>
+<td>32bits</td>
+</tr>
+<tr>
+<td><code>short</code></td>
+<td>短整型</td>
+<td>16bits</td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td>整型</td>
+<td>16bits (在32位机器中是32bits)</td>
+</tr>
+<tr>
+<td><code>long</code></td>
+<td>长整型</td>
+<td>32bits</td>
+</tr>
+<tr>
+<td><code>long long</code></td>
+<td>长整型</td>
+<td>64bits （是在C++11中新定义的）</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td>单精度浮点数</td>
+<td>6位有效数字</td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td>双精度浮点数</td>
+<td>10位有效数字</td>
+</tr>
+<tr>
+<td><code>long double</code></td>
+<td>扩展精度浮点数</td>
+<td>10位有效数字</td>
+</tr>
+</tbody></table>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">bool</span> a;</span><br><span class="line">    <span class="type">char</span> b;</span><br><span class="line">    <span class="type">wchar_t</span> c;</span><br><span class="line">    <span class="type">char16_t</span> d;</span><br><span class="line">    <span class="type">char32_t</span> e;</span><br><span class="line">    <span class="type">short</span> f;</span><br><span class="line">    <span class="type">int</span> g;</span><br><span class="line">    <span class="type">long</span> h;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> i;</span><br><span class="line">    <span class="type">float</span> j;</span><br><span class="line">    <span class="type">double</span> k;</span><br><span class="line">    <span class="type">long</span> <span class="type">double</span> l;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;bool = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(a) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(b) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;wchar_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(c) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char16_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(d) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char32_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(e) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;short = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(f) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;int = &quot;</span> &lt;&lt;  <span class="built_in">sizeof</span>(g) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(h) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long long = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(i) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;float = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(j) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;double = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(k) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long double = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(l) &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">bool = 1</span><br><span class="line">char = 1</span><br><span class="line">wchar_t = 4</span><br><span class="line">char16_t = 2</span><br><span class="line">char32_t = 4</span><br><span class="line">short = 2</span><br><span class="line">int = 4</span><br><span class="line">long = 8</span><br><span class="line">long long = 8</span><br><span class="line">float = 4</span><br><span class="line">double = 8</span><br><span class="line">long double = 16</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何选择类型"><a href="#如何选择类型" class="headerlink" title="如何选择类型"></a>如何选择类型</h2><ul>
+<li>当明确知晓数值不可能为负时，选用无符号类型</li>
+<li>使用int执行整数运算。在实际应用中，short常常显得太小而long一般和int有一样的尺寸。如果你的数值超过了int的表示范围，选用long long</li>
+<li>在算术表达式中不要使用char或bool，只有在存放字符或布尔值时才使用它们。因为类型char在一些机器上是有符号的，而在另一些机器上又是无符号的</li>
+<li>执行浮点数运算选用double</li>
+</ul>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>切勿混用带符号类型和无符号类型,带符号数会自动地转换成无符号数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">-1</span>;</span><br><span class="line"><span class="type">unsigned</span> b = <span class="number">1</span>;</span><br><span class="line">std::cout &lt;&lt; a * b &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4294967295</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>非布尔型赋给布尔型，初始值为0则结果为false，否则为true</li>
+<li>布尔型赋给非布尔型，初始值为false结果为0，初始值为true结果为1</li>
+</ul>
+<h2 id="字面值常量"><a href="#字面值常量" class="headerlink" title="字面值常量"></a>字面值常量</h2><ul>
+<li><p>整型和浮点型</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">11</span>; <span class="comment">//10</span></span><br><span class="line"><span class="number">011</span>;<span class="comment">//8</span></span><br><span class="line"><span class="number">0x11</span>;<span class="comment">//16</span></span><br><span class="line"><span class="number">3.14159e0</span>; <span class="comment">//浮点,指数用E或e</span></span><br><span class="line"><span class="number">1.5E0</span>;      <span class="comment">//浮点</span></span><br></pre></td></tr></table></figure></li>
+<li><p>字符和字符串</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="string">&quot;abc&quot;</span>;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="string">&quot;world&quot;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>转义</p>
+<table>
+<thead>
+<tr>
+<th>描述</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>换行符</td>
+<td><code>\n</code></td>
+</tr>
+<tr>
+<td>横向制表符</td>
+<td><code>\t</code></td>
+</tr>
+<tr>
+<td>纵向制表符</td>
+<td><code>\v</code></td>
+</tr>
+<tr>
+<td>反斜线</td>
+<td><code>\\</code></td>
+</tr>
+<tr>
+<td>回车符</td>
+<td><code>\r</code></td>
+</tr>
+<tr>
+<td>退格符</td>
+<td><code>\b</code></td>
+</tr>
+<tr>
+<td>问号</td>
+<td><code>\?</code></td>
+</tr>
+<tr>
+<td>进纸符</td>
+<td><code>\f</code></td>
+</tr>
+<tr>
+<td>报警符</td>
+<td><code>\a</code></td>
+</tr>
+<tr>
+<td>双引号</td>
+<td><code>\&quot;</code></td>
+</tr>
+<tr>
+<td>单引号</td>
+<td><code>\&#39;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>泛化转义</p>
+<p>  \x后紧跟1个或多个十六进制数字，或者\后紧跟1个、2个或3个八进制数字</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; <span class="string">&#x27;\115&#x27;</span> &lt;&lt; <span class="string">&#x27;M&#x27;</span>  &lt;&lt; <span class="string">&#x27;\x4d&#x27;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<p>  如果反斜线\后面跟着的八进制数字超过3个，只有前3个数字与\构成转义序列</p>
+</li>
+</ul>
+</li>
+<li><p>布尔字面值 true，false</p>
+</li>
+<li><p>指针字面值 nullptr</p>
+</li>
+<li><p>指定字面值类型</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>位置</th>
+<th>值</th>
+<th>描述</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符和字符串字面值</td>
+<td>前缀</td>
+<td>u</td>
+<td>Unicode 16字符</td>
+<td><code>char16_t</code></td>
+</tr>
+<tr>
+<td>字符和字符串字面值</td>
+<td>前缀</td>
+<td>U</td>
+<td>Unicode 32字符</td>
+<td><code>char32_t</code></td>
+</tr>
+<tr>
+<td>字符和字符串字面值</td>
+<td>前缀</td>
+<td>L</td>
+<td>宽字符</td>
+<td><code>wchar_t</code></td>
+</tr>
+<tr>
+<td>字符和字符串字面值</td>
+<td>前缀</td>
+<td>u8</td>
+<td>UTF-8</td>
+<td><code>char</code></td>
+</tr>
+<tr>
+<td>整形字面值</td>
+<td>后缀</td>
+<td>u &#x2F; U</td>
+<td>-</td>
+<td><code>unsigned</code></td>
+</tr>
+<tr>
+<td>整形字面值</td>
+<td>后缀</td>
+<td>l &#x2F; L</td>
+<td>-</td>
+<td><code>long</code></td>
+</tr>
+<tr>
+<td>整形字面值</td>
+<td>后缀</td>
+<td>ll &#x2F; LL</td>
+<td>-</td>
+<td><code>long long</code></td>
+</tr>
+<tr>
+<td>浮点型字面值</td>
+<td>后缀</td>
+<td>f &#x2F; F</td>
+<td>-</td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td>浮点型字面值</td>
+<td>后缀</td>
+<td>l &#x2F; L</td>
+<td>-</td>
+<td><code>long double</code></td>
+</tr>
+</tbody></table>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-01开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/05/cpp-01%E5%BC%80%E5%A7%8B/">C++ 01开始</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/05/cpp-01%E5%BC%80%E5%A7%8B/" class="archive-article-date">
+  	<time datetime="2021-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;&lt;</code>运算符接受两个运算对象:左侧的运算对象必须是一个<code>ostream</code>对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的<code>ostream</code>对象中。输出运算符的计算结果就是其左侧运算对象。即计算结果就是我们写入给定值的那个<code>ostream</code>对象</p>
+<p><code>&gt;&gt;</code>接受一个<code>istream</code>作为其左侧运算对象，接受一个对象作为其右侧运算对象。它从给定的<code>istream</code>读入数据，并存入给定对象中。与输出运算符类似，输入运算符返回其左侧运算对象作为其计算结果</p>
+<p>使用一个<code>istream</code>对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结束符(end-of-file)，或遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效。处于无效状态的istream对象会使条件变为假</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//编写程序，从cin读取一组数，输出其和。</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> value = <span class="number">0</span>; std::cin &gt;&gt; value; ) <span class="comment">//ctrl + d 停止</span></span><br><span class="line">        sum += value;</span><br><span class="line">    std::cout &lt;&lt; sum &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>endl</strong>: 被称为<strong>操纵符</strong>（manipulator）的特殊值，效果是结束当前行，并将设备关联的缓冲区（buffer）中的内容刷到设备中。</p>
+<p>Unix和Mac下:</p>
+<ul>
+<li>键盘输入文件结束符：<code>ctrl+d</code></li>
+<li>获取命令状态<code>echo $?</code></li>
+<li>重定向 <code>./a.out &lt; filea &gt; fileb</code></li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
+<li>单行注释： <code>//</code></li>
+<li>多行注释： <code>/**/</code>。编译器将<code>/*</code>和<code>*/</code>之间的内容都作为注释内容忽略。多行注释不能嵌套。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/05/cpp-01%E5%BC%80%E5%A7%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-thread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1122,1252 +1826,6 @@ pthread_cond_broadcast()： 唤醒阻塞在条件变量上的 所有线程。
 
 
   
-    <article id="post-linux-process" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/15/linux-process/">Linux Process</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/15/linux-process/" class="archive-article-date">
-  	<time datetime="2021-05-15T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>进程：</p>
-<pre><code>程序：死的。只占用磁盘空间。		
-
-进程；活的。运行起来的程序。占用内存、cpu等系统资源。
-</code></pre>
-<p>PCB进程控制块：</p>
-<pre><code>进程id
-
-文件描述符表
-
-进程状态：	初始态、就绪态、运行态、挂起态、终止态。
-
-进程工作目录位置
-
-*umask掩码 
-
-信号相关信息资源。
-
-用户id和组id
-</code></pre>
-<p>fork函数：</p>
-<pre><code>pid_t fork(void)
-
-创建子进程。父子进程各自返回。父进程返回子进程pid。 子进程返回 0.
-
-getpid();getppid();
-
-循环创建N个子进程模型。 每个子进程标识自己的身份。
-</code></pre>
-<p>父子进程相同：</p>
-<pre><code>刚fork后。 data段、text段、堆、栈、环境变量、全局变量、宿主目录位置、进程工作目录位置、信号处理方式
-</code></pre>
-<p>父子进程不同：</p>
-<pre><code>进程id、返回值、各自的父进程、进程创建时间、闹钟、未决信号集
-</code></pre>
-<p>父子进程共享：</p>
-<pre><code>读时共享、写时复制。———————— 全局变量。
-
-1. 文件描述符 2. mmap映射区。
-</code></pre>
-<p>gdb调试：</p>
-<pre><code>设置父进程调试路径：set follow-fork-mode parent (默认)
-
-设置子进程调试路径：set follow-fork-mode child
-</code></pre>
-<p>exec函数族：</p>
-<pre><code>使进程执行某一程序。成功无返回值，失败返回 -1
-
-int execlp(const char *file, const char *arg, ...);		借助 PATH 环境变量找寻待执行程序
-
-    参1： 程序名
-
-    参2： argv0
-
-    参3： argv1
-
-    ...： argvN
-
-    哨兵：NULL
-
-int execl(const char *path, const char *arg, ...);		自己指定待执行程序路径。
-
-int execvp();
-</code></pre>
-<p>ps ajx –&gt; pid ppid gid sid </p>
-<p>孤儿进程：</p>
-<pre><code>父进程先于子进终止，子进程沦为“孤儿进程”，会被 init 进程领养。
-</code></pre>
-<p>僵尸进程：</p>
-<pre><code>子进程终止，父进程尚未对子进程进行回收，在此期间，子进程为“僵尸进程”。  kill 对其无效。
-</code></pre>
-<p>wait函数：	回收子进程退出资源， 阻塞回收任意一个。</p>
-<pre><code>pid_t wait(int *status)
-
-参数：（传出） 回收进程的状态。
-
-返回值：成功： 回收进程的pid
-
-    失败： -1， errno
-
-函数作用1：	         阻塞等待子进程退出
-
-函数作用2：	清理子进程残留在内核的 pcb 资源
-
-函数作用3：	通过传出参数，得到子进程结束状态
-
-
-获取子进程正常终止值：
-
-    WIFEXITED(status) --》 为真 --》调用 WEXITSTATUS(status) --》 得到 子进程 退出值。
-
-获取导致子进程异常终止信号：
-
-    WIFSIGNALED(status) --》 为真 --》调用 WTERMSIG(status) --》 得到 导致子进程异常终止的信号编号。
-</code></pre>
-<p>waitpid函数：	指定某一个进程进行回收。可以设置非阻塞。			waitpid(-1, &amp;status, 0) &#x3D;&#x3D; wait(&amp;status);</p>
-<pre><code>pid_t waitpid(pid_t pid, int *status, int options)
-
-参数：
-    pid：指定回收某一个子进程pid
-
-        &gt; 0: 待回收的子进程pid
-
-        -1：任意子进程
-
-        0：同组的子进程。
-
-    status：（传出） 回收进程的状态。
-
-    options：WNOHANG 指定回收方式为，非阻塞。
-
-返回值：
-
-    &gt; 0 : 表成功回收的子进程 pid
-
-    0 : 函数调用时， 参3 指定了WNOHANG， 并且，没有子进程结束。
-
-    -1: 失败。errno
-</code></pre>
-<p>总结：</p>
-<pre><code>wait、waitpid	一次调用，回收一个子进程。
-
-想回收多个。while 
-</code></pre>
-<p>进程间通信的常用方式，特征：</p>
-<pre><code>管道：简单
-
-信号：开销小
-
-mmap映射：非血缘关系进程间
-
-socket（本地套接字）：稳定
-</code></pre>
-<p>管道： </p>
-<pre><code>实现原理： 内核借助环形队列机制，使用内核缓冲区实现。
-
-特质；	1. 伪文件
-
-    2. 管道中的数据只能一次读取。
-
-    3. 数据在管道中，只能单向流动。
-
-局限性：1. 自己写，不能自己读。
-
-    2. 数据不可以反复读。
-
-    3. 半双工通信。
-
-    4. 血缘关系进程间可用。
-</code></pre>
-<p><img src="/../photos/src/linux/pipe.png"></p>
-<p>pipe函数：	创建，并打开管道。</p>
-<pre><code>int pipe(int fd[2]);
-
-参数：	fd[0]: 读端。
-
-    fd[1]: 写端。
-
-返回值： 成功： 0
-
-     失败： -1 errno
-</code></pre>
-<p>管道的读写行为：</p>
-<pre><code>读管道：
-    1. 管道有数据，read返回实际读到的字节数。
-
-    2. 管道无数据：	1）无写端，read返回0 （类似读到文件尾）
-
-            2）有写端，read阻塞等待。
-
-写管道：
-    1. 无读端， 异常终止。 （SIGPIPE导致的）
-
-    2. 有读端：	1） 管道已满， 阻塞等待
-
-            2） 管道未满， 返回写出的字节个数。
-</code></pre>
-<p>pipe管道： 用于有血缘关系的进程间通信。  ps aux | grep 		ls | wc -l	</p>
-<pre><code>父子进程间通信：
-
-
-兄弟进程间通信：
-</code></pre>
-<p>fifo管道：可以用于无血缘关系的进程间通信。</p>
-<pre><code>命名管道：  mkfifo 
-
-无血缘关系进程间通信：
-
-    读端，open fifo O_RDONLY
-
-    写端，open fifo O_WRONLY
-</code></pre>
-<p>文件实现进程间通信：</p>
-<pre><code>打开的文件是内核中的一块缓冲区。多个无血缘关系的进程，可以同时访问该文件。
-</code></pre>
-<p>共享内存映射:</p>
-<p>void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);		创建共享内存映射</p>
-<pre><code>参数：
-    addr： 	指定映射区的首地址。通常传NULL，表示让系统自动分配
-
-    length：共享内存映射区的大小。（&lt;= 文件的实际大小）
-
-    prot：	共享内存映射区的读写属性。PROT_READ、PROT_WRITE、PROT_READ|PROT_WRITE
-
-    flags：	标注共享内存的共享属性。MAP_SHARED、MAP_PRIVATE
-
-    fd:	用于创建共享内存映射区的那个文件的 文件描述符。
-
-    offset：默认0，表示映射文件全部。偏移位置。需是 4k 的整数倍。
-
-返回值：
-
-    成功：映射区的首地址。
-
-    失败：MAP_FAILED (void*(-1))， errno
-</code></pre>
-<p>int munmap(void *addr, size_t length);		释放映射区。</p>
-<pre><code>addr：mmap 的返回值
-
-length：大小
-</code></pre>
-<p>使用注意事项：</p>
-<pre><code>1. 用于创建映射区的文件大小为 0，实际指定非0大小创建映射区，出 “总线错误”。
-
-2. 用于创建映射区的文件大小为 0，实际制定0大小创建映射区， 出 “无效参数”。
-
-3. 用于创建映射区的文件读写属性为，只读。映射区属性为 读、写。 出 “无效参数”。
-
-4. 创建映射区，需要read权限。当访问权限指定为 “共享”MAP_SHARED是， mmap的读写权限，应该 &lt;=文件的open权限。	只写不行。
-
-5. 文件描述符fd，在mmap创建映射区完成即可关闭。后续访问文件，用 地址访问。
-
-6. offset 必须是 4096的整数倍。（MMU 映射的最小单位 4k ）
-
-7. 对申请的映射区内存，不能越界访问。 
-
-8. munmap用于释放的 地址，必须是mmap申请返回的地址。
-
-9. 映射区访问权限为 “私有”MAP_PRIVATE, 对内存所做的所有修改，只在内存有效，不会反应到物理磁盘上。
-
-10.  映射区访问权限为 “私有”MAP_PRIVATE, 只需要open文件时，有读权限，用于创建映射区即可。
-</code></pre>
-<p>mmap函数的保险调用方式：</p>
-<pre><code>1. fd = open（&quot;文件名&quot;， O_RDWR）;
-
-2. mmap(NULL, 有效文件大小， PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-</code></pre>
-<p>父子进程使用 mmap 进程间通信：</p>
-<pre><code>父进程 先 创建映射区。 open（ O_RDWR） mmap( MAP_SHARED );
-
-指定 MAP_SHARED 权限
-
-fork() 创建子进程。
-
-一个进程读， 另外一个进程写。
-</code></pre>
-<p>无血缘关系进程间 mmap 通信：  				【会写】</p>
-<pre><code>两个进程 打开同一个文件，创建映射区。
-
-指定flags 为 MAP_SHARED。
-
-一个进程写入，另外一个进程读出。
-
-【注意】：无血缘关系进程间通信。mmap：数据可以重复读取。
-
-                fifo：数据只能一次读取。
-</code></pre>
-<p>匿名映射：只能用于 血缘关系进程间通信。</p>
-<pre><code>p = (int *)mmap(NULL, 40, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
-</code></pre>
-<p>信号共性：</p>
-<pre><code>简单、不能携带大量信息、满足条件才发送。
-</code></pre>
-<p>信号的特质：</p>
-<pre><code>信号是软件层面上的“中断”。一旦信号产生，无论程序执行到什么位置，必须立即停止运行，处理信号，处理结束，再继续执行后续指令。
-
-所有信号的产生及处理全部都是由【内核】完成的。
-</code></pre>
-<p>信号相关的概念：</p>
-<pre><code>产生信号：
-
-    1. 按键产生
-
-    2. 系统调用产生
-
-    3. 软件条件产生
-
-    4. 硬件异常产生
-
-    5. 命令产生
-
-概念：
-    未决：产生与递达之间状态。  
-
-    递达：产生并且送达到进程。直接被内核处理掉。
-
-    信号处理方式： 执行默认处理动作、忽略、捕捉（自定义）
-
-
-    阻塞信号集（信号屏蔽字）： 本质：位图。用来记录信号的屏蔽状态。一旦被屏蔽的信号，在解除屏蔽前，一直处于未决态。
-
-    未决信号集：本质：位图。用来记录信号的处理状态。该信号集中的信号，表示，已经产生，但尚未被处理。
-</code></pre>
-<p>信号4要素：</p>
-<pre><code>信号使用之前，应先确定其4要素，而后再用！！！
-
-编号、名称、对应事件、默认处理动作。
-</code></pre>
-<p>kill命令 和 kill函数：</p>
-<pre><code>int kill（pid_t pid, int signum）
-
-参数：
-    pid: 	&gt; 0:发送信号给指定进程
-
-        = 0：发送信号给跟调用kill函数的那个进程处于同一进程组的进程。
-
-        &lt; -1: 取绝对值，发送信号给该绝对值所对应的进程组的所有组员。
-
-        = -1：发送信号给，有权限发送的所有进程。
-
-    signum：待发送的信号
-
-返回值：
-    成功： 0
-
-    失败： -1 errno
-</code></pre>
-<p>alarm 函数：使用自然计时法。</p>
-<pre><code>定时发送SIGALRM给当前进程。
-
-unsigned int alarm(unsigned int seconds);
-
-    seconds：定时秒数
-
-    返回值：上次定时剩余时间。
-
-        无错误现象。
-
-    alarm（0）； 取消闹钟。
-
-time 命令 ： 查看程序执行时间。   实际时间 = 用户时间 + 内核时间 + 等待时间。  --》 优化瓶颈 IO
-</code></pre>
-<p>setitimer函数：</p>
-<pre><code>int setitimer(int which, const struct itimerval *new_value, struct itimerval *old_value);
-
-参数：
-    which：	ITIMER_REAL： 采用自然计时。 ——&gt; SIGALRM
-
-        ITIMER_VIRTUAL: 采用用户空间计时  ---&gt; SIGVTALRM
-
-        ITIMER_PROF: 采用内核+用户空间计时 ---&gt; SIGPROF
-    
-    new_value：定时秒数
-
-               类型：struct itimerval &#123;
-
-                           struct timeval &#123;
-                               time_t      tv_sec;         /* seconds */
-                               suseconds_t tv_usec;        /* microseconds */
-
-                       &#125;it_interval;---&gt; 周期定时秒数
-
-                            struct timeval &#123;
-                               time_t      tv_sec;         
-                               suseconds_t tv_usec;        
-
-                       &#125;it_value;  ---&gt; 第一次定时秒数  
-                    &#125;;
-
-    old_value：传出参数，上次定时剩余时间。
-
-    e.g.
-        struct itimerval new_t;	
-        struct itimerval old_t;	
-
-        new_t.it_interval.tv_sec = 0;
-        new_t.it_interval.tv_usec = 0;
-        new_t.it_value.tv_sec = 1;
-        new_t.it_value.tv_usec = 0;
-
-        int ret = setitimer(&amp;new_t, &amp;old_t);  定时1秒
-
-返回值：
-    成功： 0
-
-    失败： -1 errno
-</code></pre>
-<p>其他几个发信号函数：</p>
-<pre><code>int raise(int sig);
-
-void abort(void);
-</code></pre>
-<p>信号集操作函数：</p>
-<pre><code>sigset_t set;  自定义信号集。
-
-sigemptyset(sigset_t *set);	清空信号集
-
-sigfillset(sigset_t *set);	全部置1
-
-sigaddset(sigset_t *set, int signum);	将一个信号添加到集合中
-
-sigdelset(sigset_t *set, int signum);	将一个信号从集合中移除
-
-sigismember（const sigset_t *set，int signum); 判断一个信号是否在集合中。 在--》1， 不在--》0
-</code></pre>
-<p>设置信号屏蔽字和解除屏蔽：</p>
-<pre><code>int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
-
-    how:	SIG_BLOCK:	设置阻塞
-
-        SIG_UNBLOCK:	取消阻塞
-
-        SIG_SETMASK:	用自定义set替换mask。
-
-    set：	自定义set
-
-    oldset：旧有的 mask。
-</code></pre>
-<p>查看未决信号集：</p>
-<pre><code>int sigpending(sigset_t *set);
-
-    set： 传出的 未决信号集。
-</code></pre>
-<p>【信号捕捉】：</p>
-<pre><code>signal();
-
-【sigaction();】 重点！！！
-
-    
-</code></pre>
-<p>信号捕捉特性：</p>
-<pre><code>1. 捕捉函数执行期间，信号屏蔽字 由 mask --&gt; sa_mask , 捕捉函数执行结束。 恢复回mask
-
-2. 捕捉函数执行期间，本信号自动被屏蔽(sa_flgs = 0).
-
-3. 捕捉函数执行期间，被屏蔽信号多次发送，解除屏蔽后只处理一次！
-</code></pre>
-<p>借助信号完成 子进程回收。</p>
-<p>守护进程：</p>
-<pre><code>daemon进程。通常运行与操作系统后台，脱离控制终端。一般不与用户直接交互。周期性的等待某个事件发生或周期性执行某一动作。
-
-不受用户登录注销影响。通常采用以d结尾的命名方式。
-</code></pre>
-<p>守护进程创建步骤：</p>
-<pre><code>1. fork子进程，让父进程终止。
-
-2. 子进程调用 setsid() 创建新会话
-
-3. 通常根据需要，改变工作目录位置 chdir()， 防止目录被卸载。
-
-4. 通常根据需要，重设umask文件权限掩码，影响新文件的创建权限。  022 -- 755	0345 --- 432   r---wx-w-   422
-
-5. 通常根据需要，关闭/重定向 文件描述符
-
-6. 守护进程 业务逻辑。while（）
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/15/linux-process/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-io" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/12/linux-io/">Linux io</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/12/linux-io/" class="archive-article-date">
-  	<time datetime="2021-05-12T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>open函数：</p>
-<pre><code>int open(char *pathname, int flags)	#include &lt;unistd.h&gt;
-
-参数：
-    pathname: 欲打开的文件路径名
-
-    flags：文件打开方式：	#include &lt;fcntl.h&gt;
-
-        O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
-
-返回值：
-    成功： 打开文件所得到对应的 文件描述符（整数）
-
-    失败： -1， 设置errno	
-
-int open(char *pathname, int flags， mode_t mode)		123  775	
-
-参数：
-    pathname: 欲打开的文件路径名
-
-    flags：文件打开方式：	O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
-
-    mode: 参数3使用的前提， 参2指定了 O_CREAT。	取值8进制数，用来描述文件的 访问权限。 rwx    0664
-
-        创建文件最终权限 = mode &amp; ~umask
-
-返回值：
-    成功： 打开文件所得到对应的 文件描述符（整数）
-
-    失败： -1， 设置errno	
-</code></pre>
-<p>close函数：</p>
-<pre><code>int close(int fd);
-</code></pre>
-<p>错误处理函数：		与 errno 相关。</p>
-<pre><code>printf(&quot;xxx error: %d\n&quot;, errno);
-
-char *strerror(int errnum);
-
-    printf(&quot;xxx error: %s\n&quot;, strerror(errno));
-
-void perror(const char *s);
-
-    perror(&quot;open error&quot;);
-</code></pre>
-<p>read函数：</p>
-<pre><code>ssize_t read(int fd, void *buf, size_t count);
-
-参数：
-    fd：文件描述符
-
-    buf：存数据的缓冲区
-
-    count：缓冲区大小
-
-返回值：
-
-    0：读到文件末尾。
-
-    成功；	&gt; 0 读到的字节数。
-
-    失败：	-1， 设置 errno
-
-    -1： 并且 errno = EAGIN 或 EWOULDBLOCK, 说明不是read失败，而是read在以非阻塞方式读一个设备文件（网络文件），并且文件无数据。
-</code></pre>
-<p>write函数：</p>
-<pre><code>ssize_t write(int fd, const void *buf, size_t count);
-
-参数：
-    fd：文件描述符
-
-    buf：待写出数据的缓冲区
-
-    count：数据大小
-
-返回值：
-
-    成功；	写入的字节数。
-
-    失败：	-1， 设置 errno
-</code></pre>
-<p>文件描述符：</p>
-<pre><code>PCB进程控制块：本质 结构体。
-
-成员：文件描述符表。
-
-文件描述符：0/1/2/3/4。。。。/1023     表中可用的最小的。
-
-0 - STDIN_FILENO
-
-1 - STDOUT_FILENO
-
-2 - STDERR_FILENO
-</code></pre>
-<p>阻塞、非阻塞：  是设备文件、网络文件的属性。</p>
-<pre><code>产生阻塞的场景。 读设备文件。读网络文件。（读常规文件无阻塞概念。）
-
-/dev/tty -- 终端文件。
-
-open(&quot;/dev/tty&quot;, O_RDWR|O_NONBLOCK)	--- 设置 /dev/tty 非阻塞状态。(默认为阻塞状态)
-</code></pre>
-<p>fcntl：<br>    int (int fd, int cmd, …)</p>
-<pre><code>int flgs = fcntl(fd,  F_GETFL);
-
-flgs |= O_NONBLOCK
-
-fcntl(fd,  F_SETFL, flgs);
-
-获取文件状态： F_GETFL
-
-设置文件状态： F_SETFL
-</code></pre>
-<p>lseek函数：</p>
-<pre><code>off_t lseek(int fd, off_t offset, int whence);
-
-参数：
-    fd：文件描述符
-
-    offset： 偏移量
-
-    whence：起始偏移位置： SEEK_SET/SEEK_CUR/SEEK_END
-
-返回值：
-
-    成功：较起始位置偏移量
-
-    失败：-1 errno
-
-应用场景：	
-    1. 文件的“读”、“写”使用同一偏移位置。
-
-    2. 使用lseek获取文件大小
-
-    3. 使用lseek拓展文件大小：要想使文件大小真正拓展，必须引起IO操作。
-
-        使用 truncate 函数，直接拓展文件。	int ret = truncate(&quot;dict.cp&quot;, 250);
-</code></pre>
-<p>传入参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 同常有const关键字修饰。
-
-3. 指针指向有效区域， 在函数内部做读操作。
-</code></pre>
-<p>传出参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 在函数调用之前，指针指向的空间可以无意义，但必须有效。
-
-3. 在函数内部，做写操作。
-
-4。函数调用结束后，充当函数返回值。
-</code></pre>
-<p>传入传出参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 在函数调用之前，指针指向的空间有实际意义。
-
-3. 在函数内部，先做读操作，后做写操作。
-
-4. 函数调用结束后，充当函数返回值。
-</code></pre>
-<p>stat&#x2F;lstat 函数：</p>
-<pre><code>int stat(const char *path, struct stat *buf);
-
-参数：
-    path： 文件路径
-
-    buf：（传出参数） 存放文件属性。
-
-返回值：
-
-    成功： 0
-
-    失败： -1 errno
-
-获取文件大小： buf.st_size
-
-获取文件类型： buf.st_mode
-
-获取文件权限： buf.st_mode
-
-符号穿透：stat会。lstat不会。
-</code></pre>
-<p><img src="/../photos/src/linux/io01.png"></p>
-<p>link&#x2F;unlink:</p>
-<pre><code>隐式回收。
-</code></pre>
-<p>目录操作函数：</p>
-<pre><code>DIR * opendir(char *name);
-
-int closedir(DIR *dp);
-
-struct dirent *readdir(DIR * dp);
-
-    struct dirent &#123;
-
-        inode
-
-        char dname[256];
-    &#125;
-</code></pre>
-<p>递归遍历目录：</p>
-<pre><code>1. 判断命令行参数，获取用户要查询的目录名。	int argc, char *argv[1]
-
-    argc == 1  --&gt; ./
-
-2. 判断用户指定的是否是目录。 stat  S_ISDIR(); --&gt; 封装函数 isFile() &#123;   &#125;
-
-3. 读目录： read_dir() &#123; 
-
-    opendir（dir）
-
-    while （readdir（））&#123;
-
-        普通文件，直接打印
-
-        目录：
-            拼接目录访问绝对路径。sprintf(path, &quot;%s/%s&quot;, dir, d_name) 
-
-            递归调用自己。--》 opendir（path） readdir closedir
-    &#125;
-
-    closedir（）
-
-    &#125;
-    read_dir() --&gt; isFile() ---&gt; read_dir()
-</code></pre>
-<p>dup 和 dup2：</p>
-<pre><code>int dup(int oldfd);		文件描述符复制。
-
-    oldfd: 已有文件描述符
-
-    返回：新文件描述符。
-
-int dup2(int oldfd, int newfd); 文件描述符复制。重定向。
-</code></pre>
-<p>fcntl 函数实现 dup：</p>
-<pre><code>int fcntl(int fd, int cmd, ....)
-
-cmd: F_DUPFD
-
-参3:  	被占用的，返回最小可用的。
-
-    未被占用的， 返回=该值的文件描述符。
-</code></pre>
-<p>fcntl 函数实现 dup：</p>
-<pre><code>int fcntl(int fd, int cmd, ....)
-
-cmd: F_DUPFD
-
-参3:  	被占用的，返回最小可用的。
-
-    未被占用的， 返回=该值的文件描述符。
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/12/linux-io/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-gcc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/10/linux-gcc/">Linux gcc</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/10/linux-gcc/" class="archive-article-date">
-  	<time datetime="2021-05-10T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>gcc编译：</p>
-<pre><code>4步骤： 预处理、编译、汇编、连接。
-
--I：	指定头文件所在目录位置。
-
--c：	只做预处理、编译、汇编。得到 二进制 文件！！！
-
--g：	编译时添加调试语句。 主要支持 gdb 调试。
-
--Wall： 显示所有警告信息。
-
--D：	向程序中“动态”注册宏定义。   #define NAME VALUE
-</code></pre>
-<p><img src="/../photos/src/linux/gcc01.png"><br><img src="/../photos/src/linux/gcc02.png"></p>
-<p>生成静态库： </p>
-<pre><code>    ar  rcs libtest.a test.o 
-
-    nm libtest.a   查看信息
-</code></pre>
-<p><img src="/../photos/src/linux/gcc03.png"></p>
-<p>生成动态库：</p>
-<p>   (生成与位置无关的代码 -fPIC） 使用 gcc -shared 制作动态库</p>
-<pre><code>gcc -fPIC -c test.c  -o test.o   	
-gcc  -shared -o libtest.so test.o 
-</code></pre>
-<p>解决动态库无法加载的问题：</p>
-<ul>
-<li>放到lib目录中</li>
-<li>临时 export LD_LIBRARY_PATH &#x3D; 动态库路径</li>
-<li>永久  .bashrc 添加 2(动态库路径要用绝对路径)   更新： source .bashrc</li>
-<li>&#x2F;etc&#x2F;ld.so.conf 添加动态库路径   更新：sudo  ldconfig</li>
-</ul>
-<p>运行可以执行程序 .&#x2F;a.out 出错！！！！ — ldd a.out –&gt; “not found”</p>
-<pre><code>error while loading shared libraries: libxxx.so: cannot open shared object file: No such file or directory
-
-原因：
-    链接器：	工作于链接阶段， 工作时需要 -l 和 -L
-
-    动态链接器：	工作于程序运行阶段，工作时需要提供动态库所在目录位置。
-
-解决方式：				
-
-    【1】 通过环境变量：  export LD_LIBRARY_PATH=动态库路径
-
-        ./a.out 成功！！！  （临时生效， 终端重启环境变量失效）
-
-    【2】 永久生效： 写入 终端配置文件。  .bashrc  建议使用绝对路径。
-
-        1) vi ~/.bashrc
-
-        2) 写入 export LD_LIBRARY_PATH=动态库路径  保存
-
-        3）. .bashrc/  source .bashrc / 重启 终端  ---&gt; 让修改后的.bashrc生效
-
-        4）./a.out 成功！！！ 
-
-    【3】 拷贝自定义动态库 到 /lib (标准C库所在目录位置)
-
-    【4】 配置文件法
-
-        1）sudo vi /etc/ld.so.conf
-
-        2) 写入 动态库绝对路径  保存
-
-        3）sudo ldconfig -v  使配置文件生效。
-
-        4）./a.out 成功！！！--- 使用 ldd  a.out 查看
-</code></pre>
-<p>gdb</p>
-<p>基础指令：<br>    -g：使用该参数编译可以执行文件，得到调试表。</p>
-<pre><code>gdb ./a.out
-
-list： list 1  列出源码。根据源码指定 行号设置断点。
-
-b：	b 20	在20行位置设置断点。
-
-run/r:	运行程序
-
-n/next: 下一条指令（会越过函数）
-
-s/step: 下一条指令（会进入函数）
-
-p/print：p i  查看变量的值。
-
-continue：继续执行断点后续指令。
-
-finish：结束当前函数调用。 
-
-quit：退出gdb当前调试。
-</code></pre>
-<p>其他指令：</p>
-<pre><code>run：使用run查找段错误出现位置。
-
-set args： 设置main函数命令行参数 （在 start、run 之前）
-
-run 字串1 字串2 ...: 设置main函数命令行参数
-
-info b: 查看断点信息表
-
-b 20 if i = 5：	设置条件断点。
-
-ptype：查看变量类型。
-
-bt：列出当前程序正存活着的栈帧。
-
-frame： 根据栈帧编号，切换栈帧。
-
-display：设置跟踪变量
-
-undisplay：取消设置跟踪变量。 使用跟踪变量的编号。
-</code></pre>
-<p>Makefile</p>
-<pre><code>命名：makefile	 Makefile  --- make 命令
-
-1 个规则：
-
-    目标：依赖条件
-    （一个tab缩进）命令
-
-    1. 目标的时间必须晚于依赖条件的时间，否则，更新目标
-
-    2. 依赖条件如果不存在，找寻新的规则去产生依赖条件。
-
-ALL：指定 makefile 的终极目标。
-
-
-2 个函数：
-
-    src = $(wildcard ./*.c): 匹配当前工作目录下的所有.c 文件。将文件名组成列表，赋值给变量 src。  src = add.c sub.c div1.c 
-
-    obj = $(patsubst %.c, %.o, $(src)): 将参数3中，包含参数1的部分，替换为参数2。 obj = add.o sub.o div1.o
-
-clean:	(没有依赖)
-
-    -rm -rf $(obj) a.out	“-”：作用是，删除不存在文件时，不报错。顺序执行结束。
-
-3 个自动变量：
-
-    $@: 在规则的命令中，表示规则中的目标。
-
-    $^: 在规则的命令中，表示所有依赖条件。
-
-    $&lt;: 在规则的命令中，表示第一个依赖条件。如果将该变量应用在模式规则中，它可将依赖条件列表中的依赖依次取出，套用模式规则。
-
-模式规则：
-
-    %.o:%.c
-       gcc -c $&lt; -o %@
-
-静态模式规则：
-
-    $(obj):%.o:%.c
-       gcc -c $&lt; -o %@	
-
-伪目标：
-
-    .PHONY: clean ALL
-
-参数：
-    -n：模拟执行make、make clean 命令。
-
-    -f：指定文件执行 make 命令。				xxxx.mk
-</code></pre>
-<p><img src="/../photos/src/linux/gcc04.png"><br><img src="/../photos/src/linux/gcc05.png"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/10/linux-gcc/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-markdown" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/07/markdown/">markdown</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/07/markdown/" class="archive-article-date">
-  	<time datetime="2021-05-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="01标题"><a href="#01标题" class="headerlink" title="01标题"></a>01标题</h1><h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h1 id="一级"><a href="#一级" class="headerlink" title="一级"></a>一级</h1><h2 id="二级"><a href="#二级" class="headerlink" title="二级"></a>二级</h2><h3 id="三级"><a href="#三级" class="headerlink" title="三级"></a>三级</h3><h4 id="四级"><a href="#四级" class="headerlink" title="四级"></a>四级</h4><h5 id="五级"><a href="#五级" class="headerlink" title="五级"></a>五级</h5><h6 id="六级"><a href="#六级" class="headerlink" title="六级"></a>六级</h6><h1 id="02换行"><a href="#02换行" class="headerlink" title="02换行"></a>02换行</h1><p>换行可以用两个空格回车<br>实现换行</p>
-<p>直接空一行实现新的段落</p>
-<h1 id="03字体"><a href="#03字体" class="headerlink" title="03字体"></a>03字体</h1><p><em>斜体</em><br><strong>粗体</strong><br><em><strong>斜粗</strong></em></p>
-<h1 id="04分割线"><a href="#04分割线" class="headerlink" title="04分割线"></a>04分割线</h1><hr>
-<p>分割线</p>
-<hr>
-<h1 id="05删除线"><a href="#05删除线" class="headerlink" title="05删除线"></a>05删除线</h1><p><del>删除</del></p>
-<h1 id="06下划线"><a href="#06下划线" class="headerlink" title="06下划线"></a>06下划线</h1><p>++下划线++\ <u>下划线</u></p>
-<h1 id="07注脚"><a href="#07注脚" class="headerlink" title="07注脚"></a>07注脚</h1><p>他在 run boost <a href="%E5%8F%8C%E6%9E%B6%E8%B7%B3%E8%B7%83">^RUNBOOST</a></p>
-<h1 id="08列表"><a href="#08列表" class="headerlink" title="08列表"></a>08列表</h1><ul>
-<li>哈哈哈</li>
-<li>嘿嘿嘿</li>
-</ul>
-<!---->
-
-<ul>
-<li>兔兔兔</li>
-<li>piupiupiu</li>
-</ul>
-<!---->
-
-<ul>
-<li>papapa</li>
-<li>hihihi</li>
-</ul>
-<ol>
-<li><p>第一项</p>
-</li>
-<li><p>第二项</p>
-</li>
-<li><p>第三项</p>
-</li>
-<li><p>第一项：</p>
-<ul>
-<li>四个空格</li>
-<li>第一项嵌套的第二个元素</li>
-</ul>
-</li>
-<li><p>第二项：</p>
-<ul>
-<li>第二项嵌套的第一个元素</li>
-<li>第二项嵌套的第二个元素</li>
-</ul>
-</li>
-</ol>
-<h1 id="09区块"><a href="#09区块" class="headerlink" title="09区块"></a>09区块</h1><blockquote>
-<p>这是一个区块<br>这是一个区块</p>
-<blockquote>
-<p>嵌套区块</p>
-<ol>
-<li>列表</li>
-<li>列表</li>
-</ol>
-<ul>
-<li>列表</li>
-</ul>
-</blockquote>
-</blockquote>
-<h1 id="10代码"><a href="#10代码" class="headerlink" title="10代码"></a>10代码</h1><p><code>printf()</code> 函数<br><code>scanf()</code> 函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<h1 id="11链接"><a href="#11链接" class="headerlink" title="11链接"></a>11链接</h1><p><a href="www.baidu.com">百度</a></p>
-<h1 id="12图片"><a href="#12图片" class="headerlink" title="12图片"></a>12图片</h1><p><img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" alt="百度"></p>
-<h1 id="13表格"><a href="#13表格" class="headerlink" title="13表格"></a>13表格</h1><table>
-<thead>
-<tr>
-<th>header 1</th>
-<th>header 2</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>row 1 col 1</td>
-<td>row 1 col 2</td>
-</tr>
-<tr>
-<td>row 2 col 1</td>
-<td>row 2 col 2</td>
-</tr>
-</tbody></table>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">markdown</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/07/markdown/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -2477,11 +1935,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">

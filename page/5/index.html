@@ -145,6 +145,217 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-c-10位运算和文件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">C-10位运算和文件</a>
+    </h1>
+  
+
+        
+        <a href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/" class="archive-article-date">
+  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>位运算的操作对象只能是整形或字符型</p>
+<h3 id="amp-按位与"><a href="#amp-按位与" class="headerlink" title="&amp; 按位与"></a>&amp; 按位与</h3><p>全1为1 ，有0为0  （清零）</p>
+<h3 id="按位或"><a href="#按位或" class="headerlink" title="| 按位或"></a>| 按位或</h3><p>全1为1，全0为0 </p>
+<h3 id="按位异或"><a href="#按位异或" class="headerlink" title="^ 按位异或"></a>^ 按位异或</h3><p>相异为1，相同为0</p>
+<h3 id="按位取反（单目运算符）"><a href="#按位取反（单目运算符）" class="headerlink" title="~ 按位取反（单目运算符）"></a>~ 按位取反（单目运算符）</h3><p>~24</p>
+<h3 id="《-按位左移"><a href="#《-按位左移" class="headerlink" title="《 按位左移"></a>《 按位左移</h3><p>将二进制位按位左移n位</p>
+<p>5&lt;&lt;2 (5左移两位&#x3D;5 * 2^2)</p>
+<h3 id="》按位右移"><a href="#》按位右移" class="headerlink" title="》按位右移"></a>》按位右移</h3><h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><h3 id="文件分类"><a href="#文件分类" class="headerlink" title="文件分类"></a>文件分类</h3><ol>
+<li>文本文件</li>
+<li>二进制文件</li>
+</ol>
+<p>c语言按字符（字节）存储文件</p>
+<h3 id="文件类型指针"><a href="#文件类型指针" class="headerlink" title="文件类型指针"></a>文件类型指针</h3><p>FILE 就是文件类型，是一个结构体类型</p>
+<p>FILE *fp;</p>
+<h3 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h3><p><img src="/../photos/src/c/10-open.png"></p>
+<h3 id="关闭文件"><a href="#关闭文件" class="headerlink" title="关闭文件"></a>关闭文件</h3><p><img src="/../photos/src/c/10-close.png"></p>
+<h3 id="fputc"><a href="#fputc" class="headerlink" title="fputc"></a>fputc</h3><p><img src="/../photos/src/c/10-fputc.png"></p>
+<h3 id="fgetc"><a href="#fgetc" class="headerlink" title="fgetc"></a>fgetc</h3><p><img src="/../photos/src/c/10-fgetc.png"></p>
+<h3 id="fputs"><a href="#fputs" class="headerlink" title="fputs"></a>fputs</h3><p><img src="/../photos/src/c/10-fputs.png"></p>
+<h3 id="fgets"><a href="#fgets" class="headerlink" title="fgets"></a>fgets</h3><p><img src="/../photos/src/c/10-fgets.png"></p>
+<h3 id="fread-fwrite"><a href="#fread-fwrite" class="headerlink" title="fread fwrite"></a>fread fwrite</h3><p><img src="/../photos/src/c/10-frw.png"></p>
+<h3 id="fprintf-fscanf"><a href="#fprintf-fscanf" class="headerlink" title="fprintf fscanf"></a>fprintf fscanf</h3><p><img src="/../photos/src/c/10-fprintf.png"></p>
+<h3 id="feof"><a href="#feof" class="headerlink" title="feof"></a>feof</h3><p><img src="/../photos/src/c/10-feof.png"></p>
+<h3 id="rewind"><a href="#rewind" class="headerlink" title="rewind"></a>rewind</h3><p><img src="/../photos/src/c/10-rewind.png"></p>
+<h3 id="fseek"><a href="#fseek" class="headerlink" title="fseek"></a>fseek</h3><p><img src="/../photos/src/c/10-fseek.png"><br><img src="/../photos/src/c/10-fseek2.png"></p>
+<h3 id="ftell"><a href="#ftell" class="headerlink" title="ftell"></a>ftell</h3><p><img src="/../photos/src/c/10-ftell.png"><br><img src="/../photos/src/c/10-ftell2.png"></p>
+<h3 id="fflush"><a href="#fflush" class="headerlink" title="fflush"></a>fflush</h3><p><img src="/../photos/src/c/10-fflush.png"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="/../photos/src/c/10-summary.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-c-08指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">C-08指针</a>
+    </h1>
+  
+
+        
+        <a href="/2020/08/08/c-08%E6%8C%87%E9%92%88/" class="archive-article-date">
+  	<time datetime="2020-08-08T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="01指针变量"><a href="#01指针变量" class="headerlink" title="01指针变量"></a>01指针变量</h2><p>地址变量&#x3D;指针变量（存放地址值）</p>
+<p>内容值只能放在内容变量里</p>
+<p>指针在内存中分配的字节数相同 （2字节）</p>
+<p>指针变量要定义并初始化 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *temp ;</span><br><span class="line">*temp = <span class="number">10</span>  <span class="comment">//(错)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="02指向数组元素的指针变量"><a href="#02指向数组元素的指针变量" class="headerlink" title="02指向数组元素的指针变量"></a>02指向数组元素的指针变量</h2><p><img src="/../photos/src/c/08-pointer-arr.png"><br><img src="/../photos/src/c/08-pointer-arr2.png"></p>
+<p>*p++ &#x3D; *(p++)     (单目同级别由右向左运算)</p>
+<h2 id="03指向多维数组的指针变量"><a href="#03指向多维数组的指针变量" class="headerlink" title="03指向多维数组的指针变量"></a>03指向多维数组的指针变量</h2><p><img src="/../photos/src/c/08-pointer2-arr.png"></p>
+<h3 id="列指针变量"><a href="#列指针变量" class="headerlink" title="列指针变量"></a>列指针变量</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> *p<span class="comment">//(列指针变量=元素指针变量)</span></span><br><span class="line"></span><br><span class="line">p=a[<span class="number">0</span>]  <span class="comment">//(p=a是错的,a是行指针，p是列指针）</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*(p+<span class="number">5</span>) <span class="comment">//输出6      </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="行指针变量"><a href="#行指针变量" class="headerlink" title="行指针变量"></a>行指针变量</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">5</span>][<span class="number">7</span>]</span><br><span class="line"><span class="type">int</span> (*p)[<span class="number">7</span>] <span class="comment">//(行指针变量)</span></span><br><span class="line">p=a</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>int  w[3][4]</code></p>
+<p><code>w</code>:</p>
+<ol>
+<li>元素首地址</li>
+<li>地址常量，不能修改</li>
+<li>行指针，w+1向下移一行</li>
+</ol>
+<h2 id="04指向字符串的指针变量"><a href="#04指向字符串的指针变量" class="headerlink" title="04指向字符串的指针变量"></a>04指向字符串的指针变量</h2><p>按首地址处理符串常量   “abc”&#x3D;首个字符地址常量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> str[]=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">char</span> str[]=&#123;<span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">char</span> *p=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">char</span> *p=&#123;<span class="string">&quot;abc&quot;</span>&#125;;  <span class="comment">//(×)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="05指向函数的指针变量"><a href="#05指向函数的指针变量" class="headerlink" title="05指向函数的指针变量"></a>05指向函数的指针变量</h2><p>函数名与数组名一样，是起始地址，是地址常量</p>
+<p><code>类型名   （*指针变量名）（）</code> </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fun</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> (*p)();</span><br><span class="line">p = fun;</span><br></pre></td></tr></table></figure>
+
+<h2 id="06返回指针的函数-返回地址"><a href="#06返回指针的函数-返回地址" class="headerlink" title="06返回指针的函数(返回地址)"></a>06返回指针的函数(返回地址)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *<span class="title function_">fun</span> <span class="params">(<span class="type">int</span> *x,<span class="type">int</span> *y)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="07常量指针-可以换值，不能换地址"><a href="#07常量指针-可以换值，不能换地址" class="headerlink" title="07常量指针(可以换值，不能换地址)"></a>07常量指针(可以换值，不能换地址)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x =<span class="number">100</span>;</span><br><span class="line"><span class="type">int</span> * <span class="type">const</span> p = &amp;x;</span><br><span class="line">*p = <span class="number">200</span>; </span><br></pre></td></tr></table></figure>
+
+<h2 id="08指针常量-可以换地址，不能改值"><a href="#08指针常量-可以换地址，不能改值" class="headerlink" title="08指针常量(可以换地址，不能改值)"></a>08指针常量(可以换地址，不能改值)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">100</span>;</span><br><span class="line"><span class="type">int</span> y = <span class="number">200</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> * p =&amp;x;</span><br><span class="line">p = &amp;y;</span><br></pre></td></tr></table></figure>
+
+<h2 id="09数组作为函数参数"><a href="#09数组作为函数参数" class="headerlink" title="09数组作为函数参数"></a>09数组作为函数参数</h2><p>call by value 传值调用</p>
+<p>call by reference 传引用 （&amp;a，节省内存）(*p 解引用)</p>
+<p>当编译器看到数组作为参数的时候，不会拷贝整个数组，而是创建一个指向数组首元素的指针，所以数组作为参数总是传引用不会传值</p>
+<p>int A[] &#x3D; int *A    ([]表示这是一个数组)还需要传入数组长度，如图2，但是字符数组不用，字符数组到‘\0’结束<br><img src="/../photos/src/c/08-arr-as-arg.png"><br><img src="/../photos/src/c/08-arr-as-arg2.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-c-07预编译" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -276,404 +487,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/08/06/c-06%E5%87%BD%E6%95%B0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-02变量和基本类型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/">C++ 02变量和基本类型</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
-  	<time datetime="2020-08-06T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="内置类型"><a href="#内置类型" class="headerlink" title="内置类型"></a>内置类型</h2><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>含义</th>
-<th>最小尺寸</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>bool</code></td>
-<td>布尔类型</td>
-<td>8bits</td>
-</tr>
-<tr>
-<td><code>char</code></td>
-<td>字符</td>
-<td>8bits</td>
-</tr>
-<tr>
-<td><code>wchar_t</code></td>
-<td>宽字符</td>
-<td>16bits</td>
-</tr>
-<tr>
-<td><code>char16_t</code></td>
-<td>Unicode字符</td>
-<td>16bits</td>
-</tr>
-<tr>
-<td><code>char32_t</code></td>
-<td>Unicode字符</td>
-<td>32bits</td>
-</tr>
-<tr>
-<td><code>short</code></td>
-<td>短整型</td>
-<td>16bits</td>
-</tr>
-<tr>
-<td><code>int</code></td>
-<td>整型</td>
-<td>16bits (在32位机器中是32bits)</td>
-</tr>
-<tr>
-<td><code>long</code></td>
-<td>长整型</td>
-<td>32bits</td>
-</tr>
-<tr>
-<td><code>long long</code></td>
-<td>长整型</td>
-<td>64bits （是在C++11中新定义的）</td>
-</tr>
-<tr>
-<td><code>float</code></td>
-<td>单精度浮点数</td>
-<td>6位有效数字</td>
-</tr>
-<tr>
-<td><code>double</code></td>
-<td>双精度浮点数</td>
-<td>10位有效数字</td>
-</tr>
-<tr>
-<td><code>long double</code></td>
-<td>扩展精度浮点数</td>
-<td>10位有效数字</td>
-</tr>
-</tbody></table>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">bool</span> a;</span><br><span class="line">    <span class="type">char</span> b;</span><br><span class="line">    <span class="type">wchar_t</span> c;</span><br><span class="line">    <span class="type">char16_t</span> d;</span><br><span class="line">    <span class="type">char32_t</span> e;</span><br><span class="line">    <span class="type">short</span> f;</span><br><span class="line">    <span class="type">int</span> g;</span><br><span class="line">    <span class="type">long</span> h;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> i;</span><br><span class="line">    <span class="type">float</span> j;</span><br><span class="line">    <span class="type">double</span> k;</span><br><span class="line">    <span class="type">long</span> <span class="type">double</span> l;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;bool = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(a) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(b) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;wchar_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(c) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char16_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(d) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;char32_t = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(e) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;short = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(f) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;int = &quot;</span> &lt;&lt;  <span class="built_in">sizeof</span>(g) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(h) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long long = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(i) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;float = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(j) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;double = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(k) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;long double = &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(l) &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">bool = 1</span><br><span class="line">char = 1</span><br><span class="line">wchar_t = 4</span><br><span class="line">char16_t = 2</span><br><span class="line">char32_t = 4</span><br><span class="line">short = 2</span><br><span class="line">int = 4</span><br><span class="line">long = 8</span><br><span class="line">long long = 8</span><br><span class="line">float = 4</span><br><span class="line">double = 8</span><br><span class="line">long double = 16</span><br></pre></td></tr></table></figure>
-
-<h2 id="如何选择类型"><a href="#如何选择类型" class="headerlink" title="如何选择类型"></a>如何选择类型</h2><ul>
-<li>当明确知晓数值不可能为负时，选用无符号类型</li>
-<li>使用int执行整数运算。在实际应用中，short常常显得太小而long一般和int有一样的尺寸。如果你的数值超过了int的表示范围，选用long long</li>
-<li>在算术表达式中不要使用char或bool，只有在存放字符或布尔值时才使用它们。因为类型char在一些机器上是有符号的，而在另一些机器上又是无符号的</li>
-<li>执行浮点数运算选用double</li>
-</ul>
-<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>切勿混用带符号类型和无符号类型,带符号数会自动地转换成无符号数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">-1</span>;</span><br><span class="line"><span class="type">unsigned</span> b = <span class="number">1</span>;</span><br><span class="line">std::cout &lt;&lt; a * b &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4294967295</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>非布尔型赋给布尔型，初始值为0则结果为false，否则为true</li>
-<li>布尔型赋给非布尔型，初始值为false结果为0，初始值为true结果为1</li>
-</ul>
-<h2 id="字面值常量"><a href="#字面值常量" class="headerlink" title="字面值常量"></a>字面值常量</h2><ul>
-<li><p>整型和浮点型</p>
-  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">11</span>; <span class="comment">//10</span></span><br><span class="line"><span class="number">011</span>;<span class="comment">//8</span></span><br><span class="line"><span class="number">0x11</span>;<span class="comment">//16</span></span><br><span class="line"><span class="number">3.14159e0</span>; <span class="comment">//浮点,指数用E或e</span></span><br><span class="line"><span class="number">1.5E0</span>;      <span class="comment">//浮点</span></span><br></pre></td></tr></table></figure></li>
-<li><p>字符和字符串</p>
-  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="string">&quot;abc&quot;</span>;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="string">&quot;world&quot;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>转义</p>
-<table>
-<thead>
-<tr>
-<th>描述</th>
-<th>值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>换行符</td>
-<td><code>\n</code></td>
-</tr>
-<tr>
-<td>横向制表符</td>
-<td><code>\t</code></td>
-</tr>
-<tr>
-<td>纵向制表符</td>
-<td><code>\v</code></td>
-</tr>
-<tr>
-<td>反斜线</td>
-<td><code>\\</code></td>
-</tr>
-<tr>
-<td>回车符</td>
-<td><code>\r</code></td>
-</tr>
-<tr>
-<td>退格符</td>
-<td><code>\b</code></td>
-</tr>
-<tr>
-<td>问号</td>
-<td><code>\?</code></td>
-</tr>
-<tr>
-<td>进纸符</td>
-<td><code>\f</code></td>
-</tr>
-<tr>
-<td>报警符</td>
-<td><code>\a</code></td>
-</tr>
-<tr>
-<td>双引号</td>
-<td><code>\&quot;</code></td>
-</tr>
-<tr>
-<td>单引号</td>
-<td><code>\&#39;</code></td>
-</tr>
-</tbody></table>
-</li>
-<li><p>泛化转义</p>
-<p>  \x后紧跟1个或多个十六进制数字，或者\后紧跟1个、2个或3个八进制数字</p>
-  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; <span class="string">&#x27;\115&#x27;</span> &lt;&lt; <span class="string">&#x27;M&#x27;</span>  &lt;&lt; <span class="string">&#x27;\x4d&#x27;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
-<p>  如果反斜线\后面跟着的八进制数字超过3个，只有前3个数字与\构成转义序列</p>
-</li>
-</ul>
-</li>
-<li><p>布尔字面值 true，false</p>
-</li>
-<li><p>指针字面值 nullptr</p>
-</li>
-<li><p>指定字面值类型</p>
-</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>位置</th>
-<th>值</th>
-<th>描述</th>
-<th>类型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>字符和字符串字面值</td>
-<td>前缀</td>
-<td>u</td>
-<td>Unicode 16字符</td>
-<td><code>char16_t</code></td>
-</tr>
-<tr>
-<td>字符和字符串字面值</td>
-<td>前缀</td>
-<td>U</td>
-<td>Unicode 32字符</td>
-<td><code>char32_t</code></td>
-</tr>
-<tr>
-<td>字符和字符串字面值</td>
-<td>前缀</td>
-<td>L</td>
-<td>宽字符</td>
-<td><code>wchar_t</code></td>
-</tr>
-<tr>
-<td>字符和字符串字面值</td>
-<td>前缀</td>
-<td>u8</td>
-<td>UTF-8</td>
-<td><code>char</code></td>
-</tr>
-<tr>
-<td>整形字面值</td>
-<td>后缀</td>
-<td>u &#x2F; U</td>
-<td>-</td>
-<td><code>unsigned</code></td>
-</tr>
-<tr>
-<td>整形字面值</td>
-<td>后缀</td>
-<td>l &#x2F; L</td>
-<td>-</td>
-<td><code>long</code></td>
-</tr>
-<tr>
-<td>整形字面值</td>
-<td>后缀</td>
-<td>ll &#x2F; LL</td>
-<td>-</td>
-<td><code>long long</code></td>
-</tr>
-<tr>
-<td>浮点型字面值</td>
-<td>后缀</td>
-<td>f &#x2F; F</td>
-<td>-</td>
-<td><code>float</code></td>
-</tr>
-<tr>
-<td>浮点型字面值</td>
-<td>后缀</td>
-<td>l &#x2F; L</td>
-<td>-</td>
-<td><code>long double</code></td>
-</tr>
-</tbody></table>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/06/cpp-02%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-01开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/05/cpp-01%E5%BC%80%E5%A7%8B/">C++ 01开始</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/05/cpp-01%E5%BC%80%E5%A7%8B/" class="archive-article-date">
-  	<time datetime="2020-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>&lt;&lt;</code>运算符接受两个运算对象:左侧的运算对象必须是一个<code>ostream</code>对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的<code>ostream</code>对象中。输出运算符的计算结果就是其左侧运算对象。即计算结果就是我们写入给定值的那个<code>ostream</code>对象</p>
-<p><code>&gt;&gt;</code>接受一个<code>istream</code>作为其左侧运算对象，接受一个对象作为其右侧运算对象。它从给定的<code>istream</code>读入数据，并存入给定对象中。与输出运算符类似，输入运算符返回其左侧运算对象作为其计算结果</p>
-<p>使用一个<code>istream</code>对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结束符(end-of-file)，或遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效。处于无效状态的istream对象会使条件变为假</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//编写程序，从cin读取一组数，输出其和。</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> value = <span class="number">0</span>; std::cin &gt;&gt; value; ) <span class="comment">//ctrl + d 停止</span></span><br><span class="line">        sum += value;</span><br><span class="line">    std::cout &lt;&lt; sum &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>endl</strong>: 被称为<strong>操纵符</strong>（manipulator）的特殊值，效果是结束当前行，并将设备关联的缓冲区（buffer）中的内容刷到设备中。</p>
-<p>Unix和Mac下:</p>
-<ul>
-<li>键盘输入文件结束符：<code>ctrl+d</code></li>
-<li>获取命令状态<code>echo $?</code></li>
-<li>重定向 <code>./a.out &lt; filea &gt; fileb</code></li>
-</ul>
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
-<li>单行注释： <code>//</code></li>
-<li>多行注释： <code>/**/</code>。编译器将<code>/*</code>和<code>*/</code>之间的内容都作为注释内容忽略。多行注释不能嵌套。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/05/cpp-01%E5%BC%80%E5%A7%8B/">展开全文 >></a>
         </p>
       
 
@@ -1291,11 +1104,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
