@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>C++ 多态 | zeyu的博客</title>
+  <title>C++ 继承 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="虚函数 用virtual关键字说明的函数 虚函数是实现运行时多态性基础 C++中的虚函数是动态绑定的函数 虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态  什么函数可以是虚函数 一般成员函数可以是虚函数 构造函数不能是虚函数  析构函数可以是虚函数  一般虚函数成员 虚函数的声明   virtual 函数类型 函数名（形参表);  虚函数声明只能出现在类定义中的函数原">
+  <meta name="description" content="C++特性抽象 封装 继承 多态 成员类型 公有成员类型   任何外部的函数都可以访问共有类型数据和函数   是类与外部的接口  私有类型成员   只允许本类中的函数访问，类外的任何函数不能访问   不写关键字，默认为私有成员  保护成员   与私有很像，差别在继承与派生时对派生类的影响不同   内联成员函数直接在类内写函数  使用inline关键字  拷贝构造函数class 类名&amp;#123; p">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ 多态">
-<meta property="og:url" content="http://example.com/2020/08/20/cpp-02%E5%A4%9A%E6%80%81/index.html">
+<meta property="og:title" content="C++ 继承">
+<meta property="og:url" content="http://example.com/2020/08/10/cpp-%E7%BB%A7%E6%89%BF/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="虚函数 用virtual关键字说明的函数 虚函数是实现运行时多态性基础 C++中的虚函数是动态绑定的函数 虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态  什么函数可以是虚函数 一般成员函数可以是虚函数 构造函数不能是虚函数  析构函数可以是虚函数  一般虚函数成员 虚函数的声明   virtual 函数类型 函数名（形参表);  虚函数声明只能出现在类定义中的函数原">
+<meta property="og:description" content="C++特性抽象 封装 继承 多态 成员类型 公有成员类型   任何外部的函数都可以访问共有类型数据和函数   是类与外部的接口  私有类型成员   只允许本类中的函数访问，类外的任何函数不能访问   不写关键字，默认为私有成员  保护成员   与私有很像，差别在继承与派生时对派生类的影响不同   内联成员函数直接在类内写函数  使用inline关键字  拷贝构造函数class 类名&amp;#123; p">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-20T02:00:00.000Z">
-<meta property="article:modified_time" content="2022-09-27T06:22:23.366Z">
+<meta property="article:published_time" content="2020-08-10T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-09-26T07:58:41.522Z">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
@@ -148,59 +148,153 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-cpp-02多态" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-cpp-继承" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      C++ 多态
+      C++ 继承
     </h1>
   
 
         
-        <a href="/2020/08/20/cpp-02%E5%A4%9A%E6%80%81/" class="archive-article-date">
-  	<time datetime="2020-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-20</time>
+        <a href="/2020/08/10/cpp-%E7%BB%A7%E6%89%BF/" class="archive-article-date">
+  	<time datetime="2020-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-10</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>用<code>virtual</code>关键字说明的函数</li>
-<li>虚函数是实现运行时多态性基础</li>
-<li>C++中的虚函数是动态绑定的函数</li>
-<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
-</ul>
-<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
-<li>一般成员函数可以是虚函数</li>
-<li>构造函数不能是虚函数 </li>
-<li>析构函数可以是虚函数</li>
-</ul>
-<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
-<li><p>虚函数的声明</p>
-<p>  virtual 函数类型 函数名（形参表);</p>
+        <h2 id="C-特性"><a href="#C-特性" class="headerlink" title="C++特性"></a>C++特性</h2><p>抽象 封装 继承 多态</p>
+<h2 id="成员类型"><a href="#成员类型" class="headerlink" title="成员类型"></a>成员类型</h2><ul>
+<li><p>公有成员类型</p>
+<p>  任何外部的函数都可以访问共有类型数据和函数</p>
+<p>  是类与外部的接口</p>
 </li>
-<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
+<li><p>私有类型成员</p>
+<p>  只允许本类中的函数访问，类外的任何函数不能访问</p>
+<p>  不写关键字，默认为私有成员</p>
 </li>
-<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
-</li>
-<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
+<li><p>保护成员</p>
+<p>  与私有很像，差别在继承与派生时对派生类的影响不同</p>
 </li>
 </ul>
-<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
-<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
-<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
-<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
+<h2 id="内联成员函数"><a href="#内联成员函数" class="headerlink" title="内联成员函数"></a>内联成员函数</h2><pre><code>直接在类内写函数
+
+使用inline关键字
+</code></pre>
+<h2 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h2><pre><code>class 类名&#123;
+public:
+    类名（const 类名 &amp;对象名）；
+&#125;
+
+类名::类名（const 类名 &amp;对象名）
+&#123;
+&#125;
+</code></pre>
+<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><pre><code>~类名（）
+</code></pre>
+<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><p>友元都是单向的</p>
+<h2 id="友元函数"><a href="#友元函数" class="headerlink" title="友元函数"></a>友元函数</h2><pre><code>声明类外函数为本类朋友
+</code></pre>
+<h2 id="友元类"><a href="#友元类" class="headerlink" title="友元类"></a>友元类</h2><pre><code>friend class B;  (对B类授权可以访问自己)
+</code></pre>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>继承与派生概述</p>
+<ul>
+<li>继承与派生是同一过程从不同的角度看<ul>
+<li>保持已有类的特性而构造新类的过程称为继承</li>
+<li>在已有类的基础上新增自己的特性而产生新类的过程称为派生</li>
 </ul>
 </li>
-<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
-<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
-<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
+<li>被继承的已有类称为基类（或父类）</li>
+<li>派生出的新类称为派生类（或子类）</li>
+<li>直接参与派生出某类的基类称为直接基类</li>
+<li>基类的基类甚至更高层的基类称为间接基类</li>
 </ul>
-<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
+<p>派生是为了解决原有程序无法完全解决问题，对程序的改造</p>
+<p>派生类的构成</p>
+<ul>
+<li>吸收基类成员</li>
+<li>改造基类成员<ul>
+<li>如果派生类声明了一个和某基类成员同名的新成员，派生的新成员就隐藏或覆盖了外层同名成员</li>
+</ul>
+</li>
+<li>添加新的成员</li>
+</ul>
+<h3 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h3><ul>
+<li><p>公有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:访问属性在派生类中<strong>保持不变</strong> </li>
+<li>基类的<code>private</code>成员:不可直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:只能访问<code>public</code>成员。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>私有继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>private</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>保护继承</p>
+<ul>
+<li>继承的访问控制<ul>
+<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>protected</code>身份出现在派生类中</li>
+<li>基类的<code>private</code>成员:不可以直接访问</li>
+</ul>
+</li>
+<li>访问权限<ul>
+<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
+<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>不要重新定义继承来的非虚函数</strong></p>
+<h2 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h2><p>基类的构造函数不被继承,派生类需要编写自己的构造函数</p>
+<h3 id="单继承时构造函数"><a href="#单继承时构造函数" class="headerlink" title="单继承时构造函数"></a>单继承时构造函数</h3><pre><code>派生类名:派生类名(基类所需的型参,本类成员所需的型参):基类名(参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="多继承时构造函数"><a href="#多继承时构造函数" class="headerlink" title="多继承时构造函数"></a>多继承时构造函数</h3><pre><code>派生类名:派生类名(参数表):基类名1(基类1初始化参数表),基类名2(基类2初始化参数表),基类名n(基类n初始化参数表),本类成员初始化列表 
+&#123;
+    //其他初始化
+&#125;
+</code></pre>
+<h3 id="构造函数的执行顺序"><a href="#构造函数的执行顺序" class="headerlink" title="构造函数的执行顺序"></a>构造函数的执行顺序</h3><ol>
+<li>调用基类的构造函数,<ul>
+<li>顺序按照它们被继承时声明的顺序(从左向右)</li>
+</ul>
+</li>
+<li>对初始化列表中的成员进行初始化<ul>
+<li>顺序按照它们在类中定义的顺序</li>
+<li>对象成员初始化时自动调用其所属类的构造函数,由初始化列表提供参数</li>
+</ul>
+</li>
+<li>执行派生类的构造函数体中的内容</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> : <span class="keyword">public</span> BaseB, <span class="keyword">public</span> BaseA &#123; <span class="comment">//顺序 BaseB -&gt; BaseA</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Demo</span>(<span class="type">int</span> a, std::string str) : <span class="built_in">BaseA</span>(), <span class="built_in">BaseB</span>(),  <span class="comment">//和这里的顺序无关</span></span><br><span class="line">        <span class="built_in">m_a</span>(a),</span><br><span class="line">        <span class="built_in">m_b</span>(str) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:       <span class="comment">//顺序 m_a -&gt;  m_b</span></span><br><span class="line">    CItemA m_a;</span><br><span class="line">    CItemB m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>析构函数与构造函数顺序相反</strong></p>
 
       
 
@@ -270,7 +364,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/020/08/20/cpp-02%E5%A4%9A%E6%80%81/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/020/08/10/cpp-%E7%BB%A7%E6%89%BF/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -284,18 +378,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2020/08/24/json/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/08/10/c-09%E7%BB%93%E6%9E%84%E4%BD%93/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          json
+          C-09结构体
         
       </div>
     </a>
   
   
-    <a href="/2020/08/10/c-09%E7%BB%93%E6%9E%84%E4%BD%93/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">C-09结构体</div>
+    <a href="/2020/08/10/c-10%E4%BD%8D%E8%BF%90%E7%AE%97%E5%92%8C%E6%96%87%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C-10位运算和文件</div>
       <i class="icon-circle-right"></i>
     </a>
   

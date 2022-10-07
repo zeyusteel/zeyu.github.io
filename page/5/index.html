@@ -319,6 +319,96 @@
 
 
   
+    <article id="post-cpp-01基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/05/cpp-01%E5%9F%BA%E7%A1%80/">C++ 基础</a>
+    </h1>
+  
+
+        
+        <a href="/2020/08/05/cpp-01%E5%9F%BA%E7%A1%80/" class="archive-article-date">
+  	<time datetime="2020-08-05T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;&lt;</code>运算符接受两个运算对象:左侧的运算对象必须是一个<code>ostream</code>对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的<code>ostream</code>对象中。输出运算符的计算结果就是其左侧运算对象。即计算结果就是我们写入给定值的那个<code>ostream</code>对象</p>
+<p><code>&gt;&gt;</code>接受一个<code>istream</code>作为其左侧运算对象，接受一个对象作为其右侧运算对象。它从给定的<code>istream</code>读入数据，并存入给定对象中。与输出运算符类似，输入运算符返回其左侧运算对象作为其计算结果</p>
+<p>使用一个<code>istream</code>对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结束符(end-of-file)，或遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效。处于无效状态的istream对象会使条件变为假</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//编写程序，从cin读取一组数，输出其和。</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> value = <span class="number">0</span>; std::cin &gt;&gt; value; ) <span class="comment">//ctrl + d 停止</span></span><br><span class="line">        sum += value;</span><br><span class="line">    std::cout &lt;&lt; sum &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>endl</strong>: 被称为<strong>操纵符</strong>（manipulator）的特殊值，效果是结束当前行，并将设备关联的缓冲区（buffer）中的内容刷到设备中。</p>
+<p>UNIX和Mac下:</p>
+<ul>
+<li>键盘输入文件结束符：<code>ctrl+d</code></li>
+<li>获取命令状态<code>echo $?</code></li>
+<li>重定向 <code>./a.out &lt; filea &gt; fileb</code></li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
+<li>单行注释： <code>//</code></li>
+<li>多行注释： <code>/**/</code>。编译器将<code>/*</code>和<code>*/</code>之间的内容都作为注释内容忽略。多行注释不能嵌套。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/08/05/cpp-01%E5%9F%BA%E7%A1%80/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-c-04循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
