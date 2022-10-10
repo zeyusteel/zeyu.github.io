@@ -169,7 +169,7 @@
 
 <p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
 <p>dockerd将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
-<ol>
+<ul>
 <li><p>装载cobra命令模版<code>cmd/dockerd/newDaemonCommand</code></p>
 </li>
 <li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
@@ -189,16 +189,16 @@
 <li><p>初始化<code>ContainerD</code>以及退出清理函数</p>
 </li>
 <li><p><code>NewDaemon</code>创建daemon对象</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li><p>将<code>api server</code>的应答接口与daemon对象绑定,<code>initRouter(routerOptions)</code></p>
 </li>
 <li><p>通过<code>goroutine</code>启动<code>api servier</code>监听 </p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
 <li><p>daemon结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
 </li>
-</ol>
+</ul>
 <h3 id="NewDaemon"><a href="#NewDaemon" class="headerlink" title="NewDaemon"></a>NewDaemon</h3><p><code>NewDaemon</code>会进一步初始化<code>docker daemon</code>,并返回<code>Daemon</code>对象,Daemon对象将响应<code>api servier</code>执行具体的操作</p>
-<ol>
+<ul>
 <li>设置默认<code>mtu</code> 1500 </li>
 <li>初始化<code>registry service</code></li>
 <li>对配置参数进行校验,对一些产生冲突的参数一起使用时报错并退出</li>
@@ -207,11 +207,11 @@
 <li>创建<code>/var/lib/docker/runtimes</code>, 初始化runtimes</li>
 <li>设置<code>grpc</code>,创建<code>containerdCli</code></li>
 <li>创建插件管理器 </li>
-<li>创建<code>graphDrivers</code><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>创建<code>graphDrivers</code> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
 <li>创建volumeService</li>
 <li>创建imageService</li>
 <li>创建容器客户端libcontainerd</li>
-</ol>
+</ul>
 <h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
 <li>v20.10.12</li>
 <li>aarch linux20.04</li>
@@ -1187,11 +1187,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1207,11 +1207,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
