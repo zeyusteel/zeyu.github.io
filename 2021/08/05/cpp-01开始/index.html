@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>C++ 01开始 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="输入输出123456#include &lt;iostream&gt;int main()&amp;#123;    int a,b;        std::cin &gt;&gt; a &gt;&gt; b;    std::cout &lt;&lt; a + b &lt;&lt; std::endl;&amp;#125; &lt;&lt;运算符接受两个运算对象:左侧的运算对象必须是一个ostream对象，右">
+  <meta name="description" content="参考C++ Primer Cpp_Primer_Practice 输入输出123456#include &lt;iostream&gt;int main()&amp;#123;    int a,b;        std::cin &gt;&gt; a &gt;&gt; b;    std::cout &lt;&lt; a + b &lt;&lt; std::endl;&amp;#125; &lt;&lt;运算">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ 01开始">
 <meta property="og:url" content="http://example.com/2021/08/05/cpp-01%E5%BC%80%E5%A7%8B/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="输入输出123456#include &lt;iostream&gt;int main()&amp;#123;    int a,b;        std::cin &gt;&gt; a &gt;&gt; b;    std::cout &lt;&lt; a + b &lt;&lt; std::endl;&amp;#125; &lt;&lt;运算符接受两个运算对象:左侧的运算对象必须是一个ostream对象，右">
+<meta property="og:description" content="参考C++ Primer Cpp_Primer_Practice 输入输出123456#include &lt;iostream&gt;int main()&amp;#123;    int a,b;        std::cin &gt;&gt; a &gt;&gt; b;    std::cout &lt;&lt; a + b &lt;&lt; std::endl;&amp;#125; &lt;&lt;运算">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-08-05T02:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-07T14:38:17.316Z">
+<meta property="article:modified_time" content="2022-10-11T07:00:22.372Z">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
@@ -168,7 +168,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>参考C++ Primer</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/zeyusteel/Cpp_Primer_Practice">Cpp_Primer_Practice</a></p>
+<h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>&lt;&lt;</code>运算符接受两个运算对象:左侧的运算对象必须是一个<code>ostream</code>对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的<code>ostream</code>对象中。输出运算符的计算结果就是其左侧运算对象。即计算结果就是我们写入给定值的那个<code>ostream</code>对象</p>
 <p><code>&gt;&gt;</code>接受一个<code>istream</code>作为其左侧运算对象，接受一个对象作为其右侧运算对象。它从给定的<code>istream</code>读入数据，并存入给定对象中。与输出运算符类似，输入运算符返回其左侧运算对象作为其计算结果</p>
 <p>使用一个<code>istream</code>对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结束符(end-of-file)，或遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效。处于无效状态的istream对象会使条件变为假</p>
@@ -397,11 +399,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">

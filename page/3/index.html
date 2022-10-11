@@ -1068,6 +1068,494 @@ public:
 
 
   
+    <article id="post-cpp-03字符串、向量和数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/07/cpp-03%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E5%90%91%E9%87%8F%E5%92%8C%E6%95%B0%E7%BB%84/">C++ 03字符串、项目和数组</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/07/cpp-03%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E5%90%91%E9%87%8F%E5%92%8C%E6%95%B0%E7%BB%84/" class="archive-article-date">
+  	<time datetime="2021-08-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="using-声明"><a href="#using-声明" class="headerlink" title="using 声明"></a>using 声明</h2><p>头文件不应该包含using声明,如果头文件有某个using声明,那么每一个使用了该头文件的文件都会有这个声明,容易产生冲突</p>
+<h2 id="string对象初始化"><a href="#string对象初始化" class="headerlink" title="string对象初始化"></a>string对象初始化</h2><p>初始化<code>string</code>对象的方式：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>string s1</code></td>
+<td>默认初始化，<code>s1</code>是个空字符串</td>
+</tr>
+<tr>
+<td><code>string s2(s1)</code></td>
+<td><code>s2</code>是<code>s1</code>的副本</td>
+</tr>
+<tr>
+<td><code>string s2 = s1</code></td>
+<td>等价于<code>s2(s1)</code>，<code>s2</code>是<code>s1</code>的副本</td>
+</tr>
+<tr>
+<td><code>string s3(&quot;value&quot;)</code></td>
+<td><code>s3</code>是字面值“value”的副本，除了字面值最后的那个空字符外</td>
+</tr>
+<tr>
+<td><code>string s3 = &quot;value&quot;</code></td>
+<td>等价于<code>s3(&quot;value&quot;)</code>，<code>s3</code>是字面值”value”的副本</td>
+</tr>
+<tr>
+<td><code>string s4(n, &#39;c&#39;)</code></td>
+<td>把<code>s4</code>初始化为由连续<code>n</code>个字符<code>c</code>组成的串</td>
+</tr>
+</tbody></table>
+<ul>
+<li>拷贝初始化（copy initialization）：使用等号<code>=</code>将一个已有的对象拷贝到正在创建的对象。</li>
+<li>直接初始化（direct initialization）：通过括号给对象赋值。</li>
+</ul>
+<h2 id="string对象上的操作"><a href="#string对象上的操作" class="headerlink" title="string对象上的操作"></a>string对象上的操作</h2><p><code>string</code>的操作</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>os &lt;&lt; s</code></td>
+<td>将<code>s</code>写到输出流<code>os</code>当中，返回<code>os</code></td>
+</tr>
+<tr>
+<td><code>is &gt;&gt; s</code></td>
+<td>从<code>is</code>中读取字符串赋给<code>s</code>，字符串以空白分割，返回<code>is</code></td>
+</tr>
+<tr>
+<td><code>getline(is, s)</code></td>
+<td>从<code>is</code>中读取一行赋给<code>s</code>，返回<code>is</code></td>
+</tr>
+<tr>
+<td><code>s.empty()</code></td>
+<td><code>s</code>为空返回<code>true</code>，否则返回<code>false</code></td>
+</tr>
+<tr>
+<td><code>s.size()</code></td>
+<td>返回<code>s</code>中字符的个数 类型<code>string::size_type</code></td>
+</tr>
+<tr>
+<td><code>s[n]</code></td>
+<td>返回<code>s</code>中第<code>n</code>个字符的引用，位置<code>n</code>从0计起</td>
+</tr>
+<tr>
+<td><code>s1+s2</code></td>
+<td>返回<code>s1</code>和<code>s2</code>连接后的结果</td>
+</tr>
+<tr>
+<td><code>s1=s2</code></td>
+<td>用<code>s2</code>的副本代替<code>s1</code>中原来的字符</td>
+</tr>
+<tr>
+<td><code>s1==s2</code></td>
+<td>如果<code>s1</code>和<code>s2</code>中所含的字符完全一样，则它们相等；<code>string</code>对象的相等性判断对字母的大小写敏感</td>
+</tr>
+<tr>
+<td><code>s1!=s2</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td>
+<td>利用字符在字典中的顺序进行比较，且对字母的大小写敏感（对第一个不相同的位置进行比较）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>string io</p>
+<ul>
+<li>执行读操作<code>&gt;&gt;</code>：忽略掉开头的空白（包括空格、换行符和制表符），直到遇到下一处空白为止。</li>
+<li><code>getline</code>：读取一整行，<strong>包括空白符</strong></li>
+</ul>
+</li>
+<li><p><code>s.size()</code>返回的时<code>string::size_type</code>类型，记住是一个<strong>无符号</strong>类型的值，不要和<code>int</code>混用</p>
+</li>
+<li><p><code>s1+s2</code>使用时，保证至少一侧是string类型。<code>string s1 = &quot;hello&quot; + &quot;world&quot; // 错误，两侧均为字符串字面值</code></p>
+</li>
+<li><p><strong>字符串字面值和string是不同的类型</strong></p>
+</li>
+<li><p>sstream</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::string str;</span><br><span class="line">    std::ostringstream oss;</span><br><span class="line">    oss &lt;&lt; <span class="number">123</span> &lt;&lt; <span class="string">&quot;test&quot;</span> &lt;&lt; <span class="number">456</span>;</span><br><span class="line">    str = oss.<span class="built_in">str</span>();</span><br><span class="line">    std::cout &lt;&lt; str &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="处理string对象中的字符"><a href="#处理string对象中的字符" class="headerlink" title="处理string对象中的字符"></a>处理string对象中的字符</h2><ul>
+<li><strong>ctype.h vs. cctype</strong>：C++修改了c的标准库，名称为去掉<code>.h</code>，前面加<code>c</code><blockquote>
+<p>如c++版本为<code>cctype</code>，c版本为<code>ctype.h</code></p>
+</blockquote>
+<ul>
+<li><strong>尽量使用c++版本的头文件</strong>，即<code>cctype</code></li>
+</ul>
+</li>
+</ul>
+<p><code>cctype</code>头文件中定义了一组标准函数：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>isalnum(c)</code></td>
+<td>当<code>c</code>是字母或数字时为真</td>
+</tr>
+<tr>
+<td><code>isalpha(c)</code></td>
+<td>当<code>c</code>是字母时为真</td>
+</tr>
+<tr>
+<td><code>iscntrl(c)</code></td>
+<td>当<code>c</code>是控制字符时为真</td>
+</tr>
+<tr>
+<td><code>isdigit(c)</code></td>
+<td>当<code>c</code>是数字时为真</td>
+</tr>
+<tr>
+<td><code>isgraph(c)</code></td>
+<td>当<code>c</code>不是空格但可以打印时为真</td>
+</tr>
+<tr>
+<td><code>islower(c)</code></td>
+<td>当<code>c</code>是小写字母时为真</td>
+</tr>
+<tr>
+<td><code>isprint(c)</code></td>
+<td>当<code>c</code>是可打印字符时为真</td>
+</tr>
+<tr>
+<td><code>ispunct(c)</code></td>
+<td>当<code>c</code>是标点符号时为真</td>
+</tr>
+<tr>
+<td><code>isspace(c)</code></td>
+<td>当<code>c</code>是空白时为真（空格、横向制表符、纵向制表符、回车符、换行符、进纸符）</td>
+</tr>
+<tr>
+<td><code>isupper(c)</code></td>
+<td>当<code>c</code>是大写字母时为真</td>
+</tr>
+<tr>
+<td><code>isxdigit(c)</code></td>
+<td>当<code>c</code>是十六进制数字时为真</td>
+</tr>
+<tr>
+<td><code>tolower(c)</code></td>
+<td>当<code>c</code>是大写字母，输出对应的小写字母；否则原样输出<code>c</code></td>
+</tr>
+<tr>
+<td><code>toupper(c)</code></td>
+<td>当<code>c</code>是小写字母，输出对应的大写字母；否则原样输出<code>c</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>遍历字符串：使用<strong>范围for</strong>（range for）语句： <code>for (auto c: str)</code>，或者 <code>for (auto &amp;c: str)</code>使用引用直接改变字符串中的字符。 （C++11）</li>
+<li><code>str[x]</code>,[]输入参数为<code>string::size_type</code>类型，给出<code>int</code>整型也会自动转化为该类型</li>
+</ul>
+<h2 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h2><ul>
+<li>vector是一个<strong>容器</strong>，也是一个类模板</li>
+<li><code>#include &lt;vector&gt;</code> 然后 <code>using std::vector;</code></li>
+<li>容器：包含其他对象</li>
+<li>类模板：本身不是类，但可以<strong>实例化instantiation</strong>出一个类。 <code>vector</code>是一个模板， <code>vector&lt;int&gt;</code>是一个类型</li>
+<li>通过将类型放在类模板名称后面的<strong>尖括号</strong>中来指定<strong>类型</strong>，如<code>vector&lt;int&gt; ivec</code></li>
+</ul>
+<h2 id="定义和初始化vector对象"><a href="#定义和初始化vector对象" class="headerlink" title="定义和初始化vector对象"></a>定义和初始化vector对象</h2><p>初始化<code>vector</code>对象的方法</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>vector&lt;T&gt; v1</code></td>
+<td><code>v1</code>是一个空<code>vector</code>，它潜在的元素是<code>T</code>类型的，执行默认初始化</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2(v1)</code></td>
+<td><code>v2</code>中包含有<code>v1</code>所有元素的副本</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2 = v1</code></td>
+<td>等价于<code>v2(v1)</code>，<code>v2</code>中包含<code>v1</code>所有元素的副本</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v3(n, val)</code></td>
+<td><code>v3</code>包含了n个重复的元素，每个元素的值都是<code>val</code></td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v4(n)</code></td>
+<td><code>v4</code>包含了n个重复地执行了值初始化的对象</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v5&#123;a, b, c...&#125;</code></td>
+<td><code>v5</code>包含了初始值个数的元素，每个元素被赋予相应的初始值</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v5=&#123;a, b, c...&#125;</code></td>
+<td>等价于<code>v5&#123;a, b, c...&#125;</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>列表初始化： <code>vector&lt;string&gt; v&#123;&quot;a&quot;, &quot;an&quot;, &quot;the&quot;&#125;;</code> （C++11）</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;initializer_list&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span> </span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">test</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">test</span>(std::initializer_list&lt;<span class="type">int</span>&gt; list) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> out: list) &#123;</span><br><span class="line">            std::cout &lt;&lt; out &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="向vector对象中添加元素"><a href="#向vector对象中添加元素" class="headerlink" title="向vector对象中添加元素"></a>向vector对象中添加元素</h3><ul>
+<li><code>v.push_back(e)</code> 在尾部增加元素</li>
+</ul>
+<h3 id="其他vector操作"><a href="#其他vector操作" class="headerlink" title="其他vector操作"></a>其他vector操作</h3><p><code>vector</code>支持的操作</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>v.emtpy()</code></td>
+<td>如果<code>v</code>不含有任何元素，返回真；否则返回假</td>
+</tr>
+<tr>
+<td><code>v.size()</code></td>
+<td>返回<code>v</code>中元素的个数</td>
+</tr>
+<tr>
+<td><code>v.push_back(t)</code></td>
+<td>向<code>v</code>的尾端添加一个值为<code>t</code>的元素</td>
+</tr>
+<tr>
+<td><code>v[n]</code></td>
+<td>返回<code>v</code>中第<code>n</code>个位置上元素的<strong>引用</strong></td>
+</tr>
+<tr>
+<td><code>v1 = v2</code></td>
+<td>用<code>v2</code>中的元素拷贝替换<code>v1</code>中的元素</td>
+</tr>
+<tr>
+<td><code>v1 = &#123;a,b,c...&#125;</code></td>
+<td>用列表中元素的拷贝替换<code>v1</code>中的元素</td>
+</tr>
+<tr>
+<td><code>v1 == v2</code></td>
+<td><code>v1</code>和<code>v2</code>相等当且仅当它们的元素数量相同且对应位置的元素值都相同</td>
+</tr>
+<tr>
+<td><code>v1 != v2</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>, <code>&gt;=</code></td>
+<td>以字典顺序进行比较</td>
+</tr>
+</tbody></table>
+<ul>
+<li>范围<code>for</code>语句内不应该改变其遍历序列的大小</li>
+<li><code>vector</code>对象（以及<code>string</code>对象）的下标运算符，只能对确知已存在的元素执行下标操作，不能用于添加元素</li>
+</ul>
+<h2 id="迭代器iterator"><a href="#迭代器iterator" class="headerlink" title="迭代器iterator"></a>迭代器iterator</h2><ul>
+<li>所有标准库容器都可以使用迭代器</li>
+<li>类似于指针类型，迭代器也提供了对对象的间接访问</li>
+</ul>
+<h3 id="使用迭代器"><a href="#使用迭代器" class="headerlink" title="使用迭代器"></a>使用迭代器</h3><ul>
+<li><code>vector&lt;int&gt;::iterator iter</code></li>
+<li><code>auto b = v.begin();</code>返回指向第一个元素的迭代器</li>
+<li><code>auto e = v.end();</code>返回指向最后一个元素的下一个（哨兵，尾后,one past the end）的迭代器（off the end）</li>
+<li>如果容器为空， <code>begin()</code>和 <code>end()</code>返回的是同一个迭代器，都是尾后迭代器</li>
+<li>使用解引用符<code>*</code>访问迭代器指向的元素</li>
+<li>养成使用迭代器和<code>!=</code>的习惯（泛型编程）</li>
+<li><strong>容器</strong>：可以包含其他对象；但所有的对象必须类型相同</li>
+<li><strong>迭代器（iterator）</strong>：每种标准容器都有自己的迭代器。<code>C++</code>倾向于用迭代器而不是下标遍历元素</li>
+<li><strong>const_iterator</strong>：只能读取容器内元素不能改变</li>
+<li><strong>箭头运算符</strong>： 解引用 + 成员访问，<code>it-&gt;mem</code>等价于 <code>(*it).mem</code></li>
+<li><strong>谨记</strong>：但凡是使用了<strong>迭代器</strong>的循环体，都<strong>不要</strong>向迭代器所属的容器<strong>添加元素</strong></li>
+</ul>
+<p>标准容器迭代器的运算符</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>*iter</code></td>
+<td>返回迭代器<code>iter</code>所指向的<strong>元素的引用</strong></td>
+</tr>
+<tr>
+<td><code>iter-&gt;mem</code></td>
+<td>等价于<code>(*iter).mem</code></td>
+</tr>
+<tr>
+<td><code>++iter</code></td>
+<td>令<code>iter</code>指示容器中的下一个元素</td>
+</tr>
+<tr>
+<td><code>--iter</code></td>
+<td>令<code>iter</code>指示容器中的上一个元素</td>
+</tr>
+<tr>
+<td><code>iter1 == iter2</code></td>
+<td>判断两个迭代器是否相等</td>
+</tr>
+</tbody></table>
+<h3 id="迭代器运算"><a href="#迭代器运算" class="headerlink" title="迭代器运算"></a>迭代器运算</h3><p><code>vector</code>和<code>string</code>迭代器支持的运算</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>iter + n</code></td>
+<td>迭代器加上一个整数值仍得到一个迭代器，迭代器指示的新位置和原来相比向前移动了若干个元素。结果迭代器或者指示容器内的一个元素，或者指示容器尾元素的下一位置。</td>
+</tr>
+<tr>
+<td><code>iter - n</code></td>
+<td>迭代器减去一个证书仍得到一个迭代器，迭代器指示的新位置比原来向后移动了若干个元素。结果迭代器或者指向容器内的一个元素，或者指示容器尾元素的下一位置。</td>
+</tr>
+<tr>
+<td><code>iter1 += n</code></td>
+<td>迭代器加法的复合赋值语句，将<code>iter1</code>加n的结果赋给<code>iter1</code></td>
+</tr>
+<tr>
+<td><code>iter1 -= n</code></td>
+<td>迭代器减法的复合赋值语句，将<code>iter2</code>减n的加过赋给<code>iter1</code></td>
+</tr>
+<tr>
+<td><code>iter1 - iter2</code></td>
+<td>两个迭代器相减的结果是它们之间的距离，也就是说，将运算符右侧的迭代器向前移动差值个元素后得到左侧的迭代器。参与运算的两个迭代器必须指向的是同一个容器中的元素或者尾元素的下一位置。</td>
+</tr>
+<tr>
+<td><code>&gt;</code>、<code>&gt;=</code>、<code>&lt;</code>、<code>&lt;=</code></td>
+<td>迭代器的关系运算符，如果某迭代器</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>difference_type</strong>：保证足够大以存储任何两个迭代器对象间的距离，可正可负</li>
+</ul>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><ul>
+<li>相当于vector的低级版，<strong>长度固定</strong></li>
+</ul>
+<h3 id="定义和初始化内置数组"><a href="#定义和初始化内置数组" class="headerlink" title="定义和初始化内置数组"></a>定义和初始化内置数组</h3><ul>
+<li>初始化：<code>char input_buffer[buffer_size];</code>，长度必须是const表达式，或者不写，让编译器自己推断</li>
+<li>数组不允许直接赋值给另一个数组</li>
+</ul>
+<h3 id="访问数组元素"><a href="#访问数组元素" class="headerlink" title="访问数组元素"></a>访问数组元素</h3><ul>
+<li>数组下标的类型：<code>size_t</code></li>
+<li>字符数组的特殊性：结尾处有一个空字符，如 <code>char a[] = &quot;hello&quot;;</code></li>
+<li>用数组初始化 <code>vector</code>： <code>int a[] = &#123;1,2,3,4,5&#125;; vector&lt;int&gt; v(begin(a), end(a));</code></li>
+</ul>
+<h3 id="数组和指针"><a href="#数组和指针" class="headerlink" title="数组和指针"></a>数组和指针</h3><ul>
+<li>使用数组时，编译器一般会把它转换成指针</li>
+<li>标准库类型限定使用的下标必须是无符号类型，而内置的下标可以处理负值</li>
+<li><strong>指针访问数组</strong>：在表达式中使用数组名时，名字会自动转换成指向数组的第一个元素的指针</li>
+</ul>
+<h2 id="C风格字符串"><a href="#C风格字符串" class="headerlink" title="C风格字符串"></a>C风格字符串</h2><ul>
+<li>从C继承来的字符串</li>
+<li>用空字符结束（<code>\0</code>）</li>
+<li>对大多数应用来说，使用标准库 <code>string</code>比使用C风格字符串更安全、更高效</li>
+<li>获取 <code>string</code> 中的 <code>cstring</code> ： <code>const char *str = s.c_str();</code></li>
+</ul>
+<p>C标准库String函数，定义在<code>&lt;cstring&gt;</code> 中：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>strlen(p)</code></td>
+<td>返回<code>p</code>的长度，空字符不计算在内</td>
+</tr>
+<tr>
+<td><code>strcmp(p1, p2)</code></td>
+<td>比较<code>p1</code>和<code>p2</code>的相等性。如果<code>p1==p2</code>，返回0；如果<code>p1&gt;p2</code>，返回一个正值；如果<code>p1&lt;p2</code>，返回一个负值。</td>
+</tr>
+<tr>
+<td><code>strcat(p1, p2)</code></td>
+<td>将<code>p2</code>附加到<code>p1</code>之后，返回<code>p1</code></td>
+</tr>
+<tr>
+<td><code>strcpy(p1, p2)</code></td>
+<td>将<code>p2</code>拷贝给<code>p1</code>，返回<code>p1</code></td>
+</tr>
+</tbody></table>
+<p> <strong>尽量使用vector和迭代器，少用数组</strong></p>
+<h2 id="多维数组"><a href="#多维数组" class="headerlink" title="多维数组"></a>多维数组</h2><ul>
+<li><strong>多维数组的初始化</strong>： &#96;int ia[3][4] &#x3D;</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/07/cpp-03%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E5%90%91%E9%87%8F%E5%92%8C%E6%95%B0%E7%BB%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-02变量和基本类型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1550,7 +2038,9 @@ public:
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>参考C++ Primer</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/zeyusteel/Cpp_Primer_Practice">Cpp_Primer_Practice</a></p>
+<h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,b;    </span><br><span class="line">    std::cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">    std::cout &lt;&lt; a + b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>&lt;&lt;</code>运算符接受两个运算对象:左侧的运算对象必须是一个<code>ostream</code>对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的<code>ostream</code>对象中。输出运算符的计算结果就是其左侧运算对象。即计算结果就是我们写入给定值的那个<code>ostream</code>对象</p>
 <p><code>&gt;&gt;</code>接受一个<code>istream</code>作为其左侧运算对象，接受一个对象作为其右侧运算对象。它从给定的<code>istream</code>读入数据，并存入给定对象中。与输出运算符类似，输入运算符返回其左侧运算对象作为其计算结果</p>
 <p>使用一个<code>istream</code>对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结束符(end-of-file)，或遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效。处于无效状态的istream对象会使条件变为假</p>
@@ -1591,366 +2081,6 @@ public:
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/05/cpp-01%E5%BC%80%E5%A7%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-thread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/18/linux-thread/">Linux Thread</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/18/linux-thread/" class="archive-article-date">
-  	<time datetime="2021-05-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>线程概念：</p>
-<pre><code>进程：有独立的 进程地址空间。有独立的pcb。	分配资源的最小单位。
-
-线程：有独立的pcb。没有独立的进程地址空间。	最小单位的执行。
-
-ps -Lf 进程id 	---&gt; 线程号。LWP  --》cpu 执行的最小单位。
-</code></pre>
-<p>线程共享：</p>
-<pre><code>独享 栈空间（内核栈、用户栈）
-
-共享 ./text./data ./rodataa ./bsss heap  ---&gt; 共享【全局变量】（errno）
-</code></pre>
-<p>线程控制原语：</p>
-<pre><code>pthread_t pthread_self(void);	获取线程id。 线程id是在进程地址空间内部，用来标识线程身份的id号。
-
-    返回值：本线程id
-
-
-检查出错返回：  线程中。
-
-    fprintf(stderr, &quot;xxx error: %s\n&quot;, strerror(ret));
-
-
-int pthread_create(pthread_t *tid, const pthread_attr_t *attr, void *(*start_rountn)(void *), void *arg); 创建子线程。
-
-    参1：传出参数，表新创建的子线程 id
-
-    参2：线程属性。传NULL表使用默认属性。
-
-    参3：子线程回调函数。创建成功，ptherad_create函数返回时，该函数会被自动调用。
-    
-    参4：参3的参数。没有的话，传NULL
-
-    返回值：成功：0
-
-        失败：errno
-
-
-循环创建N个子线程：
-
-    for （i = 0； i &lt; 5; i++）
-
-        pthread_create(&amp;tid, NULL, tfn, (void *)i);   // 将 int 类型 i， 强转成 void *， 传参。	
-
-
-void pthread_exit(void *retval);  退出当前线程。
-
-    retval：退出值。 无退出值时，NULL
-
-    exit();	退出当前进程。
-
-    return: 返回到调用者那里去。
-
-    pthread_exit(): 退出当前线程。
-
-
-int pthread_join(pthread_t thread, void **retval);	阻塞 回收线程。
-
-    thread: 待回收的线程id
-
-    retval：传出参数。 回收的那个线程的退出值。
-
-        线程异常借助，值为 -1。
-
-    返回值：成功：0
-
-        失败：errno
-
-int pthread_detach(pthread_t thread);		设置线程分离
-
-    thread: 待分离的线程id
-
-
-    返回值：成功：0
-
-        失败：errno	
-
-int pthread_cancel(pthread_t thread);		杀死一个线程。  需要到达取消点（保存点）
-
-    thread: 待杀死的线程id
-    
-    返回值：成功：0
-
-        失败：errno
-
-    如果，子线程没有到达取消点， 那么 pthread_cancel 无效。
-
-    我们可以在程序中，手动添加一个取消点。使用 pthread_testcancel();
-
-    成功被 pthread_cancel() 杀死的线程，返回 -1.使用pthead_join 回收。
-
-
-线程控制原语					进程控制原语
-
-
-pthread_create()				fork();
-
-pthread_self()					getpid();
-
-pthread_exit()					exit(); 		/ return 
-
-pthread_join()					wait()/waitpid()
-
-pthread_cancel()				kill()
-
-pthread_detach()
-</code></pre>
-<p>线程属性：</p>
-<pre><code>设置分离属性。
-
-pthread_attr_t attr  	创建一个线程属性结构体变量
-
-pthread_attr_init(&amp;attr);	初始化线程属性
-
-pthread_attr_setdetachstate(&amp;attr,  PTHREAD_CREATE_DETACHED);		设置线程属性为 分离态
-
-pthread_create(&amp;tid, &amp;attr, tfn, NULL); 借助修改后的 设置线程属性 创建为分离态的新线程
-
-pthread_attr_destroy(&amp;attr);	销毁线程属性
-</code></pre>
-<p>线程同步：</p>
-<pre><code>协同步调，对公共区域数据按序访问。防止数据混乱，产生与时间有关的错误。
-</code></pre>
-<p>锁的使用：</p>
-<pre><code>建议锁！对公共数据进行保护。所有线程【应该】在访问公共数据前先拿锁再访问。但，锁本身不具备强制性。
-</code></pre>
-<p>使用mutex(互斥量、互斥锁)一般步骤：</p>
-<pre><code>pthread_mutex_t 类型。 
-
-1. pthread_mutex_t lock;  创建锁
-
-2  pthread_mutex_init; 初始化		1
-
-3. pthread_mutex_lock;加锁		1--	--&gt; 0
-
-4. 访问共享数据（stdout)		
-
-5. pthrad_mutext_unlock();解锁		0++	--&gt; 1
-
-6. pthead_mutex_destroy；销毁锁
-
-
-初始化互斥量：
-
-    pthread_mutex_t mutex;
-
-    1. pthread_mutex_init(&amp;mutex, NULL);   			动态初始化。
-
-    2. pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;	静态初始化。
-
-注意事项：
-
-    尽量保证锁的粒度， 越小越好。（访问共享数据前，加锁。访问结束【立即】解锁。）
-
-    互斥锁，本质是结构体。 我们可以看成整数。 初值为 1。（pthread_mutex_init() 函数调用成功。）
-
-    加锁： --操作， 阻塞线程。
-
-    解锁： ++操作， 换醒阻塞在锁上的线程。
-
-    try锁：尝试加锁，成功--。失败，返回。同时设置错误号 EBUSY
-</code></pre>
-<p>restrict关键字：</p>
-<pre><code>用来限定指针变量。被该关键字限定的指针变量所指向的内存操作，必须由本指针完成。
-</code></pre>
-<p>【死锁】：</p>
-<pre><code>是使用锁不恰当导致的现象：
-
-    1. 对一个锁反复lock。
-
-    2. 两个线程，各自持有一把锁，请求另一把。
-</code></pre>
-<p>读写锁：</p>
-<pre><code>锁只有一把。以读方式给数据加锁——读锁。以写方式给数据加锁——写锁。
-
-读共享，写独占。
-
-写锁优先级高。
-
-相较于互斥量而言，当读线程多的时候，提高访问效率
-
-pthread_rwlock_t  rwlock;
-
-pthread_rwlock_init(&amp;rwlock, NULL);
-
-pthread_rwlock_rdlock(&amp;rwlock);		try
-
-pthread_rwlock_wrlock(&amp;rwlock);		try
-
-pthread_rwlock_unlock(&amp;rwlock);
-
-pthread_rwlock_destroy(&amp;rwlock);
-</code></pre>
-<p>条件变量：</p>
-<pre><code>本身不是锁！  但是通常结合锁来使用。 mutex
-
-pthread_cond_t cond;
-
-初始化条件变量：
-
-    1. pthread_cond_init(&amp;cond, NULL);   			动态初始化。
-
-    2. pthread_cond_t cond = PTHREAD_COND_INITIALIZER;	静态初始化。
-
-阻塞等待条件：
-
-    pthread_cond_wait(&amp;cond, &amp;mutex);
-
-    作用：	1） 阻塞等待条件变量满足
-
-        2） 解锁已经加锁成功的信号量 （相当于 pthread_mutex_unlock(&amp;mutex)）
-
-        3)  当条件满足，函数返回时，重新加锁信号量 （相当于， pthread_mutex_lock(&amp;mutex);）
-
-
-pthread_cond_signal(): 唤醒阻塞在条件变量上的 (至少)一个线程。
-
-pthread_cond_broadcast()： 唤醒阻塞在条件变量上的 所有线程。
-
-
-【要求，能够借助条件变量，完成生成者消费者】
-</code></pre>
-<p>信号量： </p>
-<pre><code>应用于线程、进程间同步。
-
-相当于 初始化值为 N 的互斥量。  N值，表示可以同时访问共享数据区的线程数。
-
-函数：
-    sem_t sem;	定义类型。
-
-    int sem_init(sem_t *sem, int pshared, unsigned int value);
-
-    参数：
-        sem： 信号量 
-
-        pshared：	0： 用于线程间同步
-                
-                1： 用于进程间同步
-
-        value：N值。（指定同时访问的线程数）
-
-
-    sem_destroy();
-
-    sem_wait();		一次调用，做一次-- 操作， 当信号量的值为 0 时，再次 -- 就会阻塞。 （对比 pthread_mutex_lock）
-
-    sem_post();		一次调用，做一次++ 操作. 当信号量的值为 N 时, 再次 ++ 就会阻塞。（对比 pthread_mutex_unlock）
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/18/linux-thread/">展开全文 >></a>
         </p>
       
 
@@ -2069,11 +2199,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
