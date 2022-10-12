@@ -145,6 +145,119 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-04存储管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/10/11/docker-04%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">Docker - 04存储管理</a>
+    </h1>
+  
+
+        
+        <a href="/2022/10/11/docker-04%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" class="archive-article-date">
+  	<time datetime="2022-10-11T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-10-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><code>registry</code>是<code>repository</code>的集合，<code>repository</code>是镜像的集合</p>
+<p><code>Docker</code>内部的<code>image</code>(镜像)概念是用来存储一组镜像相关的元数据信息，主要包括镜像的架构、镜像默认配置信息、构建镜像的容器配置信息、包含所有镜像层信息的<code>rootfs</code>,<code>Docker</code>用<code>rootfs</code>中的<code>diff_id</code>计算出内容寻址的索引（chainID）来获取<code>layer</code>相关信息，进而获取每一个镜像层的文件内容</p>
+<p><code>layer</code>（镜像层）是一个<code>Docker</code>用来管理镜像层的中间概念，镜像是由镜像层组成的，而单个镜像层可能被多个镜像共享，所以<code>Docker</code>将<code>layer</code>与<code>image</code>的概念分离。<code>Docker</code>镜像管理中的<code>layer</code>主要存放了镜像层的<code>diff_id</code>、<code>size</code>、<code>cache-id</code>和<code>parent</code>等内容，实际的文件内容则是由存储驱动来管理，并可以通过<code>cache-id</code>在本地索引到</p>
+<h2 id="repository元数据"><a href="#repository元数据" class="headerlink" title="repository元数据"></a>repository元数据</h2><p><code>/var/lib/docker/image/overlay2/repositories.json</code>下存放所有镜像相关元数据(多个repository下的不同版本镜像),包含<code>repo</code>名称(docker-cli-dev),镜像名称和tag(docker-cli-dev:latest),镜像id(sha256…),有的还包含数字签名</p>
+<p>Docker默认采用SHA256算法根据镜像元数据配置文件计算出镜像ID</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;Repositories&quot;</span><span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span>	</span><br><span class="line">	<span class="attr">&quot;docker-cli-dev&quot;</span><span class="punctuation">:</span></span><br><span class="line">	<span class="punctuation">&#123;</span><span class="attr">&quot;docker-cli-dev:latest&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:809278dd58853bdeba654f7b8605a792830d1e1ab4ba2c41a24b43c945998901&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">	<span class="attr">&quot;docker-cli-native&quot;</span><span class="punctuation">:</span></span><br><span class="line">	<span class="punctuation">&#123;</span><span class="attr">&quot;docker-cli-native:latest&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:4bb4cbf4906ee605fb05d1b7d2e96e72dc2ee4703845431d910eb3c515b994f8&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">	<span class="attr">&quot;docker-dev&quot;</span><span class="punctuation">:</span></span><br><span class="line">	<span class="punctuation">&#123;</span><span class="attr">&quot;docker-dev:1-12-0&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:0c12c9a82fe05a081fff33012812236c6ee84037e8375ba3d138df042efbbca9&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">	<span class="attr">&quot;redis&quot;</span><span class="punctuation">:</span></span><br><span class="line">	<span class="punctuation">&#123;</span><span class="attr">&quot;redis:latest&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:e800a8da9469811a2d16e2f9aaa65374d33b04844209e85eda17986b21949a5c&quot;</span><span class="punctuation">,</span><span class="attr">&quot;redis@sha256:9bc34afe08ca30ef179404318cdebe6430ceda35a4ebe4b67d10789b17bdf7c4&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:e800a8da9469811a2d16e2f9aaa65374d33b04844209e85eda17986b21949a5c&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br><span class="line">	<span class="attr">&quot;ubuntu&quot;</span><span class="punctuation">:</span></span><br><span class="line">	<span class="punctuation">&#123;</span><span class="attr">&quot;ubuntu:16.04&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:fe3b34cb9255c8dd390f85c8fe37e6fbe6ac555f86c7e8944cd68da2de2f7633&quot;</span><span class="punctuation">,</span><span class="attr">&quot;ubuntu:latest&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:bad148f8963fb9be6c8c260ce8a65aadd1cdfdd95e5bd16867d0f987cd7ebff3&quot;</span><span class="punctuation">,</span><span class="attr">&quot;ubuntu@sha256:34fea4f31bf187bc915536831fd0afc9d214755bf700b5cdb1336c82516d154e&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:bad148f8963fb9be6c8c260ce8a65aadd1cdfdd95e5bd16867d0f987cd7ebff3&quot;</span><span class="punctuation">,</span><span class="attr">&quot;ubuntu@sha256:91bd29a464fdabfcf44e29e1f2a5f213c6dfa750b6290e40dd6998ac79da3c41&quot;</span><span class="punctuation">:</span><span class="string">&quot;sha256:fe3b34cb9255c8dd390f85c8fe37e6fbe6ac555f86c7e8944cd68da2de2f7633&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">	</span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="image元数据"><a href="#image元数据" class="headerlink" title="image元数据"></a>image元数据</h2><p><code>imageStore</code>则管理镜像ID与镜像元数据之间的映射关系以及元数据的持久化操作，持久化文件位于<code>/var/lib/docker/image/[graph_driver]/imagedb/content/sha256/[image_id]</code>中</p>
+<p>内容包括镜像架构,构建镜像相关配置信息、创建该镜像的容器ID和配置、创建时间、创建该镜像的<code>Docker</code>版本、构建镜像的历史信息、操作系统以及<code>rootfs</code>组成</p>
+<p><code>Docker</code>会根据历史信息和<code>rootfs</code>中的<code>diff_ids</code>计算出构成该镜像的镜像层的存储索引<code>chainID</code></p>
+<h2 id="layer元数据"><a href="#layer元数据" class="headerlink" title="layer元数据"></a>layer元数据</h2><p>镜像层只包含一个具体的镜像层文件包,当一个镜像层被下载后,<code>Docker</code>会基于镜像层文件包和<code>image</code>元数据构建本地的<code>layer</code>元数据,包括diff、parent、size等</p>
+<p><code>Docker</code>中定义了<code>Layer</code>和<code>RWLayper</code>两种接口，分别用来定义只读层和可读写层的一些操作，又定义了<code>roLayer</code>和<code>mountedLayer</code>，分别实现了上述两种接口。其中，<code>roLayer</code>用于描述不可改变的镜像层，<code>mountedLayer</code>用于描述可读写的容器层</p>
+<h3 id="roLayer"><a href="#roLayer" class="headerlink" title="roLayer"></a>roLayer</h3><p>位于<code>/var/lib/docker/image/[graph_driver]/layerdb/sha256/[chainID]/</code></p>
+<ul>
+<li>chainID 文件夹名称,用于索引该镜像层<ul>
+<li>如果该镜像层是最底层(没有父镜像层),该层的<code>diffID</code>便是<code>chainID</code></li>
+<li>该镜像层的<code>chainID</code>计算公式为<code>chainID(n)=SHA256(chain(n-1) diffID(n))</code>，也就是根据父镜像层的<code>chainID</code>加上一个空格和当前层的<code>diffID</code>，再计算<code>SHA256</code>校验码</li>
+</ul>
+</li>
+<li>diff 该镜像层的校验码<code>diffID</code><ul>
+<li><code>diffID</code>采用<code>SHA256</code>算法，基于镜像层文件包的内容计算得到</li>
+</ul>
+</li>
+<li>parent 父镜像层<code>chainID</code></li>
+<li>cache-id <code>graphdriver</code>存储当前镜像层文件的<code>cacheID</code><ul>
+<li><code>cacheID</code>是在当前<code>Docker</code>宿主机上随机生成的一个<code>uuid</code>，在当前宿主机上与该镜像层一一对应，用于标示并索引<code>graphdriver</code>中的镜像层文件</li>
+</ul>
+</li>
+<li>size 该镜像层的大小</li>
+</ul>
+<h3 id="mountedLayer"><a href="#mountedLayer" class="headerlink" title="mountedLayer"></a>mountedLayer</h3><p>位于<code>/var/lib/docker/image/[graph_driver]/layerdb/mounts/[container_id]/</code></p>
+<ul>
+<li>container_id 对应<code>docker ps -a</code>的容器ID</li>
+<li>init-id 容器init层在graphdriver中的ID</li>
+<li>mount 读写层在graphdriver中的ID</li>
+<li>parent 父层镜像的chainID</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@zeyu-desktop:/var/lib/docker/image/overlay2/layerdb/mounts/f4ce0841c0b174e4e5e4639e1ef5841a14ebe64c37f3e6cf3711501567345842<span class="comment"># ls</span></span><br><span class="line">init-id  mount-id  parent</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@zeyu-desktop:/var/lib/docker/image/overlay2/layerdb/sha256/efc088ed50a3b76edfce1505de41e3317d521684dc0620f1cd87af5f6f28a9ab<span class="comment"># pwd</span></span><br><span class="line">/var/lib/docker/image/overlay2/layerdb/sha256/efc088ed50a3b76edfce1505de41e3317d521684dc0620f1cd87af5f6f28a9ab</span><br><span class="line">root@zeyu-desktop:/var/lib/docker/image/overlay2/layerdb/sha256/efc088ed50a3b76edfce1505de41e3317d521684dc0620f1cd87af5f6f28a9ab<span class="comment"># ls</span></span><br><span class="line">cache-id  diff  parent  size  tar-split.json.gz</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/10/11/docker-04%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-03daemon" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1008,99 +1121,9 @@
 
 
   
-    <article id="post-head-first-go-12异常处理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/10/head-first-go-12%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/">Head First Go - 12异常处理</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/10/head-first-go-12%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" class="archive-article-date">
-  	<time datetime="2022-08-10T00:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="写在最前面"><a href="#写在最前面" class="headerlink" title="写在最前面"></a>写在最前面</h2><p>Go语言本身的设计不鼓励使用panic和recover,Go开发人员鼓励使用if和return语句,以及error值进行错误处理</p>
-<h2 id="延迟调用"><a href="#延迟调用" class="headerlink" title="延迟调用"></a>延迟调用</h2><p>声明defer的语句在函数所有调用执行之后,return之前执行</p>
-<p>最先声明的defer最后执行</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;abc&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;000&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;111&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;def&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;222&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;333&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="延迟调用在panic前完成"><a href="#延迟调用在panic前完成" class="headerlink" title="延迟调用在panic前完成"></a>延迟调用在panic前完成</h2><p>当程序出现panic时，当前函数停止运行，程序打印日志消息并崩溃。可以通过简单地调用内置的panic函数来引发panic</p>
-<p>panic函数需要一个满足空接口的参数(也就是说，它可以是任何类型)。该参数将被转换为字符串(如果需要)，并作为panic日志信息的一部分打印出来</p>
-<p>当程序出现panic时，所有延迟的函数调用仍然会被执行。如果有多个延迟调用，它们的执行顺序将与被延迟的顺序相反</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOne</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;defer one&quot;</span>)</span><br><span class="line">	testTwo()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testTwo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="string">&quot;defer two&quot;</span>)</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;die&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	testOne()	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="何时产生panic"><a href="#何时产生panic" class="headerlink" title="何时产生panic"></a>何时产生panic</h2><p>调用panic应该留给“不可能的”情况,错误表示的是程序中的错误，而不是用户方面的错误</p>
-<h2 id="recover函数"><a href="#recover函数" class="headerlink" title="recover函数"></a>recover函数</h2><p>Go提供了一个内置的recover函数，可以阻止程序陷入panic</p>
-<p>在正常程序执行过程中调用recover时，它只返回nil，而不执行其他操作</p>
-<p>需要在程序处于panic状态时调用recover才能生效，recover就要配合defer一起使用</p>
-<p>recover必须在defer函数中使用，但是不能被defer直接调用 <code>defer recover()</code>是不生效的</p>
-<p>recover会恢复让程序继续执行,但是panic的那个函数从panic后都不会执行</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">catchPanic</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="built_in">recover</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOne</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> catchPanic()</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;die&quot;</span>)</span><br><span class="line">    fmt.Println(<span class="string">&quot;not go there&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	testOne()	</span><br><span class="line">	fmt.Println(<span class="string">&quot;go on&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>recover的返回值的类型也是interface{},要对panic值调用方法或执行其他操作，需要使用类型断言将其转换回其底层类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">catchPanic</span><span class="params">()</span></span> &#123;</span><br><span class="line">	p := <span class="built_in">recover</span>() <span class="comment">//p是空接口</span></span><br><span class="line">	<span class="keyword">if</span> p == <span class="literal">nil</span> &#123; <span class="comment">//没有panci时返回nil</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err, ok := p.(<span class="type">error</span>)</span><br><span class="line">	<span class="keyword">if</span> (ok) &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;catch&quot;</span>, err.Error())</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(p) <span class="comment">//未知panic类型,恢复panic</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> catchPanic()</span><br><span class="line">	err := fmt.Errorf(<span class="string">&quot;wtf&quot;</span>)</span><br><span class="line">	<span class="built_in">panic</span>(err) <span class="comment">//传入一个error接口变量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/10/head-first-go-12%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
