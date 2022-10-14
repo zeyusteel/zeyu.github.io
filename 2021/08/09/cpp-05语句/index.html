@@ -6,13 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2021 | zeyu的博客</title>
+  <title>C++ 05语句 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zeyu的博客">
-<meta property="og:url" content="http://example.com/archives/2021/page/2/index.html">
+  <meta name="description" content="简单语句 表达式语句：一个表达式末尾加上分号，就变成了表达式语句 空语句：只有一个单独的分号 复合语句（块）：用花括号 &amp;#123;&amp;#125;包裹起来的语句和声明的序列。一个块就是一个作用域  条件语句 悬垂else（dangling else）：用来描述在嵌套的if else语句中，如果if比else多时如何处理的问题。C++使用的方法是else匹配最近没有配对的if  迭代语句 while：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 05语句">
+<meta property="og:url" content="http://example.com/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="简单语句 表达式语句：一个表达式末尾加上分号，就变成了表达式语句 空语句：只有一个单独的分号 复合语句（块）：用花括号 &amp;#123;&amp;#125;包裹起来的语句和声明的序列。一个块就是一个作用域  条件语句 悬垂else（dangling else）：用来描述在嵌套的if else语句中，如果if比else多时如何处理的问题。C++使用的方法是else匹配最近没有配对的if  迭代语句 while：">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-09T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-10-14T07:15:06.390Z">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -143,177 +148,224 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-cpp-05语句" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      C++ 05语句
+    </h1>
+  
+
+        
+        <a href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/" class="archive-article-date">
+  	<time datetime="2021-08-09T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-09</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="简单语句"><a href="#简单语句" class="headerlink" title="简单语句"></a>简单语句</h2><ul>
+<li><strong>表达式语句</strong>：一个表达式末尾加上分号，就变成了表达式语句</li>
+<li><strong>空语句</strong>：只有一个单独的分号</li>
+<li><strong>复合语句（块）</strong>：用花括号 <code>&#123;&#125;</code>包裹起来的语句和声明的序列。一个块就是一个作用域</li>
+</ul>
+<h2 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h2><ul>
+<li><strong>悬垂else</strong>（dangling else）：用来描述在嵌套的<code>if else</code>语句中，如果<code>if</code>比<code>else</code>多时如何处理的问题。C++使用的方法是<code>else</code>匹配最近没有配对的<code>if</code></li>
+</ul>
+<h2 id="迭代语句"><a href="#迭代语句" class="headerlink" title="迭代语句"></a>迭代语句</h2><ul>
+<li><strong>while</strong>：当不确定到底要迭代多少次时，使用 <code>while</code>循环比较合适，比如读取输入的内容</li>
+<li><strong>for</strong>： <code>for</code>语句可以省略掉 <code>init-statement</code>， <code>condition</code>和 <code>expression</code>的任何一个；<strong>甚至全部</strong></li>
+<li><strong>范围for</strong>： <code>for (declaration: expression) statement</code></li>
+</ul>
+<h2 id="跳转语句"><a href="#跳转语句" class="headerlink" title="跳转语句"></a>跳转语句</h2><ul>
+<li><strong>break</strong>：<code>break</code>语句负责终止离它最近的<code>while</code>、<code>do while</code>、<code>for</code>或者<code>switch</code>语句，并从这些语句之后的第一条语句开始继续执行</li>
+<li><strong>continue</strong>：终止最近的循环中的当前迭代并立即开始下一次迭代。只能在<code>while</code>、<code>do while</code>、<code>for</code>循环的内部</li>
+</ul>
+<h2 id="try语句块和异常处理"><a href="#try语句块和异常处理" class="headerlink" title="try语句块和异常处理"></a>try语句块和异常处理</h2><ul>
+<li><strong>throw表达式</strong>：异常检测部分使用 <code>throw</code>表达式来表示它遇到了无法处理的问题。我们说 <code>throw</code>引发 <code>raise</code>了异常</li>
+<li><strong>try语句块</strong>：以 <code>try</code>关键词开始，以一个或多个 <code>catch</code>字句结束。 <code>try</code>语句块中的代码抛出的异常通常会被某个 <code>catch</code>捕获并处理。 <code>catch</code>子句也被称为<strong>异常处理代码</strong></li>
+<li><strong>异常类</strong>：用于在 <code>throw</code>表达式和相关的 <code>catch</code>子句之间传递异常的具体信息</li>
+<li>只<code>throw</code>,而不进行异常捕捉,系统会调用<code>terminate</code>函数并终止当前程序的执行</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>异常类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>exception</td>
+<td>最常见的问题</td>
+</tr>
+<tr>
+<td>runtime_error</td>
+<td>只有在运行时才能检测出的问题</td>
+</tr>
+<tr>
+<td>range_error</td>
+<td>运行时错误：生成的结果超出了有意义的值域范围</td>
+</tr>
+<tr>
+<td>overflow_error</td>
+<td>运行时错误：计算上溢</td>
+</tr>
+<tr>
+<td>underflow_error</td>
+<td>运行时错误：计算下溢</td>
+</tr>
+<tr>
+<td>logic_error</td>
+<td>程序逻辑错误</td>
+</tr>
+<tr>
+<td>domain_error</td>
+<td>逻辑错误：参数对应的结果值不存在</td>
+</tr>
+<tr>
+<td>invalid_argument</td>
+<td>逻辑错误：无效参数</td>
+</tr>
+<tr>
+<td>length_error</td>
+<td>逻辑错误：试图创建一个超出该类型最大长度的对象</td>
+</tr>
+<tr>
+<td>out_of_range</td>
+<td>逻辑错误：使用一个超出有效范围的值</td>
+</tr>
+</tbody></table>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (std::runtime_error err) &#123;</span><br><span class="line">        std:: cout &lt;&lt; err.<span class="built_in">what</span>() &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/05/10/linux-gcc/" class="archive-article-date">
-  	<time datetime="2021-05-10T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/05/10/linux-gcc/">Linux gcc</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/05/07/markdown/" class="archive-article-date">
-  	<time datetime="2021-05-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-07</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          C++ 继承
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/08/08/cpp-04%E8%A1%A8%E8%BE%BE%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C++ 04表达式</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/05/07/markdown/">markdown</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">markdown</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/27/linux-dmesg/" class="archive-article-date">
-  	<time datetime="2021-04-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/27/linux-dmesg/">Linux dmesg</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/02/27/linux-command/" class="archive-article-date">
-  	<time datetime="2021-02-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/02/27/linux-command/">Linux Command</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2021/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2021/">1</a><span class="page-number current">2</span>
-    </nav>
   
 
 
@@ -337,8 +389,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
