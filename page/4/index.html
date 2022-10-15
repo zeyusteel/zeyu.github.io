@@ -145,6 +145,132 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-04表达式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/08/cpp-04%E8%A1%A8%E8%BE%BE%E5%BC%8F/">C++ 04表达式</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/08/cpp-04%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-08-08T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="算术运算符"><a href="#算术运算符" class="headerlink" title="算术运算符"></a>算术运算符</h2><ul>
+<li><strong>溢出</strong>：当计算的结果超出该类型所能表示的范围时就会产生溢出</li>
+<li><strong>bool类型不应该参与计算</strong><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> b=<span class="literal">true</span>;</span><br><span class="line"><span class="type">bool</span> b2=-b;   <span class="comment">//仍然为true</span></span><br><span class="line"><span class="comment">//b为true，提升为对应int=1，-b=-1</span></span><br><span class="line"><span class="comment">//b2=-1≠0，所以b2仍未true</span></span><br></pre></td></tr></table></figure></li>
+<li>取余运算m%n，结果符号与m相同</li>
+</ul>
+<h2 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h2><ul>
+<li><strong>短路求值</strong>：逻辑与运算符和逻辑或运算符都是先求左侧运算对象的值再求右侧运算对象的值，当且仅当左侧运算对象无法确定表达式的结果时才会计算右侧运算对象的值。<strong>先左再右</strong></li>
+<li>小技巧，声明为引用类型可以避免对元素的拷贝，如下，如string特别大时可以节省大量时间  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;string&gt; text;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">const</span> <span class="keyword">auto</span> &amp;s: text)&#123;</span><br><span class="line">  cout&lt;&lt;s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="赋值运算符"><a href="#赋值运算符" class="headerlink" title="赋值运算符"></a>赋值运算符</h2><ul>
+<li>赋值运算的<strong>返回结果是它的左侧运算对象</strong>，且是一个左值。类型也就是左侧对象的类型</li>
+<li>如果赋值运算的左右侧运算对象类型不同，则右侧运算对象将转换成左侧运算对象的类型</li>
+<li>赋值运算符满足<strong>右结合律</strong>，这点和其他二元运算符不一样。 <code>ival = jval = 0;</code>等价于<code>ival = (jval = 0);</code></li>
+<li>赋值运算优先级比较低，使用其当条件时应该加括号</li>
+<li>复合赋值运算符，<strong>复合运算符只求值一次</strong>，普通运算符求值两次。（对性能有一点点点点影响）<br>任意复合运算符op等价于<code>a = a op b;</code></li>
+</ul>
+<h2 id="递增递减运算符"><a href="#递增递减运算符" class="headerlink" title="递增递减运算符"></a>递增递减运算符</h2><ul>
+<li>前置版本<code>j = ++i</code>，先加一后赋值</li>
+<li>后置版本<code>j = i++</code>，先赋值后加一</li>
+</ul>
+<p><strong>优先使用前置</strong>版本，后置多一步储存原始值。（除非需要变化前的值）</p>
+<h3 id="混用解引用和递增运算符"><a href="#混用解引用和递增运算符" class="headerlink" title="混用解引用和递增运算符"></a>混用解引用和递增运算符</h3><p><code>*iter++</code>等价于<code>*(iter++)</code>，递增优先级较高</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> iter = vi.<span class="built_in">begin</span>();</span><br><span class="line"><span class="keyword">while</span> (iter!=vi.<span class="built_in">end</span>()&amp;&amp;*iter&gt;=<span class="number">0</span>)</span><br><span class="line">	cout&lt;&lt;*iter++&lt;&lt;endl;	<span class="comment">// 输出当前值，指针向前移1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>简介是一种美德</strong>，追求简洁能降低程序出错可能性</p>
+</blockquote>
+<h2 id="成员访问运算符"><a href="#成员访问运算符" class="headerlink" title="成员访问运算符"></a>成员访问运算符</h2><p><code>ptr-&gt;mem</code>等价于<code>(*ptr).mem</code></p>
+<p>注意<code>.</code>运算符优先级大于<code>*</code>，所以记得加括号</p>
+<h2 id="条件运算符"><a href="#条件运算符" class="headerlink" title="条件运算符"></a>条件运算符</h2><ul>
+<li>可以嵌套使用，<strong>右结合律</strong>，从右向左顺序组合<ul>
+<li>&#96;&#96;&#96;c++<br>finalgrade &#x3D; (grade &gt; 90) ? “high pass”<br>: (grade &lt; 60) ? “fail” : “pass”;<br>&#x2F;&#x2F;等价于<br>finalgrade &#x3D; (grade &gt; 90) ? “high pass”<br>: （(grade &lt; 60) ? “fail” : “pass”）;<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## 位运算符</span><br><span class="line">- 有符号数负值可能移位后变号，所以强烈建议**位运算符仅用于无符号数**。</span><br><span class="line">- 位运算符满足左结合律，优先级介于中间，使用时尽量加括</span><br><span class="line"></span><br><span class="line">## 逗号运算符</span><br><span class="line"></span><br><span class="line">从左向右依次求值</span><br><span class="line"></span><br><span class="line">左侧求值结果丢弃，逗号运算符**结果是右侧表达式**的值</span><br><span class="line">```c++</span><br><span class="line">    int a = (1 * 1, 1* 2, 1 * 3);</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><h3 id="隐式类型转换"><a href="#隐式类型转换" class="headerlink" title="隐式类型转换"></a>隐式类型转换</h3><ul>
+<li>在大多数表达式中，比int类型小的整型值首先提升为较大的整数类型</li>
+<li>在条件中，非布尔值转换成布尔类型</li>
+<li>初始化过程中，初始值转换成变量的类型；在赋值语句中，右侧运算对象转换成左侧运算对象的类型</li>
+<li>如果算术运算或关系运算的运算对象有多种类型，需要转换成同一种类型</li>
+<li>函数调用时也会发生类型转换</li>
+</ul>
+<h3 id="显式类型转"><a href="#显式类型转" class="headerlink" title="显式类型转"></a>显式类型转</h3><ul>
+<li><strong>static_cast</strong>：任何明确定义的类型转换，只要不包含底层const，都可以使用。 <code>double slope = static_cast&lt;double&gt;(j);</code></li>
+<li><strong>dynamic_cast</strong>：支持运行时类型识别。</li>
+<li><strong>const_cast</strong>：只能改变运算对象的底层const，一般可用于去除const性质。 <code>const char *pc; char *p = const_cast&lt;char*&gt;(pc)</code><blockquote>
+<p>只有其可以改变常量属性</p>
+</blockquote>
+</li>
+<li><strong>reinterpret_cast</strong>：通常为运算对象的位模式提供低层次上的重新解释</li>
+</ul>
+<h2 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h2><p><img src="/../photos/src/cpp/04-1.png"><br><img src="/../photos/src/cpp/04-2.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/08/cpp-04%E8%A1%A8%E8%BE%BE%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-03字符串、向量和数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2859,242 +2985,6 @@ news: Network news subsystem.
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/04/27/linux-dmesg/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-command" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/27/linux-command/">Linux Command</a>
-    </h1>
-  
-
-        
-        <a href="/2021/02/27/linux-command/" class="archive-article-date">
-  	<time datetime="2021-02-27T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h2><ul>
-<li>bin:存放二进制可执行文件,date</li>
-<li>boot:存放开机启动程序</li>
-<li>dev:存放设备文件(device):字符设备、块设备,linux中所见皆文件</li>
-<li>home:存放普通用户</li>
-<li>etc:用户信息和系统配置文件passwd、group</li>
-<li>lib:库文件:libc.so.6</li>
-<li>root:管理员宿主目录（家目录）</li>
-<li>usr:用户资源管理目录 </li>
-<li>media:Linux识别光驱,U盘自动挂载   </li>
-<li>mnt:用户手动挂载</li>
-</ul>
-<h2 id="用户目录"><a href="#用户目录" class="headerlink" title="用户目录"></a>用户目录</h2><ul>
-<li><code>$</code> 普通用户</li>
-<li><code>#</code> 超级用户</li>
-<li><code>cd -</code> 回到上一次的工作目录</li>
-<li><code>.</code> 当前目录</li>
-<li><code>..</code> 上一级目录</li>
-<li><code>ls -a</code> 打开隐藏文件</li>
-<li><code>ls -l</code> 文件详细信息</li>
-</ul>
-<h2 id="系统文件类型："><a href="#系统文件类型：" class="headerlink" title="系统文件类型："></a>系统文件类型：</h2><ul>
-<li>普通文件：-</li>
-<li>目录文件：d</li>
-<li>字符设备文件：c</li>
-<li>块设备文件：b</li>
-<li>软连接：l</li>
-<li>管道文件：p</li>
-<li>套接字：s</li>
-<li>未知文件</li>
-</ul>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
-<li>which	    查看命令所在路径</li>
-<li>touch	    创建文件</li>
-<li>rm		删除目录&#x2F;文件 </li>
-<li>rm -r 	递归删除</li>
-<li>cp -r		拷贝目录&#x2F;文件</li>
-<li>cat		查看文件内容</li>
-<li>more less 查看大文件</li>
-<li>head tail 查看头尾</li>
-<li>tac		逆序查看文件内容</li>
-<li>more	    分屏查看内容</li>
-<li>mkdir -p  创建多层目录</li>
-<li>du -h     文件夹大小</li>
-<li>df -h     查看磁盘</li>
-</ul>
-<h2 id="软连接（快捷方式）"><a href="#软连接（快捷方式）" class="headerlink" title="软连接（快捷方式）"></a>软连接（快捷方式）</h2><p>ln -s file file.soft (创建时务必对源文件使用 绝对路径，可以搬运)</p>
-<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>ln file file.hard</p>
-<p>操作系统给每一个文件赋予唯一的inode,当有相同inode的文件存在时,彼此同步;删除时,只将硬链接计数减一。减为0时,inode被释放</p>
-<h2 id="文件属性和用户组"><a href="#文件属性和用户组" class="headerlink" title="文件属性和用户组"></a>文件属性和用户组</h2><p>创建用户：</p>
-<pre><code>sudo adduser 新用户名		--- useradd
-</code></pre>
-<p>修改文件所属用户：</p>
-<pre><code>sudo chown 新用户名 待修改文件。
-
-sudo chown wangwu a.c
-</code></pre>
-<p>删除用户：</p>
-<pre><code>sudo deluser 用户名  (-r 删除用户目录)
-</code></pre>
-<p>创建用户组：</p>
-<pre><code>sudo addgroup 新组名
-</code></pre>
-<p>修改文件所属用户组：</p>
-<pre><code>sudo chgrp 新用户组名 待修改文件。
-
-sudo chgrp g88 a.c
-</code></pre>
-<p> 删除组：</p>
-<pre><code>sudo delgroup 用户组名 
-</code></pre>
-<p>使用chown 一次修改所有者和所属组：</p>
-<pre><code>sudo chown 所有者：所属组  待操作文件。
-
-chmod u(user)/ g(group) /o(others)/a(all) + r/w/x  文件
-</code></pre>
-<h2 id="查找与检索"><a href="#查找与检索" class="headerlink" title="查找与检索"></a>查找与检索</h2><p>find<br>    -type 按文件类型搜索  d&#x2F;p&#x2F;s&#x2F;c&#x2F;b&#x2F;l&#x2F; f(文件)</p>
-<pre><code>-name 按文件名搜索
-
-    find ./ -name &quot;*file*.jpg&quot;
-
--maxdepth 指定搜索深度。应作为第一个参数出现。
-
-    find ./ -maxdepth 1 -name &quot;*file*.jpg&quot;
-
-
--size 按文件大小搜索. 单位：k、M、G
-
-    find /home/itcast -size +20M -size -50M
-
--atime、mtime、ctime 天  amin、mmin、cmin 分钟。
-
--exec：将find搜索的结果集执行某一指定命令。
-
-    find /usr/ -name &quot;*tmp*&quot; -exec ls -ld &#123;&#125; \;
-
--ok: 以交互式的方式 将find搜索的结果集执行某一指定命令
-
-
--xargs：将find搜索的结果集执行某一指定命令。  当结果集数量过大时，可以分片映射。
-
-    find /usr/ -name &quot;*tmp*&quot; | xargs ls -ld 
-
--print0：
-    find /usr/ -name &quot;*tmp*&quot; -print0 | xargs  -0 ls -ld 
-</code></pre>
-<p>grep(按内容查找)</p>
-<pre><code>grep -r &quot;copy&quot; ./ -n
-
--n参数：:显示行号    -r ：递归
-</code></pre>
-<p>检索进程结果集</p>
-<pre><code>ps aux | grep &#39;cupsd&#39;  
-</code></pre>
-<h2 id="安装与卸载"><a href="#安装与卸载" class="headerlink" title="安装与卸载"></a>安装与卸载</h2><p>软件安装：</p>
-<pre><code>1. 联网
-
-2. 更新软件资源列表到本地。  sudo apt-get update
-
-3. 安装 sudo apt-get install 软件名
-
-4. 卸载	sudo apt-get remove 软件名
-
-5. 使用软件包（.deb） 安装：	sudo dpkg -i 安装包名。
-</code></pre>
-<h2 id="压缩解压"><a href="#压缩解压" class="headerlink" title="压缩解压"></a>压缩解压</h2><p>tar</p>
-<pre><code>c 创建 -- 压缩
-x 释放 -- 解压
-v 显示提示信息
-f 指定压缩文件名
-z 使用gzip压缩
-j 使用bizp2方式压缩
-</code></pre>
-<p>tar压缩:</p>
-<pre><code>tar zcvf  test.tar.gz  file1 dir2   使用 gzip方式压缩。
-
-tar jcvf  test.tar.gz  file1 dir2   使用 bzip方式压缩。
-</code></pre>
-<p>tar解压：</p>
-<pre><code>将压缩命令中的 c --&gt; x
-
-    tar zxvf  test.tar.gz   使用 gzip方式解压缩。
-
-    tar jxvf  test.tar.gz   使用 bzip2方式解压缩。
-</code></pre>
-<p>rar压缩：</p>
-<pre><code>rar a  压缩包名（带.rar后缀） 压缩材料。
-
-rar a   testrar.rar	stdio.h test2.mp3
-</code></pre>
-<p>rar解压：</p>
-<pre><code>rar x 压缩包名（带.rar后缀）
-</code></pre>
-<p>zip压缩：</p>
-<pre><code>zip -r 压缩包名（带.zip后缀） 压缩材料。
-
-zip -r testzip.zip dir stdio.h test2.mp3
-</code></pre>
-<p>zip解压：</p>
-<pre><code>unzip 压缩包名（带.zip后缀） 
-
-unzip  testzip.zip 
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/27/linux-command/">展开全文 >></a>
         </p>
       
 
