@@ -165,7 +165,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><code>registry</code>是<code>repository</code>的集合，<code>repository</code>是镜像的集合</p>
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><code>registry</code>用以保存<code>Docker</code>镜像，其中还包括镜像层次结构和关于镜像的元数据(Docker Hub)</p>
+<p><code>repository</code>即由具有某个功能的<code>Docker</code>镜像的所有迭代版本构成的镜像组</p>
+<p><code>registry</code>是<code>repository</code>的集合，<code>repository</code>是镜像的集合</p>
 <p><code>Docker</code>内部的<code>image</code>(镜像)概念是用来存储一组镜像相关的元数据信息，主要包括镜像的架构、镜像默认配置信息、构建镜像的容器配置信息、包含所有镜像层信息的<code>rootfs</code>,<code>Docker</code>用<code>rootfs</code>中的<code>diff_id</code>计算出内容寻址的索引（chainID）来获取<code>layer</code>相关信息，进而获取每一个镜像层的文件内容</p>
 <p><code>layer</code>（镜像层）是一个<code>Docker</code>用来管理镜像层的中间概念，镜像是由镜像层组成的，而单个镜像层可能被多个镜像共享，所以<code>Docker</code>将<code>layer</code>与<code>image</code>的概念分离。<code>Docker</code>镜像管理中的<code>layer</code>主要存放了镜像层的<code>diff_id</code>、<code>size</code>、<code>cache-id</code>和<code>parent</code>等内容，实际的文件内容则是由存储驱动来管理，并可以通过<code>cache-id</code>在本地索引到</p>
 <h2 id="repository元数据"><a href="#repository元数据" class="headerlink" title="repository元数据"></a>repository元数据</h2><p><code>/var/lib/docker/image/overlay2/repositories.json</code>下存放所有镜像相关元数据(多个repository下的不同版本镜像),包含<code>repo</code>名称(docker-cli-dev),镜像名称和tag(docker-cli-dev:latest),镜像id(sha256…),有的还包含数字签名</p>

@@ -981,6 +981,211 @@
 
 
   
+    <article id="post-cpp-07类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/11/cpp-07%E7%B1%BB/">C++ 07类</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/11/cpp-07%E7%B1%BB/" class="archive-article-date">
+  	<time datetime="2021-08-11T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>类的基本思想是数据抽象（data abstraction）和封装（encapsulation）。数据抽象是一种依赖于接口（interface）和实现（implementation）分离的编程（以及设计）技术</p>
+<h2 id="类成员-（Member）"><a href="#类成员-（Member）" class="headerlink" title="类成员 （Member）"></a>类成员 （Member）</h2><ul>
+<li>必须在类的内部声明，不能在其他地方增加成员</li>
+<li>成员可以是数据，函数，类型别名</li>
+</ul>
+<h2 id="类的成员函数"><a href="#类的成员函数" class="headerlink" title="类的成员函数"></a>类的成员函数</h2><ul>
+<li>成员函数的<strong>声明</strong>必须在类的内部</li>
+<li>成员函数的<strong>定义</strong>既可以在类的内部也可以在外部</li>
+<li>使用点运算符 <code>.</code> 调用成员函数</li>
+<li>必须对任何<code>const</code>或引用类型成员以及没有默认构造函数的类类型的任何成员使用初始化式  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CTest</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CTest</span>(<span class="type">int</span> &amp;b) : <span class="built_in">i</span>(<span class="number">15</span>), <span class="built_in">ref</span>(b) &#123;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">int</span> &amp;ref;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><code>*this</code>：<ul>
+<li>每个成员函数都有一个额外的，隐含的形参<code>this</code></li>
+<li><code>this</code>总是指向当前对象，因此<code>this</code>是一个常量指针</li>
+<li><code>total.isbn()</code>等价于<code>Sales_data::isbn(&amp;total)</code></li>
+<li>默认情况下不能在一个常量对象上调用普通的成员函(this类型是Sales_data ＊const),形参表后面的<code>const</code>，改变了隐含的<code>this</code>形参的类型(const Sales_data ＊const)，如 <code>bool same_isbn(const Sales_item &amp;rhs) const</code>，这种函数称为“常量成员函数”（<code>this</code>指向的当前对象是常量）,果成员被声明成常量成员函数，那么它的定义也必须在参数列表后明确指定<code>const</code>属性</li>
+<li>普通的非<code>const</code>成员函数：<code>this</code>是指向类类型的<code>const</code>指针（可以改变<code>this</code>所指向的值，不能改变<code>this</code>保存的地址）</li>
+<li><code>const</code>成员函数：<code>this</code>是指向const类类型的<code>const</code>指针（既不能改变<code>this</code>所指向的值，也不能改变<code>this</code>保存的地址）</li>
+<li><code>return *this;</code>可以让成员函数返回执行该函数的对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的构造函数"><a href="#类的构造函数" class="headerlink" title="类的构造函数"></a>类的构造函数</h2><ul>
+<li>类通过一个或者几个特殊的成员函数来控制其对象的初始化过程，这些函数叫做<strong>构造函数</strong></li>
+<li>构造函数是特殊的成员函数</li>
+<li>构造函数放在类的<code>public</code>部分</li>
+<li>与类同名的成员函数</li>
+<li><code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
+<li><code>=default</code>要求编译器合成默认的构造函数。(<code>C++11</code>)</li>
+<li>初始化列表：冒号和花括号之间的代码： <code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
+</ul>
+<h2 id="访问控制与封装"><a href="#访问控制与封装" class="headerlink" title="访问控制与封装"></a>访问控制与封装</h2><ul>
+<li>使用 <code>class</code>：在第一个访问说明符之前的成员是 <code>priavte</code>的</li>
+<li>使用 <code>struct</code>：在第一个访问说明符之前的成员是 <code>public</code>的</li>
+</ul>
+<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><ul>
+<li>允许特定的<strong>非成员函数</strong>访问一个类的<strong>私有成员</strong></li>
+<li>友元的声明以关键字 <code>friend</code>开始。 <code>friend Sales_data add(const Sales_data&amp;, const Sales_data&amp;);</code>表示非成员函数<code>add</code>可以访问类的非公有成员</li>
+<li>通常将友元声明成组地放在<strong>类定义的开始或者结尾</strong></li>
+<li>类之间的友元：<ul>
+<li>如果一个类指定了友元类，则友元类的成员函数可以访问此类包括非公有成员在内的所有成员</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的其他特性"><a href="#类的其他特性" class="headerlink" title="类的其他特性"></a>类的其他特性</h2><ul>
+<li>成员函数作为内联函数 <code>inline</code><ul>
+<li>在类的内部，常有一些规模较小的函数适合于被声明成内联函数</li>
+<li><strong>定义</strong>在类内部的函数是<strong>自动内联</strong>的</li>
+<li>如果不是类内定义的函数，一般习惯不在类内函数声明加<code>inline</code>,而是在定义函数的时候声明<code>inline</code>，并且习惯将函数定义与相应的类写在同一头文件</li>
+</ul>
+</li>
+<li><strong>可变数据成员</strong> （mutable data member）<ul>
+<li><code>mutable size_t access_ctr;</code></li>
+<li>永远不会是<code>const</code>，即使它是<code>const</code>对象的成员</li>
+</ul>
+</li>
+<li><strong>类类型</strong>：<ul>
+<li>每个类定义了唯一的类型</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的作用域"><a href="#类的作用域" class="headerlink" title="类的作用域"></a>类的作用域</h2><ul>
+<li>每个类都会定义它自己的作用域。在类的作用域之外，普通的数据和函数成员只能由引用、对象、指针使用成员访问运算符来访问</li>
+<li>函数的<strong>返回类型</strong>通常在函数名前面，因此当成员函数定义在类的外部时，返回类型中使用的名字都位于类的作用域之外</li>
+<li>如果成员使用了外层作用域中的某个名字，而该名字代表一种<strong>类型</strong>，则类不能在之后重新定义该名字</li>
+<li>类中的<strong>类型名定义</strong>都要放在一开始</li>
+</ul>
+<h2 id="构造函数再探"><a href="#构造函数再探" class="headerlink" title="构造函数再探"></a>构造函数再探</h2><ul>
+<li>构造函数初始值列表：<ul>
+<li>类似<code>python</code>使用赋值的方式有时候不行，比如<code>const</code>或者引用类型的数据，只能初始化，不能赋值。（注意初始化和赋值的区别）</li>
+<li>最好让构造函数初始值的顺序和成员声明的顺序保持一致</li>
+<li>如果一个构造函数为所有参数都提供了默认参数，那么它实际上也定义了默认的构造函数</li>
+</ul>
+</li>
+</ul>
+<h3 id="委托构造函数-（delegating-constructor-C-11）"><a href="#委托构造函数-（delegating-constructor-C-11）" class="headerlink" title="委托构造函数 （delegating constructor, C++11）"></a>委托构造函数 （delegating constructor, <code>C++11</code>）</h3><ul>
+<li>委托构造函数将自己的职责委托给了其他构造函数</li>
+<li><code>Sale_data(): Sale_data(&quot;&quot;, 0, 0) &#123;&#125;</code></li>
+</ul>
+<h3 id="隐式的类型转换"><a href="#隐式的类型转换" class="headerlink" title="隐式的类型转换"></a>隐式的类型转换</h3><ul>
+<li>如果构造函数<strong>只接受一个实参</strong>，则它实际上定义了转换为此类类型的<strong>隐式转换机制</strong>。这种构造函数又叫<strong>转换构造函数</strong>（converting constructor）</li>
+<li>编译器只会自动地执行<code>仅一步</code>类型转换</li>
+<li>抑制构造函数定义的隐式转换<ul>
+<li>将构造函数声明为<code>explicit</code>加以阻止</li>
+<li><code>explicit</code>构造函数只能用于直接初始化，不能用于拷贝形式的初始化</li>
+</ul>
+</li>
+</ul>
+<h3 id="聚合类-（aggregate-class）"><a href="#聚合类-（aggregate-class）" class="headerlink" title="聚合类 （aggregate class）"></a>聚合类 （aggregate class）</h3><ul>
+<li>满足以下所有条件：<ul>
+<li>所有成员都是<code>public</code>的</li>
+<li>没有定义任何构造函数</li>
+<li>没有类内初始值</li>
+<li>没有基类，也没有<code>virtual</code>函数</li>
+</ul>
+</li>
+<li>可以使用一个花括号括起来的成员初始值列表，初始值的顺序必须和声明的顺序一致</li>
+</ul>
+<h3 id="字面值常量类"><a href="#字面值常量类" class="headerlink" title="字面值常量类"></a>字面值常量类</h3><ul>
+<li><code>constexpr</code>函数的参数和返回值必须是字面值</li>
+<li><strong>字面值类型</strong>：除了算术类型、引用和指针外，某些类也是字面值类型</li>
+<li>数据成员都是字面值类型的聚合类是字面值常量类</li>
+<li>如果不是聚合类，则必须满足下面所有条件：<ul>
+<li>数据成员都必须是字面值类型</li>
+<li>类必须至少含有一个<code>constexpr</code>构造函数</li>
+<li>如果一个数据成员含有类内部初始值，则内置类型成员的初始值必须是一条常量表达式；或者如果成员属于某种类类型，则初始值必须使用成员自己的<code>constexpr</code>构造函数</li>
+<li>类必须使用析构函数的默认定义，该成员负责销毁类的对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的静态成员"><a href="#类的静态成员" class="headerlink" title="类的静态成员"></a>类的静态成员</h2><ul>
+<li>非<code>static</code>数据成员存在于类类型的每个对象中</li>
+<li><code>static</code>数据成员独立于该类的任意对象而存在</li>
+<li>每个<code>static</code>数据成员是与类关联的对象，并不与该类的对象相关联</li>
+<li>声明：<ul>
+<li>声明之前加上关键词<code>static</code></li>
+</ul>
+</li>
+<li>使用：<ul>
+<li>使用<strong>作用域运算符</strong><code>::</code>直接访问静态成员:<code>r = Account::rate();</code></li>
+<li>也可以使用对象访问：<code>r = ac.rate();</code></li>
+</ul>
+</li>
+<li>定义：<ul>
+<li>在类外部定义时不用加<code>static</code></li>
+</ul>
+</li>
+<li>初始化：<ul>
+<li>通常不在类的内部初始化，而是在定义时进行初始化，如 <code>double Account::interestRate = initRate();</code></li>
+<li>如果一定要在类内部定义，则要求必须是字面值常量类型的<code>constexpr</code></li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/11/cpp-07%E7%B1%BB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-06函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1390,150 +1595,6 @@ public:
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-05语句" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/">C++ 05语句</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/" class="archive-article-date">
-  	<time datetime="2021-08-09T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="简单语句"><a href="#简单语句" class="headerlink" title="简单语句"></a>简单语句</h2><ul>
-<li><strong>表达式语句</strong>：一个表达式末尾加上分号，就变成了表达式语句</li>
-<li><strong>空语句</strong>：只有一个单独的分号</li>
-<li><strong>复合语句（块）</strong>：用花括号 <code>&#123;&#125;</code>包裹起来的语句和声明的序列。一个块就是一个作用域</li>
-</ul>
-<h2 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h2><ul>
-<li><strong>悬垂else</strong>（dangling else）：用来描述在嵌套的<code>if else</code>语句中，如果<code>if</code>比<code>else</code>多时如何处理的问题。C++使用的方法是<code>else</code>匹配最近没有配对的<code>if</code></li>
-</ul>
-<h2 id="迭代语句"><a href="#迭代语句" class="headerlink" title="迭代语句"></a>迭代语句</h2><ul>
-<li><strong>while</strong>：当不确定到底要迭代多少次时，使用 <code>while</code>循环比较合适，比如读取输入的内容</li>
-<li><strong>for</strong>： <code>for</code>语句可以省略掉 <code>init-statement</code>， <code>condition</code>和 <code>expression</code>的任何一个；<strong>甚至全部</strong></li>
-<li><strong>范围for</strong>： <code>for (declaration: expression) statement</code></li>
-</ul>
-<h2 id="跳转语句"><a href="#跳转语句" class="headerlink" title="跳转语句"></a>跳转语句</h2><ul>
-<li><strong>break</strong>：<code>break</code>语句负责终止离它最近的<code>while</code>、<code>do while</code>、<code>for</code>或者<code>switch</code>语句，并从这些语句之后的第一条语句开始继续执行</li>
-<li><strong>continue</strong>：终止最近的循环中的当前迭代并立即开始下一次迭代。只能在<code>while</code>、<code>do while</code>、<code>for</code>循环的内部</li>
-</ul>
-<h2 id="try语句块和异常处理"><a href="#try语句块和异常处理" class="headerlink" title="try语句块和异常处理"></a>try语句块和异常处理</h2><ul>
-<li><strong>throw表达式</strong>：异常检测部分使用 <code>throw</code>表达式来表示它遇到了无法处理的问题。我们说 <code>throw</code>引发 <code>raise</code>了异常</li>
-<li><strong>try语句块</strong>：以 <code>try</code>关键词开始，以一个或多个 <code>catch</code>字句结束。 <code>try</code>语句块中的代码抛出的异常通常会被某个 <code>catch</code>捕获并处理。 <code>catch</code>子句也被称为<strong>异常处理代码</strong></li>
-<li><strong>异常类</strong>：用于在 <code>throw</code>表达式和相关的 <code>catch</code>子句之间传递异常的具体信息</li>
-<li>只<code>throw</code>,而不进行异常捕捉,系统会调用<code>terminate</code>函数并终止当前程序的执行</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>异常类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>exception</td>
-<td>最常见的问题</td>
-</tr>
-<tr>
-<td>runtime_error</td>
-<td>只有在运行时才能检测出的问题</td>
-</tr>
-<tr>
-<td>range_error</td>
-<td>运行时错误：生成的结果超出了有意义的值域范围</td>
-</tr>
-<tr>
-<td>overflow_error</td>
-<td>运行时错误：计算上溢</td>
-</tr>
-<tr>
-<td>underflow_error</td>
-<td>运行时错误：计算下溢</td>
-</tr>
-<tr>
-<td>logic_error</td>
-<td>程序逻辑错误</td>
-</tr>
-<tr>
-<td>domain_error</td>
-<td>逻辑错误：参数对应的结果值不存在</td>
-</tr>
-<tr>
-<td>invalid_argument</td>
-<td>逻辑错误：无效参数</td>
-</tr>
-<tr>
-<td>length_error</td>
-<td>逻辑错误：试图创建一个超出该类型最大长度的对象</td>
-</tr>
-<tr>
-<td>out_of_range</td>
-<td>逻辑错误：使用一个超出有效范围的值</td>
-</tr>
-</tbody></table>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (std::runtime_error err) &#123;</span><br><span class="line">        std:: cout &lt;&lt; err.<span class="built_in">what</span>() &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/">展开全文 >></a>
         </p>
       
 
