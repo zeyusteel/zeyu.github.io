@@ -981,6 +981,279 @@
 
 
   
+    <article id="post-cpp-08IO" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/12/cpp-08IO/">C++ 08IO</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/12/cpp-08IO/" class="archive-article-date">
+  	<time datetime="2021-08-12T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前面章节已经在用的IO库设施"><a href="#前面章节已经在用的IO库设施" class="headerlink" title="前面章节已经在用的IO库设施"></a>前面章节已经在用的IO库设施</h2><ul>
+<li><strong>istream</strong>：输入流类型，提供输入操作</li>
+<li><strong>ostream</strong>：输出流类型，提供输出操作</li>
+<li><strong>cin</strong>：一个<code>istream</code>对象，从标准输入读取数据</li>
+<li><strong>cout</strong>：一个<code>ostream</code>对象，向标准输出写入数据</li>
+<li><strong>cerr</strong>：一个<code>ostream</code>对象，向标准错误写入消息</li>
+<li><strong>&gt;&gt;运算符</strong>：用来从一个<code>istream</code>对象中读取输入数据</li>
+<li><strong>&lt;&lt;运算符</strong>：用来向一个<code>ostream</code>对象中写入输出数据</li>
+<li><strong>getline函数</strong>：从一个给定的<code>istream</code>对象中读取一行数据，存入到一个给定的<code>string</code>对象中</li>
+</ul>
+<h2 id="IO类"><a href="#IO类" class="headerlink" title="IO类"></a>IO类</h2><h3 id="标准库定义的IO类型"><a href="#标准库定义的IO类型" class="headerlink" title="标准库定义的IO类型"></a>标准库定义的IO类型</h3><ul>
+<li><code>iostream</code>头文件：从标准流中读写数据，<code>istream</code>、<code>ostream</code>等。</li>
+<li><code>fstream</code>头文件：从文件中读写数据，<code>ifstream</code>、<code>ofstream</code>等。</li>
+<li><code>sstream</code>头文件：从字符串中读写数据，<code>istringstream</code>、<code>ostringstream</code></li>
+</ul>
+<h3 id="IO对象不可复制或赋值"><a href="#IO对象不可复制或赋值" class="headerlink" title="IO对象不可复制或赋值"></a>IO对象不可复制或赋值</h3><ul>
+<li>1.IO对象不能存在容器里</li>
+<li>2.形参和返回类型也不能是流类型</li>
+<li>3.形参和返回类型一般是流的<strong>引用</strong></li>
+<li>4.读写一个IO对象会改变其状态，因此传递和返回的引用不能是<code>const</code>的</li>
+</ul>
+<h3 id="条件状态"><a href="#条件状态" class="headerlink" title="条件状态"></a>条件状态</h3><table>
+<thead>
+<tr>
+<th>状态</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>strm:iostate</code></td>
+<td>是一种机器无关的<strong>类型</strong>，提供了表达条件状态的完整功能</td>
+</tr>
+<tr>
+<td><code>strm:badbit</code></td>
+<td>用来指出流已经崩溃</td>
+</tr>
+<tr>
+<td><code>strm:failbit</code></td>
+<td>用来指出一个IO操作失败了</td>
+</tr>
+<tr>
+<td><code>strm:eofbit</code></td>
+<td>用来指出流到达了文件结束</td>
+</tr>
+<tr>
+<td><code>strm:goodbit</code></td>
+<td>用来指出流未处于错误状态，此值保证为零</td>
+</tr>
+<tr>
+<td><code>s.eof()</code></td>
+<td>若流<code>s</code>的<code>eofbit</code>置位，则返回<code>true</code></td>
+</tr>
+<tr>
+<td><code>s.fail()</code></td>
+<td>若流<code>s</code>的<code>failbit</code>置位，则返回<code>true</code></td>
+</tr>
+<tr>
+<td><code>s.bad()</code></td>
+<td>若流<code>s</code>的<code>badbit</code>置位，则返回<code>true</code></td>
+</tr>
+<tr>
+<td><code>s.good()</code></td>
+<td>若流<code>s</code>处于有效状态，则返回<code>true</code></td>
+</tr>
+<tr>
+<td><code>s.clear()</code></td>
+<td>将流<code>s</code>中所有条件状态位复位，将流的状态设置成有效，返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>s.clear(flags)</code></td>
+<td>将流<code>s</code>中指定的条件状态位复位，返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>s.setstate(flags)</code></td>
+<td>根据给定的标志位，将流<code>s</code>中对应的条件状态位置位，返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>s.rdstate()</code></td>
+<td>返回流<code>s</code>的当前条件状态，返回值类型为<code>strm::iostate</code></td>
+</tr>
+</tbody></table>
+<p>上表中，<code>strm</code>是一种IO类型，（如<code>istream</code>）， <code>s</code>是一个流对象</p>
+<h3 id="管理输出缓冲"><a href="#管理输出缓冲" class="headerlink" title="管理输出缓冲"></a>管理输出缓冲</h3><ul>
+<li>每个输出流都管理一个缓冲区，执行输出的代码，文本串可能立即打印出来，也可能被操作系统保存在缓冲区内，随后再打印</li>
+<li>刷新缓冲区，可以使用如下IO操纵符：<ul>
+<li><code>endl</code>：输出一个换行符并刷新缓冲区</li>
+<li><code>flush</code>：刷新流，单不添加任何字符</li>
+<li><code>ends</code>：在缓冲区插入空字符<code>null</code>，然后刷新</li>
+<li><code>unitbuf</code>：告诉流接下来每次操作之后都要进行一次<code>flush</code>操作</li>
+<li><code>nounitbuf</code>：回到正常的缓冲方式</li>
+</ul>
+</li>
+</ul>
+<h2 id="文件输入输出"><a href="#文件输入输出" class="headerlink" title="文件输入输出"></a>文件输入输出</h2><ul>
+<li>头文件<code>fstream</code>定义了三个类型来支持文件IO：<ul>
+<li><code>ifstream</code>从一个给定文件读取数据</li>
+<li><code>ofstream</code>向一个给定文件写入数据</li>
+<li><code>fstream</code>可以读写给定文件</li>
+</ul>
+</li>
+<li><strong>文件流</strong>：需要读写文件时，必须定义自己的文件流对象，并绑定在需要的文件上</li>
+</ul>
+<h3 id="fstream特有的操作"><a href="#fstream特有的操作" class="headerlink" title="fstream特有的操作"></a>fstream特有的操作</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fstream fstrm;</code></td>
+<td>创建一个未绑定的文件流。</td>
+</tr>
+<tr>
+<td><code>fstream fstrm(s);</code></td>
+<td>创建一个文件流，并打开名为<code>s</code>的文件，<code>s</code>可以是<code>string</code>也可以是<code>char</code>指针</td>
+</tr>
+<tr>
+<td><code>fstream fstrm(s, mode);</code></td>
+<td>与前一个构造函数类似，但按指定<code>mode</code>打开文件</td>
+</tr>
+<tr>
+<td><code>fstrm.open(s)</code></td>
+<td>打开名为<code>s</code>的文件，并和<code>fstrm</code>绑定</td>
+</tr>
+<tr>
+<td><code>fstrm.close()</code></td>
+<td>关闭和<code>fstrm</code>绑定的文件</td>
+</tr>
+<tr>
+<td><code>fstrm.is_open()</code></td>
+<td>返回一个<code>bool</code>值，指出与<code>fstrm</code>关联的文件是否成功打开且尚未关闭</td>
+</tr>
+</tbody></table>
+<p>上表中，<code>fstream</code>是头文件<code>fstream</code>中定义的一个类型，<code>fstrm</code>是一个文件流对象</p>
+<h3 id="文件模式"><a href="#文件模式" class="headerlink" title="文件模式"></a>文件模式</h3><table>
+<thead>
+<tr>
+<th>文件模式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>in</code></td>
+<td>以读的方式打开</td>
+</tr>
+<tr>
+<td><code>out</code></td>
+<td>以写的方式打开</td>
+</tr>
+<tr>
+<td><code>app</code></td>
+<td>每次写操作前均定位到文件末尾</td>
+</tr>
+<tr>
+<td><code>ate</code></td>
+<td>打开文件后立即定位到文件末尾</td>
+</tr>
+<tr>
+<td><code>trunc</code></td>
+<td>截断文件</td>
+</tr>
+<tr>
+<td><code>binary</code></td>
+<td>以二进制方式进行IO操作</td>
+</tr>
+</tbody></table>
+<h2 id="string流"><a href="#string流" class="headerlink" title="string流"></a>string流</h2><ul>
+<li>头文件<code>sstream</code>定义了三个类型来支持内存IO：<ul>
+<li><code>istringstream</code>从<code>string</code>读取数据</li>
+<li><code>ostringstream</code>向<code>string</code>写入数据</li>
+<li><code>stringstream</code>可以读写给定<code>string</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="stringstream特有的操作"><a href="#stringstream特有的操作" class="headerlink" title="stringstream特有的操作"></a>stringstream特有的操作</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sstream strm</code></td>
+<td>定义一个未绑定的<code>stringstream</code>对象</td>
+</tr>
+<tr>
+<td><code>sstream strm(s)</code></td>
+<td>用<code>s</code>初始化对象</td>
+</tr>
+<tr>
+<td><code>strm.str()</code></td>
+<td>返回<code>strm</code>所保存的<code>string</code>的拷贝</td>
+</tr>
+<tr>
+<td><code>strm.str(s)</code></td>
+<td>将<code>s</code>拷贝到<code>strm</code>中，返回<code>void</code></td>
+</tr>
+</tbody></table>
+<p>上表中<code>sstream</code>是头文件<code>sstream</code>中任意一个类型。<code>s</code>是一个<code>string</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/12/cpp-08IO/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-07类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1424,206 +1697,6 @@
 
 
   
-    <article id="post-cpp-继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">C++ 继承</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/" class="archive-article-date">
-  	<time datetime="2021-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="C-特性"><a href="#C-特性" class="headerlink" title="C++特性"></a>C++特性</h2><p>抽象 封装 继承 多态</p>
-<h2 id="成员类型"><a href="#成员类型" class="headerlink" title="成员类型"></a>成员类型</h2><ul>
-<li><p>公有成员类型</p>
-<p>  任何外部的函数都可以访问共有类型数据和函数</p>
-<p>  是类与外部的接口</p>
-</li>
-<li><p>私有类型成员</p>
-<p>  只允许本类中的函数访问，类外的任何函数不能访问</p>
-<p>  不写关键字，默认为私有成员</p>
-</li>
-<li><p>保护成员</p>
-<p>  与私有很像，差别在继承与派生时对派生类的影响不同</p>
-</li>
-</ul>
-<h2 id="内联成员函数"><a href="#内联成员函数" class="headerlink" title="内联成员函数"></a>内联成员函数</h2><pre><code>直接在类内写函数
-
-使用inline关键字
-</code></pre>
-<h2 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h2><pre><code>class 类名&#123;
-public:
-    类名（const 类名 &amp;对象名）；
-&#125;
-
-类名::类名（const 类名 &amp;对象名）
-&#123;
-&#125;
-</code></pre>
-<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><pre><code>~类名（）
-</code></pre>
-<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><p>友元都是单向的</p>
-<h2 id="友元函数"><a href="#友元函数" class="headerlink" title="友元函数"></a>友元函数</h2><pre><code>声明类外函数为本类朋友
-</code></pre>
-<h2 id="友元类"><a href="#友元类" class="headerlink" title="友元类"></a>友元类</h2><pre><code>friend class B;  (对B类授权可以访问自己)
-</code></pre>
-<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>继承与派生概述</p>
-<ul>
-<li>继承与派生是同一过程从不同的角度看<ul>
-<li>保持已有类的特性而构造新类的过程称为继承</li>
-<li>在已有类的基础上新增自己的特性而产生新类的过程称为派生</li>
-</ul>
-</li>
-<li>被继承的已有类称为基类（或父类）</li>
-<li>派生出的新类称为派生类（或子类）</li>
-<li>直接参与派生出某类的基类称为直接基类</li>
-<li>基类的基类甚至更高层的基类称为间接基类</li>
-</ul>
-<p>派生是为了解决原有程序无法完全解决问题，对程序的改造</p>
-<p>派生类的构成</p>
-<ul>
-<li>吸收基类成员</li>
-<li>改造基类成员<ul>
-<li>如果派生类声明了一个和某基类成员同名的新成员，派生的新成员就隐藏或覆盖了外层同名成员</li>
-</ul>
-</li>
-<li>添加新的成员</li>
-</ul>
-<h3 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h3><ul>
-<li><p>公有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:访问属性在派生类中<strong>保持不变</strong> </li>
-<li>基类的<code>private</code>成员:不可直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:只能访问<code>public</code>成员。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>私有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>private</code>身份出现在派生类中</li>
-<li>基类的<code>private</code>成员:不可以直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>保护继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>protected</code>身份出现在派生类中</li>
-<li>基类的<code>private</code>成员:不可以直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>不要重新定义继承来的非虚函数</strong></p>
-<h2 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h2><p>基类的构造函数不被继承,派生类需要编写自己的构造函数</p>
-<h3 id="单继承时构造函数"><a href="#单继承时构造函数" class="headerlink" title="单继承时构造函数"></a>单继承时构造函数</h3><pre><code>派生类名:派生类名(基类所需的型参,本类成员所需的型参):基类名(参数表),本类成员初始化列表 
-&#123;
-    //其他初始化
-&#125;
-</code></pre>
-<h3 id="多继承时构造函数"><a href="#多继承时构造函数" class="headerlink" title="多继承时构造函数"></a>多继承时构造函数</h3><pre><code>派生类名:派生类名(参数表):基类名1(基类1初始化参数表),基类名2(基类2初始化参数表),基类名n(基类n初始化参数表),本类成员初始化列表 
-&#123;
-    //其他初始化
-&#125;
-</code></pre>
-<h3 id="构造函数的执行顺序"><a href="#构造函数的执行顺序" class="headerlink" title="构造函数的执行顺序"></a>构造函数的执行顺序</h3><ol>
-<li>调用基类的构造函数,<ul>
-<li>顺序按照它们被继承时声明的顺序(从左向右)</li>
-</ul>
-</li>
-<li>对初始化列表中的成员进行初始化<ul>
-<li>顺序按照它们在类中定义的顺序</li>
-<li>对象成员初始化时自动调用其所属类的构造函数,由初始化列表提供参数</li>
-</ul>
-</li>
-<li>执行派生类的构造函数体中的内容</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> : <span class="keyword">public</span> BaseB, <span class="keyword">public</span> BaseA &#123; <span class="comment">//顺序 BaseB -&gt; BaseA</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Demo</span>(<span class="type">int</span> a, std::string str) : <span class="built_in">BaseA</span>(), <span class="built_in">BaseB</span>(),  <span class="comment">//和这里的顺序无关</span></span><br><span class="line">        <span class="built_in">m_a</span>(a),</span><br><span class="line">        <span class="built_in">m_b</span>(str) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:       <span class="comment">//顺序 m_a -&gt;  m_b</span></span><br><span class="line">    CItemA m_a;</span><br><span class="line">    CItemB m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>析构函数与构造函数顺序相反</strong></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1733,11 +1806,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
