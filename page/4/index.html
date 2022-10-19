@@ -145,6 +145,211 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-07类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/11/cpp-07%E7%B1%BB/">C++ 07类</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/11/cpp-07%E7%B1%BB/" class="archive-article-date">
+  	<time datetime="2021-08-11T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>类的基本思想是数据抽象（data abstraction）和封装（encapsulation）。数据抽象是一种依赖于接口（interface）和实现（implementation）分离的编程（以及设计）技术</p>
+<h2 id="类成员-（Member）"><a href="#类成员-（Member）" class="headerlink" title="类成员 （Member）"></a>类成员 （Member）</h2><ul>
+<li>必须在类的内部声明，不能在其他地方增加成员</li>
+<li>成员可以是数据，函数，类型别名</li>
+</ul>
+<h2 id="类的成员函数"><a href="#类的成员函数" class="headerlink" title="类的成员函数"></a>类的成员函数</h2><ul>
+<li>成员函数的<strong>声明</strong>必须在类的内部</li>
+<li>成员函数的<strong>定义</strong>既可以在类的内部也可以在外部</li>
+<li>使用点运算符 <code>.</code> 调用成员函数</li>
+<li>必须对任何<code>const</code>或引用类型成员以及没有默认构造函数的类类型的任何成员使用初始化式  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CTest</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CTest</span>(<span class="type">int</span> &amp;b) : <span class="built_in">i</span>(<span class="number">15</span>), <span class="built_in">ref</span>(b) &#123;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">int</span> &amp;ref;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><code>*this</code>：<ul>
+<li>每个成员函数都有一个额外的，隐含的形参<code>this</code></li>
+<li><code>this</code>总是指向当前对象，因此<code>this</code>是一个常量指针</li>
+<li><code>total.isbn()</code>等价于<code>Sales_data::isbn(&amp;total)</code></li>
+<li>默认情况下不能在一个常量对象上调用普通的成员函(this类型是Sales_data ＊const),形参表后面的<code>const</code>，改变了隐含的<code>this</code>形参的类型(const Sales_data ＊const)，如 <code>bool same_isbn(const Sales_item &amp;rhs) const</code>，这种函数称为“常量成员函数”（<code>this</code>指向的当前对象是常量）,果成员被声明成常量成员函数，那么它的定义也必须在参数列表后明确指定<code>const</code>属性</li>
+<li>普通的非<code>const</code>成员函数：<code>this</code>是指向类类型的<code>const</code>指针（可以改变<code>this</code>所指向的值，不能改变<code>this</code>保存的地址）</li>
+<li><code>const</code>成员函数：<code>this</code>是指向const类类型的<code>const</code>指针（既不能改变<code>this</code>所指向的值，也不能改变<code>this</code>保存的地址）</li>
+<li><code>return *this;</code>可以让成员函数返回执行该函数的对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的构造函数"><a href="#类的构造函数" class="headerlink" title="类的构造函数"></a>类的构造函数</h2><ul>
+<li>类通过一个或者几个特殊的成员函数来控制其对象的初始化过程，这些函数叫做<strong>构造函数</strong></li>
+<li>构造函数是特殊的成员函数</li>
+<li>构造函数放在类的<code>public</code>部分</li>
+<li>与类同名的成员函数</li>
+<li><code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
+<li><code>=default</code>要求编译器合成默认的构造函数。(<code>C++11</code>)</li>
+<li>初始化列表：冒号和花括号之间的代码： <code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
+</ul>
+<h2 id="访问控制与封装"><a href="#访问控制与封装" class="headerlink" title="访问控制与封装"></a>访问控制与封装</h2><ul>
+<li>使用 <code>class</code>：在第一个访问说明符之前的成员是 <code>priavte</code>的</li>
+<li>使用 <code>struct</code>：在第一个访问说明符之前的成员是 <code>public</code>的</li>
+</ul>
+<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><ul>
+<li>允许特定的<strong>非成员函数</strong>访问一个类的<strong>私有成员</strong></li>
+<li>友元的声明以关键字 <code>friend</code>开始。 <code>friend Sales_data add(const Sales_data&amp;, const Sales_data&amp;);</code>表示非成员函数<code>add</code>可以访问类的非公有成员</li>
+<li>通常将友元声明成组地放在<strong>类定义的开始或者结尾</strong></li>
+<li>类之间的友元：<ul>
+<li>如果一个类指定了友元类，则友元类的成员函数可以访问此类包括非公有成员在内的所有成员</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的其他特性"><a href="#类的其他特性" class="headerlink" title="类的其他特性"></a>类的其他特性</h2><ul>
+<li>成员函数作为内联函数 <code>inline</code><ul>
+<li>在类的内部，常有一些规模较小的函数适合于被声明成内联函数</li>
+<li><strong>定义</strong>在类内部的函数是<strong>自动内联</strong>的</li>
+<li>如果不是类内定义的函数，一般习惯不在类内函数声明加<code>inline</code>,而是在定义函数的时候声明<code>inline</code>，并且习惯将函数定义与相应的类写在同一头文件</li>
+</ul>
+</li>
+<li><strong>可变数据成员</strong> （mutable data member）<ul>
+<li><code>mutable size_t access_ctr;</code></li>
+<li>永远不会是<code>const</code>，即使它是<code>const</code>对象的成员</li>
+</ul>
+</li>
+<li><strong>类类型</strong>：<ul>
+<li>每个类定义了唯一的类型</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的作用域"><a href="#类的作用域" class="headerlink" title="类的作用域"></a>类的作用域</h2><ul>
+<li>每个类都会定义它自己的作用域。在类的作用域之外，普通的数据和函数成员只能由引用、对象、指针使用成员访问运算符来访问</li>
+<li>函数的<strong>返回类型</strong>通常在函数名前面，因此当成员函数定义在类的外部时，返回类型中使用的名字都位于类的作用域之外</li>
+<li>如果成员使用了外层作用域中的某个名字，而该名字代表一种<strong>类型</strong>，则类不能在之后重新定义该名字</li>
+<li>类中的<strong>类型名定义</strong>都要放在一开始</li>
+</ul>
+<h2 id="构造函数再探"><a href="#构造函数再探" class="headerlink" title="构造函数再探"></a>构造函数再探</h2><ul>
+<li>构造函数初始值列表：<ul>
+<li>类似<code>python</code>使用赋值的方式有时候不行，比如<code>const</code>或者引用类型的数据，只能初始化，不能赋值。（注意初始化和赋值的区别）</li>
+<li>最好让构造函数初始值的顺序和成员声明的顺序保持一致</li>
+<li>如果一个构造函数为所有参数都提供了默认参数，那么它实际上也定义了默认的构造函数</li>
+</ul>
+</li>
+</ul>
+<h3 id="委托构造函数-（delegating-constructor-C-11）"><a href="#委托构造函数-（delegating-constructor-C-11）" class="headerlink" title="委托构造函数 （delegating constructor, C++11）"></a>委托构造函数 （delegating constructor, <code>C++11</code>）</h3><ul>
+<li>委托构造函数将自己的职责委托给了其他构造函数</li>
+<li><code>Sale_data(): Sale_data(&quot;&quot;, 0, 0) &#123;&#125;</code></li>
+</ul>
+<h3 id="隐式的类型转换"><a href="#隐式的类型转换" class="headerlink" title="隐式的类型转换"></a>隐式的类型转换</h3><ul>
+<li>如果构造函数<strong>只接受一个实参</strong>，则它实际上定义了转换为此类类型的<strong>隐式转换机制</strong>。这种构造函数又叫<strong>转换构造函数</strong>（converting constructor）</li>
+<li>编译器只会自动地执行<code>仅一步</code>类型转换</li>
+<li>抑制构造函数定义的隐式转换<ul>
+<li>将构造函数声明为<code>explicit</code>加以阻止</li>
+<li><code>explicit</code>构造函数只能用于直接初始化，不能用于拷贝形式的初始化</li>
+</ul>
+</li>
+</ul>
+<h3 id="聚合类-（aggregate-class）"><a href="#聚合类-（aggregate-class）" class="headerlink" title="聚合类 （aggregate class）"></a>聚合类 （aggregate class）</h3><ul>
+<li>满足以下所有条件：<ul>
+<li>所有成员都是<code>public</code>的</li>
+<li>没有定义任何构造函数</li>
+<li>没有类内初始值</li>
+<li>没有基类，也没有<code>virtual</code>函数</li>
+</ul>
+</li>
+<li>可以使用一个花括号括起来的成员初始值列表，初始值的顺序必须和声明的顺序一致</li>
+</ul>
+<h3 id="字面值常量类"><a href="#字面值常量类" class="headerlink" title="字面值常量类"></a>字面值常量类</h3><ul>
+<li><code>constexpr</code>函数的参数和返回值必须是字面值</li>
+<li><strong>字面值类型</strong>：除了算术类型、引用和指针外，某些类也是字面值类型</li>
+<li>数据成员都是字面值类型的聚合类是字面值常量类</li>
+<li>如果不是聚合类，则必须满足下面所有条件：<ul>
+<li>数据成员都必须是字面值类型</li>
+<li>类必须至少含有一个<code>constexpr</code>构造函数</li>
+<li>如果一个数据成员含有类内部初始值，则内置类型成员的初始值必须是一条常量表达式；或者如果成员属于某种类类型，则初始值必须使用成员自己的<code>constexpr</code>构造函数</li>
+<li>类必须使用析构函数的默认定义，该成员负责销毁类的对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="类的静态成员"><a href="#类的静态成员" class="headerlink" title="类的静态成员"></a>类的静态成员</h2><ul>
+<li>非<code>static</code>数据成员存在于类类型的每个对象中</li>
+<li><code>static</code>数据成员独立于该类的任意对象而存在</li>
+<li>每个<code>static</code>数据成员是与类关联的对象，并不与该类的对象相关联</li>
+<li>声明：<ul>
+<li>声明之前加上关键词<code>static</code></li>
+</ul>
+</li>
+<li>使用：<ul>
+<li>使用<strong>作用域运算符</strong><code>::</code>直接访问静态成员:<code>r = Account::rate();</code></li>
+<li>也可以使用对象访问：<code>r = ac.rate();</code></li>
+</ul>
+</li>
+<li>定义：<ul>
+<li>在类外部定义时不用加<code>static</code></li>
+</ul>
+</li>
+<li>初始化：<ul>
+<li>通常不在类的内部初始化，而是在定义时进行初始化，如 <code>double Account::interestRate = initRate();</code></li>
+<li>如果一定要在类内部定义，则要求必须是字面值常量类型的<code>constexpr</code></li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/11/cpp-07%E7%B1%BB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-06函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2786,334 +2991,6 @@ sigismember（const sigset_t *set，int signum); 判断一个信号是否在集�
 
 
   
-    <article id="post-linux-io" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/12/linux-io/">Linux io</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/12/linux-io/" class="archive-article-date">
-  	<time datetime="2021-05-12T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>open函数：</p>
-<pre><code>int open(char *pathname, int flags)	#include &lt;unistd.h&gt;
-
-参数：
-    pathname: 欲打开的文件路径名
-
-    flags：文件打开方式：	#include &lt;fcntl.h&gt;
-
-        O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
-
-返回值：
-    成功： 打开文件所得到对应的 文件描述符（整数）
-
-    失败： -1， 设置errno	
-
-int open(char *pathname, int flags， mode_t mode)		123  775	
-
-参数：
-    pathname: 欲打开的文件路径名
-
-    flags：文件打开方式：	O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
-
-    mode: 参数3使用的前提， 参2指定了 O_CREAT。	取值8进制数，用来描述文件的 访问权限。 rwx    0664
-
-        创建文件最终权限 = mode &amp; ~umask
-
-返回值：
-    成功： 打开文件所得到对应的 文件描述符（整数）
-
-    失败： -1， 设置errno	
-</code></pre>
-<p>close函数：</p>
-<pre><code>int close(int fd);
-</code></pre>
-<p>错误处理函数：		与 errno 相关。</p>
-<pre><code>printf(&quot;xxx error: %d\n&quot;, errno);
-
-char *strerror(int errnum);
-
-    printf(&quot;xxx error: %s\n&quot;, strerror(errno));
-
-void perror(const char *s);
-
-    perror(&quot;open error&quot;);
-</code></pre>
-<p>read函数：</p>
-<pre><code>ssize_t read(int fd, void *buf, size_t count);
-
-参数：
-    fd：文件描述符
-
-    buf：存数据的缓冲区
-
-    count：缓冲区大小
-
-返回值：
-
-    0：读到文件末尾。
-
-    成功；	&gt; 0 读到的字节数。
-
-    失败：	-1， 设置 errno
-
-    -1： 并且 errno = EAGIN 或 EWOULDBLOCK, 说明不是read失败，而是read在以非阻塞方式读一个设备文件（网络文件），并且文件无数据。
-</code></pre>
-<p>write函数：</p>
-<pre><code>ssize_t write(int fd, const void *buf, size_t count);
-
-参数：
-    fd：文件描述符
-
-    buf：待写出数据的缓冲区
-
-    count：数据大小
-
-返回值：
-
-    成功；	写入的字节数。
-
-    失败：	-1， 设置 errno
-</code></pre>
-<p>文件描述符：</p>
-<pre><code>PCB进程控制块：本质 结构体。
-
-成员：文件描述符表。
-
-文件描述符：0/1/2/3/4。。。。/1023     表中可用的最小的。
-
-0 - STDIN_FILENO
-
-1 - STDOUT_FILENO
-
-2 - STDERR_FILENO
-</code></pre>
-<p>阻塞、非阻塞：  是设备文件、网络文件的属性。</p>
-<pre><code>产生阻塞的场景。 读设备文件。读网络文件。（读常规文件无阻塞概念。）
-
-/dev/tty -- 终端文件。
-
-open(&quot;/dev/tty&quot;, O_RDWR|O_NONBLOCK)	--- 设置 /dev/tty 非阻塞状态。(默认为阻塞状态)
-</code></pre>
-<p>fcntl：<br>    int (int fd, int cmd, …)</p>
-<pre><code>int flgs = fcntl(fd,  F_GETFL);
-
-flgs |= O_NONBLOCK
-
-fcntl(fd,  F_SETFL, flgs);
-
-获取文件状态： F_GETFL
-
-设置文件状态： F_SETFL
-</code></pre>
-<p>lseek函数：</p>
-<pre><code>off_t lseek(int fd, off_t offset, int whence);
-
-参数：
-    fd：文件描述符
-
-    offset： 偏移量
-
-    whence：起始偏移位置： SEEK_SET/SEEK_CUR/SEEK_END
-
-返回值：
-
-    成功：较起始位置偏移量
-
-    失败：-1 errno
-
-应用场景：	
-    1. 文件的“读”、“写”使用同一偏移位置。
-
-    2. 使用lseek获取文件大小
-
-    3. 使用lseek拓展文件大小：要想使文件大小真正拓展，必须引起IO操作。
-
-        使用 truncate 函数，直接拓展文件。	int ret = truncate(&quot;dict.cp&quot;, 250);
-</code></pre>
-<p>传入参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 同常有const关键字修饰。
-
-3. 指针指向有效区域， 在函数内部做读操作。
-</code></pre>
-<p>传出参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 在函数调用之前，指针指向的空间可以无意义，但必须有效。
-
-3. 在函数内部，做写操作。
-
-4。函数调用结束后，充当函数返回值。
-</code></pre>
-<p>传入传出参数：</p>
-<pre><code>1. 指针作为函数参数。
-
-2. 在函数调用之前，指针指向的空间有实际意义。
-
-3. 在函数内部，先做读操作，后做写操作。
-
-4. 函数调用结束后，充当函数返回值。
-</code></pre>
-<p>stat&#x2F;lstat 函数：</p>
-<pre><code>int stat(const char *path, struct stat *buf);
-
-参数：
-    path： 文件路径
-
-    buf：（传出参数） 存放文件属性。
-
-返回值：
-
-    成功： 0
-
-    失败： -1 errno
-
-获取文件大小： buf.st_size
-
-获取文件类型： buf.st_mode
-
-获取文件权限： buf.st_mode
-
-符号穿透：stat会。lstat不会。
-</code></pre>
-<p><img src="/../photos/src/linux/io01.png"></p>
-<p>link&#x2F;unlink:</p>
-<pre><code>隐式回收。
-</code></pre>
-<p>目录操作函数：</p>
-<pre><code>DIR * opendir(char *name);
-
-int closedir(DIR *dp);
-
-struct dirent *readdir(DIR * dp);
-
-    struct dirent &#123;
-
-        inode
-
-        char dname[256];
-    &#125;
-</code></pre>
-<p>递归遍历目录：</p>
-<pre><code>1. 判断命令行参数，获取用户要查询的目录名。	int argc, char *argv[1]
-
-    argc == 1  --&gt; ./
-
-2. 判断用户指定的是否是目录。 stat  S_ISDIR(); --&gt; 封装函数 isFile() &#123;   &#125;
-
-3. 读目录： read_dir() &#123; 
-
-    opendir（dir）
-
-    while （readdir（））&#123;
-
-        普通文件，直接打印
-
-        目录：
-            拼接目录访问绝对路径。sprintf(path, &quot;%s/%s&quot;, dir, d_name) 
-
-            递归调用自己。--》 opendir（path） readdir closedir
-    &#125;
-
-    closedir（）
-
-    &#125;
-    read_dir() --&gt; isFile() ---&gt; read_dir()
-</code></pre>
-<p>dup 和 dup2：</p>
-<pre><code>int dup(int oldfd);		文件描述符复制。
-
-    oldfd: 已有文件描述符
-
-    返回：新文件描述符。
-
-int dup2(int oldfd, int newfd); 文件描述符复制。重定向。
-</code></pre>
-<p>fcntl 函数实现 dup：</p>
-<pre><code>int fcntl(int fd, int cmd, ....)
-
-cmd: F_DUPFD
-
-参3:  	被占用的，返回最小可用的。
-
-    未被占用的， 返回=该值的文件描述符。
-</code></pre>
-<p>fcntl 函数实现 dup：</p>
-<pre><code>int fcntl(int fd, int cmd, ....)
-
-cmd: F_DUPFD
-
-参3:  	被占用的，返回最小可用的。
-
-    未被占用的， 返回=该值的文件描述符。
-</code></pre>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/12/linux-io/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -3223,11 +3100,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">

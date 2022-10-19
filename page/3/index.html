@@ -145,92 +145,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-head-first-go-03函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/">Head First Go - 03函数</a>
-    </h1>
-  
-
-        
-        <a href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/" class="archive-article-date">
-  	<time datetime="2022-07-25T00:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="函数定义和调用"><a href="#函数定义和调用" class="headerlink" title="函数定义和调用"></a>函数定义和调用</h3><blockquote>
-<p>func 函数名(参数名 类型) 返回类型 {<br>return<br>}</p>
-</blockquote>
-<p>Go不像C++有缺省参数,如果希望调用函数来接受参数，必须在函数声明中声明一个或多个参数，包括每个参数的类型。所传递的参数的数量和类型必须始终与规定的参数的数量和类型相匹配，否则将出现编译错误</p>
-<p>Go要求带返回类型的函数结尾必须有return</p>
-<p>目前没有发现Go中的函数必须要声明,函数定义的顺序不影响函数使用</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	noReturn()</span><br><span class="line">	rc := haveReturn()</span><br><span class="line">	fmt.Println(<span class="string">&quot;rc=&quot;</span>, rc)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">noReturn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;no return\n&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">haveReturn</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;have return\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="多个返回值"><a href="#多个返回值" class="headerlink" title="多个返回值"></a>多个返回值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">abc</span><span class="params">(num <span class="type">int</span>)</span></span> (rc <span class="type">int</span>, err <span class="type">error</span>) &#123; <span class="comment">//返回值可以写变量名称方便阅读代码，多个返回值必须加括号</span></span><br><span class="line">	<span class="keyword">if</span> num &gt; <span class="number">5</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>, fmt.Errorf(<span class="string">&quot;bad num&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	rc, err := abc(<span class="number">7</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;rc=%d\n&quot;</span>, rc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><p>和C差不多，只不过C声明变量时类型在变量名称前面(int* rc),Go类型在变量名称后面(var rc *int), *的位置也相反</p>
-<h3 id="Go是一种“值传递”语言-函数形参从函数调用中接收实参的副本"><a href="#Go是一种“值传递”语言-函数形参从函数调用中接收实参的副本" class="headerlink" title="Go是一种“值传递”语言,函数形参从函数调用中接收实参的副本"></a>Go是一种“值传递”语言,函数形参从函数调用中接收实参的副本</h3><h3 id="在Go中，返回一个指向函数局-部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值"><a href="#在Go中，返回一个指向函数局-部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值" class="headerlink" title="在Go中，返回一个指向函数局 部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值"></a>在Go中，返回一个指向函数局 部变量的指针是可以的。即使该变量不在作用域内，只要你仍然拥有指针，Go将确保你仍然可以访问该值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">retPointer</span><span class="params">()</span></span> *<span class="type">int</span> &#123;</span><br><span class="line">	val := <span class="number">5</span></span><br><span class="line">	<span class="keyword">return</span> &amp;val</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> rc *<span class="type">int</span> = retPointer()</span><br><span class="line">	fmt.Println(*rc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Printf-Sprintf"><a href="#Printf-Sprintf" class="headerlink" title="Printf Sprintf"></a>Printf Sprintf</h2><p>和C差不多</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A float: %f\n&quot;</span>, <span class="number">3.1415</span>)			<span class="comment">//浮点</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;An integer: %d\n&quot;</span>, <span class="number">15</span>)			<span class="comment">//整数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A string: %s\n&quot;</span>, <span class="string">&quot;hello&quot;</span>)			<span class="comment">//字符串</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;A boolean: %t\n&quot;</span>, <span class="literal">false</span>)			<span class="comment">//bool</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Values: %v %v %v\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//任意类型</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Values: %#v %#v %#v\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//任意类型，按代码中显示的格式进行格式化</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Types: %T %T %T\n&quot;</span>, <span class="number">1.2</span>, <span class="string">&quot;\t&quot;</span>, <span class="literal">true</span>)	<span class="comment">//返回值的类型</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Percent sign: %%\n&quot;</span>)			<span class="comment">//返回%</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/07/25/head-first-go-03%E5%87%BD%E6%95%B0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-head-first-go-02条件和循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1067,6 +981,1314 @@
 
 
   
+    <article id="post-cpp-10泛型算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/14/cpp-10%E6%B3%9B%E5%9E%8B%E7%AE%97%E6%B3%95/">C++ 10泛型算法</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/14/cpp-10%E6%B3%9B%E5%9E%8B%E7%AE%97%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2021-08-14T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="泛型算法"><a href="#泛型算法" class="headerlink" title="泛型算法"></a>泛型算法</h2><ul>
+<li>因为它们实现共同的操作，所以称之为“<strong>算法</strong>”；而“<strong>泛型</strong>”、指的是它们可以操作在多种容器类型上</li>
+<li>泛型算法本身不执行容器操作，只是单独依赖迭代器和迭代器操作实现</li>
+<li>头文件： <code>#include &lt;algorithm&gt;</code>或者 <code>#include &lt;numeric&gt;</code>(算数相关)</li>
+<li>大多数算法是通过遍历两个迭代器标记的一段元素来实现其功能</li>
+<li>必要的编程假定：算法永远不会直接改变底层容器的大小。算法可能通过迭代器改变容器中保存的元素的值、移动元素、插入元素，但不能直接添加或者删除元素</li>
+</ul>
+<h3 id="find"><a href="#find" class="headerlink" title="find"></a>find</h3><ul>
+<li><code>vector&lt;int&gt;::const_iterator result = find(vec.begin(), vec.end(), search_value);</code></li>
+<li>输入：两个标记范围的迭代器和目标查找值。返回：如果找到，返回对应的迭代器，否则返回第二个参数，即标记结尾的迭代器</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="type">const</span> <span class="keyword">auto</span> iter = std::<span class="built_in">find</span>(vec.<span class="built_in">cbegin</span>(), vec.<span class="built_in">cend</span>(), <span class="number">3</span>);</span><br><span class="line"><span class="keyword">if</span> (iter != vec.<span class="built_in">end</span>()) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;find&quot;</span> &lt;&lt; *iter &lt;&lt;  std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="初识泛型算法"><a href="#初识泛型算法" class="headerlink" title="初识泛型算法"></a>初识泛型算法</h2><ul>
+<li>标准库提供了超过100个算法，但这些算法有一致的结构</li>
+<li>理解算法的最基本的方法是了解它们是否读取元素、改变元素、重排元素顺序</li>
+</ul>
+<h3 id="只读算法"><a href="#只读算法" class="headerlink" title="只读算法"></a>只读算法</h3><ul>
+<li>只读取范围中的元素，不改变元素</li>
+<li>如 <code>find</code>和 <code>accumulate</code>（在<code>numeric</code>中定义，求和）</li>
+<li><code>find_first_of</code>，输入：两对迭代器标记两段范围，在第一段中找第二段中任意元素，返回第一个匹配的元素，找不到返回第一段的<code>end</code>迭代器</li>
+<li>通常最好使用<code>cbegin</code>和<code>cend</code></li>
+<li><code>equal</code>：确定两个序列是否保存相同的值</li>
+</ul>
+<h3 id="写容器元素的算法"><a href="#写容器元素的算法" class="headerlink" title="写容器元素的算法"></a>写容器元素的算法</h3><ul>
+<li>一些算法将新值赋予序列中的元素</li>
+<li>算法不检查写操作</li>
+<li><code>fill</code>： <code>fill(vec.begin(), vec.end(), 0);</code> 将每个元素重置为</li>
+<li><code>fill_n</code>： <code>fill_n(vec.begin(), 10, 0);</code></li>
+<li>插入迭代器<code>back_inserter</code><ul>
+<li>用来确保算法有足够的空间存储数据</li>
+<li><code>#include &lt;iterator&gt;</code></li>
+<li><code>back_inserter(vec)</code></li>
+</ul>
+</li>
+<li>拷贝算法<code>copy</code></li>
+<li>输入：前两个参数指定输入范围，第三个指向目标序列</li>
+<li><code>copy (ilst.begin(), ilst.end(), back_inserter(ivec));</code></li>
+<li><code>copy</code>时必须保证目标目的序列至少要包含与输入序列一样多的元素&#96;</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">vecnew</span><span class="params">(<span class="number">5</span>)</span></span>;</span><br><span class="line"><span class="built_in">copy</span>(vec.<span class="built_in">cbegin</span>(), vec.<span class="built_in">cend</span>(), vecnew.<span class="built_in">begin</span>());</span><br></pre></td></tr></table></figure>
+
+<h3 id="重排容器元素的算法"><a href="#重排容器元素的算法" class="headerlink" title="重排容器元素的算法"></a>重排容器元素的算法</h3><ul>
+<li>这些算法会重排容器中元素的顺序</li>
+<li>排序算法<code>sort</code><ul>
+<li>接受两个迭代器，表示要排序的元素范围</li>
+</ul>
+</li>
+<li>消除重复<code>unique</code><ul>
+<li>之前要先调用<code>sort</code></li>
+<li>返回的迭代器指向最后一个不重复元素之后的位置</li>
+<li>顺序会变，重复的元素被“删除”</li>
+<li>并没有真正删除，真正删除必须使用容器操作</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">descend</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">5</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>&#125;;</span><br><span class="line">    std::<span class="built_in">sort</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>(), descend);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> end = <span class="built_in">unique</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    vec.<span class="built_in">erase</span>(end, vec.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;i : vec) &#123;</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="定制操作"><a href="#定制操作" class="headerlink" title="定制操作"></a>定制操作</h2><h3 id="向算法传递函数"><a href="#向算法传递函数" class="headerlink" title="向算法传递函数"></a>向算法传递函数</h3><ul>
+<li><p>谓词（<code>predicate</code>）</p>
+<ul>
+<li>是一个<strong>可调用的表达式</strong>，返回结果是一个能用作条件的值</li>
+<li>一元谓词：接受一个参数</li>
+<li>二元谓词：接受两个参数</li>
+</ul>
+</li>
+<li><p>例子：</p>
+<ul>
+<li><code>stable_sort</code>：<ul>
+<li>保留相等元素的原始相对位置</li>
+<li><code>stable_sort(words.begin(), words.end(), isShorter);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="lambda表达式"><a href="#lambda表达式" class="headerlink" title="lambda表达式"></a>lambda表达式</h3><ul>
+<li><p>有时可能希望操作可以接受更多的参数</p>
+</li>
+<li><p><code>lambda</code>表达式表示一个可调用的代码单元，可以理解成是一个未命名的内联函数</p>
+</li>
+<li><p>形式：<code>[capture list](parameter list) -&gt; return type &#123;function body&#125;</code></p>
+<ul>
+<li>其中<code>capture list</code>捕获列表是一个<code>lambda</code>所在函数定义的局部变量的列表（通常为空）。不可忽略</li>
+<li><code>return type</code>是返回类型。可忽略</li>
+<li><code>parameter</code>是参数列表。可忽略</li>
+<li><code>function body</code>是函数体。不可忽略</li>
+<li><code>auto f = [] &#123;return 42;&#125;</code></li>
+</ul>
+</li>
+<li><p>例子：</p>
+<ul>
+<li><code>find_if</code><ul>
+<li>接受一对表示范围的迭代器和一个谓词，用来查找第一个满足特定要求的元素。返回第一个使谓词返回非0值的元素</li>
+<li><code>auto wc = find_if(words.begin(), words.end(), [sz](const string &amp;a)&#123;return a.size() &gt;= sz;&#125;);</code></li>
+</ul>
+</li>
+<li><code>for_each</code><ul>
+<li>接受一个可调用对象，并对序列中每个元素调用此对象</li>
+<li><code>for_each(wc, words.end(), [](const string &amp;s)&#123;cout &lt;&lt; s &lt;&lt; &quot; &quot;;&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="lambda捕获和返回"><a href="#lambda捕获和返回" class="headerlink" title="lambda捕获和返回"></a>lambda捕获和返回</h3><ul>
+<li>定义<code>lambda</code>时会生成一个新的类类型和该类型的一个对象</li>
+<li>默认情况下，从<code>lambda</code>生成的类都包含一个对应该<code>lambda</code>所捕获的变量的数据成员，在<code>lambda</code>对象创建时被初始化</li>
+<li><strong>值捕获</strong>：前提是变量可以拷贝，<code>size_t v1 = 42; auto f = [v1] &#123;return v1;&#125;;</code></li>
+<li><strong>引用捕获</strong>：必须保证在<code>lambda</code>执行时，变量是存在的，<code>auto f2 = [&amp;v1] &#123;return v1;&#125;;</code></li>
+<li>尽量减少捕获的数据量，尽可能避免捕获指针或引用</li>
+<li><strong>隐式捕获</strong>：让编译器推断捕获列表，在捕获列表中写一个<code>&amp;</code>（引用方式）或<code>=</code>（值方式）。<code>auto f3 = [=] &#123;return v1;&#125;</code></li>
+</ul>
+<p><strong>lambda捕获列表</strong></p>
+<table>
+<thead>
+<tr>
+<th>捕获列表</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[]</code></td>
+<td>空捕获列表。<code>lambda</code>不能使用所在函数中的变量。一个<code>lambda</code>只有在捕获变量后才能使用它们</td>
+</tr>
+<tr>
+<td><code>[names]</code></td>
+<td><code>names</code>是一个逗号分隔的名字列表，这些名字都是在<code>lambda</code>所在函数的局部变量，捕获列表中的变量都被拷贝，名字前如果使用了<code>&amp;</code>，则采用引用捕获方式</td>
+</tr>
+<tr>
+<td><code>[&amp;]</code></td>
+<td>隐式捕获列表，采用引用捕获方式。<code>lambda</code>体中所使用的来自所在函数的实体都采用引用方式使用</td>
+</tr>
+<tr>
+<td><code>[=]</code></td>
+<td>隐式捕获列表，采用值捕获方式</td>
+</tr>
+<tr>
+<td><code>[&amp;, identifier_list]</code></td>
+<td><code>identifier_list</code>是一个逗号分隔的列表，包含0个或多个来自所在函数的变量。这些变量采用值捕获方式，而任何隐式捕获的变量都采用引用方式捕获。<code>identifier_list</code>中的名字前面不能使用<code>&amp;</code></td>
+</tr>
+<tr>
+<td><code>[=, identifier_list]</code></td>
+<td><code>identifier_list</code>中的变量采用引用方式捕获，而任何隐式捕获的变量都采用值方式捕获。<code>identifier_list</code>中的名字不能包括<code>this</code>，且前面必须使用<code>&amp;</code></td>
+</tr>
+</tbody></table>
+<h3 id="参数绑定"><a href="#参数绑定" class="headerlink" title="参数绑定"></a>参数绑定</h3><ul>
+<li><code>lambda</code>表达式更适合在一两个地方使用的简单操作</li>
+<li>如果是很多地方使用相同的操作，还是需要定义函数</li>
+<li>函数如何包装成一元谓词？使用参数绑定</li>
+<li>标准库<code>bind</code>函数：<ul>
+<li>定义在头文件<code>functional</code>中，可以看做为一个通用的函数适配器</li>
+<li><code>auto newCallable = bind(callable, arg_list);</code></li>
+<li>我们再调用<code>newCallable</code>的时候，<code>newCallable</code>会调用<code>callable</code>并传递给它<code>arg_list</code>中的参数</li>
+<li><code>_n</code>代表第n个位置的参数。定义在<code>placeholders</code>的命名空间中。<code>using std::placeholder::_1;</code></li>
+<li><code>auto g = bind(f, a, b, _2, c, _1);</code>，调用<code>g(_1, _2)</code>实际上调用<code>f(a, b, _2, c, _1)</code></li>
+<li>非占位符的参数要使用引用传参，必须使用标准库<code>ref</code>函数或者<code>cref</code>函数</li>
+</ul>
+</li>
+</ul>
+<h2 id="再探迭代器"><a href="#再探迭代器" class="headerlink" title="再探迭代器"></a>再探迭代器</h2><h3 id="插入迭代器"><a href="#插入迭代器" class="headerlink" title="插入迭代器"></a>插入迭代器</h3><ul>
+<li>插入器是一种迭代器适配器，接受一个容器，生成一个迭代器，能实现向给定容器添加元素</li>
+<li>三种类型：<ul>
+<li><code>back_inserter</code>：创建一个使用<code>push_back</code>的迭代器</li>
+<li><code>front_inserter</code>创建一个使用<code>push_front</code>的迭代器</li>
+<li><code>inserter</code>创建一个使用<code>insert</code>的迭代器。接受第二个参数，即一个指向给定容器的迭代器，元素会被查到迭代器所指向的元素之前</li>
+</ul>
+</li>
+</ul>
+<p><strong>插入迭代器操作</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>it=t</code></td>
+<td>在<code>it</code>指定的当前位置插入值<code>t</code>。假定<code>c</code>是<code>it</code>绑定的容器，依赖于插入迭代器的不同种类，此赋值会分别调用<code>c.push_back(t)</code>、<code>c.push_front(t)</code>、<code>c.insert(t, p)</code>，其中<code>p</code>是传递给<code>inserter</code>的迭代器位置</td>
+</tr>
+<tr>
+<td><code>*it, ++it, it++</code></td>
+<td>这些操作虽然存在，但不会对<code>it</code>做任何事情，每个操作都返回<code>it</code></td>
+</tr>
+</tbody></table>
+<h3 id="iostream迭代器"><a href="#iostream迭代器" class="headerlink" title="iostream迭代器"></a>iostream迭代器</h3><ul>
+<li>迭代器可与输入或输出流绑定在一起，用于迭代遍历所关联的IO流</li>
+<li>通过使用流迭代器，我们可以用泛型算法从流对象中读取数据以及向其写入数据</li>
+</ul>
+<p><strong>istream_iterator的操作</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>istream_iterator&lt;T&gt; in(is);</code></td>
+<td><code>in</code>从输入流<code>is</code>读取类型为<code>T</code>的值</td>
+</tr>
+<tr>
+<td><code>istream_iterator&lt;T&gt; end;</code></td>
+<td>读取类型是<code>T</code>的值的<code>istream_iterator</code>迭代器，表示尾后位置</td>
+</tr>
+<tr>
+<td><code>in1 == in2</code></td>
+<td><code>in1</code>和<code>in2</code>必须读取相同类型。如果他们都是尾后迭代器，或绑定到相同的输入，则两者相等</td>
+</tr>
+<tr>
+<td><code>in1 != in2</code></td>
+<td>类似上条</td>
+</tr>
+<tr>
+<td><code>*in</code></td>
+<td>返回从流中读取的值</td>
+</tr>
+<tr>
+<td><code>in-&gt;mem</code></td>
+<td>与<code>*(in).mem</code>含义相同</td>
+</tr>
+<tr>
+<td><code>++in, in++</code></td>
+<td>使用元素类型所定义的<code>&gt;&gt;</code>运算符从流中读取下一个值。前置版本返回一个指向递增后迭代器的引用，后置版本返回旧值</td>
+</tr>
+</tbody></table>
+<p><strong>ostream_iterator的操作</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ostream_iterator&lt;T&gt; out(os);</code></td>
+<td><code>out</code>将类型为<code>T</code>的值写到输出流<code>os</code>中</td>
+</tr>
+<tr>
+<td><code>ostream_iterator&lt;T&gt; out(os, d);</code></td>
+<td><code>out</code>将类型为<code>T</code>的值写到输出流<code>os</code>中，每个值后面都输出一个<code>d</code>。<code>d</code>指向一个空字符结尾的字符数组</td>
+</tr>
+<tr>
+<td><code>out = val</code></td>
+<td>用<code>&lt;&lt;</code>运算符将<code>val</code>写入到<code>out</code>所绑定的<code>ostream</code>中。<code>val</code>的类型必须和<code>out</code>可写的类型兼容</td>
+</tr>
+<tr>
+<td><code>*out, ++out, out++</code></td>
+<td>这些运算符是存在的，但不对<code>out</code>做任何事情。每个运算符都返回<code>out</code></td>
+</tr>
+</tbody></table>
+<h3 id="反向迭代器"><a href="#反向迭代器" class="headerlink" title="反向迭代器"></a>反向迭代器</h3><ul>
+<li>反向迭代器就是在容器中从尾元素向首元素反向移动的迭代器</li>
+<li>对于反向迭代器，递增和递减的操作含义会颠倒</li>
+<li>实现向后遍历，配合<code>rbegin</code>和<code>rend</code></li>
+</ul>
+<h2 id="泛型算法结构"><a href="#泛型算法结构" class="headerlink" title="泛型算法结构"></a>泛型算法结构</h2><h3 id="5类迭代器"><a href="#5类迭代器" class="headerlink" title="5类迭代器"></a>5类迭代器</h3><table>
+<thead>
+<tr>
+<th>迭代器类别</th>
+<th>解释</th>
+<th>支持的操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入迭代器</td>
+<td>只读，不写；单遍扫描，只能递增</td>
+<td><code>==</code>,<code>!=</code>,<code>++</code>,<code>*</code>,<code>-&gt;</code></td>
+</tr>
+<tr>
+<td>输出迭代器</td>
+<td>只写，不读；单遍扫描，只能递增</td>
+<td><code>++</code>,<code>*</code></td>
+</tr>
+<tr>
+<td>前向迭代器</td>
+<td>可读写；多遍扫描，只能递增</td>
+<td><code>==</code>,<code>!=</code>,<code>++</code>,<code>*</code>,<code>-&gt;</code></td>
+</tr>
+<tr>
+<td>双向迭代器</td>
+<td>可读写；多遍扫描，可递增递减</td>
+<td><code>==</code>,<code>!=</code>,<code>++</code>,<code>--</code>,<code>*</code>,<code>-&gt;</code></td>
+</tr>
+<tr>
+<td>随机访问迭代器</td>
+<td>可读写，多遍扫描，支持全部迭代器运算</td>
+<td><code>==</code>,<code>!=</code>,<code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>,<code>&gt;=</code>,<code>++</code>,<code>--</code>,<code>+</code>,<code>+=</code>,<code>-</code>,<code>-=</code>,<code>*</code>,<code>-&gt;</code>,<code>iter[n]</code>&#x3D;&#x3D;<code>*(iter[n])</code></td>
+</tr>
+</tbody></table>
+<h3 id="算法的形参模式"><a href="#算法的形参模式" class="headerlink" title="算法的形参模式"></a>算法的形参模式</h3><ul>
+<li><code>alg(beg, end, other args);</code></li>
+<li><code>alg(beg, end, dest, other args);</code></li>
+<li><code>alg(beg, end, beg2, other args);</code></li>
+<li><code>alg(beg, end, beg2, end2, other args);</code></li>
+</ul>
+<p>其中，<code>alg</code>是算法名称，<code>beg</code>和<code>end</code>表示算法所操作的输入范围。<code>dest</code>、<code>beg2</code>、<code>end2</code>都是迭代器参数，是否使用要依赖于执行的操作</p>
+<h3 id="算法命名规范"><a href="#算法命名规范" class="headerlink" title="算法命名规范"></a>算法命名规范</h3><ul>
+<li>一些算法使用重载形式传递一个谓词</li>
+<li>接受一个元素值的算法通常有一个<strong>不同名</strong>的版本：加<code>_if</code>，接受一个谓词代替元素值</li>
+<li>区分拷贝元素的版本和不拷贝的版本：拷贝版本通常加<code>_copy</code></li>
+</ul>
+<h2 id="特定容器算法"><a href="#特定容器算法" class="headerlink" title="特定容器算法"></a>特定容器算法</h2><ul>
+<li>对于<code>list</code>和<code>forward_list</code>，优先使用成员函数版本的算法而不是通用算法</li>
+</ul>
+<p><strong>list和forward_list成员函数版本的算法</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lst.merge(lst2)</code></td>
+<td>将来自<code>lst2</code>的元素合并入<code>lst</code>，二者都必须是有序的，元素将从<code>lst2</code>中删除</td>
+</tr>
+<tr>
+<td><code>lst.merge(lst2, comp)</code></td>
+<td>同上，给定比较操作</td>
+</tr>
+<tr>
+<td><code>lst.remove(val)</code></td>
+<td>调用<code>erase</code>删除掉与给定值相等(&#x3D;&#x3D;)的每个元素</td>
+</tr>
+<tr>
+<td><code>lst.remove_if(pred)</code></td>
+<td>调用<code>erase</code>删除掉令一元谓词为真的每个元素</td>
+</tr>
+<tr>
+<td><code>lst.reverse()</code></td>
+<td>反转<code>lst</code>中元素的顺序</td>
+</tr>
+<tr>
+<td><code>lst.sort()</code></td>
+<td>使用<code>&lt;</code>排序元素</td>
+</tr>
+<tr>
+<td><code>lst.sort(comp)</code></td>
+<td>使用给定比较操作排序元素</td>
+</tr>
+<tr>
+<td><code>lst.unique()</code></td>
+<td>调用<code>erase</code>删除同一个值的连续拷贝。使用<code>==</code></td>
+</tr>
+<tr>
+<td><code>lst.unique(pred)</code></td>
+<td>调用<code>erase</code>删除同一个值的连续拷贝。使用给定的二元谓词</td>
+</tr>
+</tbody></table>
+<ul>
+<li>上面的操作都返回<code>void</code></li>
+</ul>
+<p><strong>list和forward_list的splice成员函数版本的参数</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(p, lst2)</code></td>
+<td><code>p</code>是一个指向<code>lst</code>中元素的迭代器，或者一个指向<code>flst</code>首前位置的迭代器。函数将<code>lst2</code>中的所有元素移动到<code>lst</code>中<code>p</code>之前的位置或是<code>flst</code>中<code>p</code>之后的位置。将元素从<code>lst2</code>中删除。<code>lst2</code>的类型必须和<code>lst</code>相同，而且不能是同一个链表</td>
+</tr>
+<tr>
+<td><code>(p, lst2, p2)</code></td>
+<td>同上，<code>p2</code>是一个指向<code>lst2</code>中位置的有效的迭代器，将<code>p2</code>指向的元素移动到<code>lst</code>中，或将<code>p2</code>之后的元素移动到<code>flst</code>中。<code>lst2</code>可以是于<code>lst</code>或<code>flst</code>相同的链表</td>
+</tr>
+<tr>
+<td><code>(p, lst2, b, e)</code></td>
+<td><code>b</code>和<code>e</code>表示<code>lst2</code>中的合法范围。将给定范围中的元素从<code>lst2</code>移动到<code>lst</code>或<code>first</code>中。<code>lst2</code>与<code>lst</code>可以使相同的链表，但<code>p</code>不能指向给定范围中的元素</td>
+</tr>
+</tbody></table>
+<ul>
+<li>使用<code>lst.splice(args)</code>或<code>flst.splice_after(args)</code></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/14/cpp-10%E6%B3%9B%E5%9E%8B%E7%AE%97%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-09顺序容器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/13/cpp-09%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8/">C++ 09顺序容器</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/13/cpp-09%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8/" class="archive-article-date">
+  	<time datetime="2021-08-13T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="顺序容器概述"><a href="#顺序容器概述" class="headerlink" title="顺序容器概述"></a>顺序容器概述</h2><ul>
+<li><strong>顺序容器</strong>（sequential container）：为程序员提供了控制元素存储和访问顺序的能力。这种顺序不依赖于元素的值，而是与元素加入容器时的位置相对应</li>
+</ul>
+<h3 id="顺序容器类型"><a href="#顺序容器类型" class="headerlink" title="顺序容器类型"></a>顺序容器类型</h3><table>
+<thead>
+<tr>
+<th>容器类型</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>vector</code></td>
+<td>可变大小数组。支持快速随机访问。在尾部之外的位置插入或删除元素可能很慢</td>
+</tr>
+<tr>
+<td><code>deque</code></td>
+<td>双端队列。支持快速随机访问。在头尾位置插入&#x2F;删除速度很快</td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td>双向链表。只支持双向顺序访问。在<code>list</code>中任何位置进行插入&#x2F;删除操作速度都很快</td>
+</tr>
+<tr>
+<td><code>forward_list</code></td>
+<td>单向链表。只支持单向顺序访问。在链表任何位置进行插入&#x2F;删除操作速度都很快</td>
+</tr>
+<tr>
+<td><code>array</code></td>
+<td>固定大小数组。支持快速随机访问。不能添加或者删除元素</td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td>与<code>vector</code>相似的容器，但专门用于保存字符。随机访问块。在尾部插入&#x2F;删除速度快</td>
+</tr>
+</tbody></table>
+<ul>
+<li>除了固定大小的<code>array</code>外，其他容器都提供高效、灵活的内存管理</li>
+<li><code>forward_list</code>和<code>array</code>是新C++标准增加的类型</li>
+<li>通常使用<code>vector</code>是最好的选择，除非你有很好的理由选择其他容器</li>
+<li>新标准库的容器比旧版的快得多</li>
+</ul>
+<h2 id="容器操作"><a href="#容器操作" class="headerlink" title="容器操作"></a>容器操作</h2><h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>iterator</code></td>
+<td>此容器类型的迭代器类型</td>
+</tr>
+<tr>
+<td><code>const_iterator</code></td>
+<td>可以读取元素但不能修改元素的迭代器类型</td>
+</tr>
+<tr>
+<td><code>size_type</code></td>
+<td>无符号整数类型，足够保存此种容器类型最大可能的大小</td>
+</tr>
+<tr>
+<td><code>difference_type</code></td>
+<td>带符号整数类型，足够保存两个迭代器之间的距离</td>
+</tr>
+<tr>
+<td><code>value_type</code></td>
+<td>元素类型</td>
+</tr>
+<tr>
+<td><code>reference</code></td>
+<td>元素的左值类型；和<code>value_type &amp;</code>含义相同</td>
+</tr>
+<tr>
+<td><code>const_reference</code></td>
+<td>元素的<code>const</code>左值类型，即<code>const value_type &amp;</code></td>
+</tr>
+</tbody></table>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>C c;</code></td>
+<td>默认构造函数，构造空容器</td>
+</tr>
+<tr>
+<td><code>C c1(c2);</code>或<code>C c1 = c2;</code></td>
+<td>构造<code>c2</code>的拷贝<code>c1</code></td>
+</tr>
+<tr>
+<td><code>C c(b, e)</code></td>
+<td>构造<code>c</code>，将迭代器<code>b</code>和<code>e</code>指定范围内的所有元素拷贝到<code>c</code></td>
+</tr>
+<tr>
+<td><code>C c&#123;a, b, c...&#125;</code></td>
+<td>列表初始化<code>c</code></td>
+</tr>
+<tr>
+<td><code>C c(n)</code></td>
+<td>只支持顺序容器，且不包括<code>array</code>，包含<code>n</code>个元素，这些元素进行了值初始化</td>
+</tr>
+<tr>
+<td><code>C c(n, t)</code></td>
+<td>包含<code>n</code>个初始值为<code>t</code>的元素</td>
+</tr>
+</tbody></table>
+<ul>
+<li>只有顺序容器的构造函数才接受大小参数，关联容器并不支持</li>
+<li><code>array</code>具有固定大小</li>
+<li>和其他容器不同，默认构造的<code>array</code>是非空的</li>
+<li>直接复制：将一个容器复制给另一个容器时，类型必须匹配：容器类型和元素类型都必须相同</li>
+<li>使用迭代器复制：不要求容器类型相同，容器内的元素类型也可以不同</li>
+</ul>
+<h3 id="赋值和swap"><a href="#赋值和swap" class="headerlink" title="赋值和swap"></a>赋值和<code>swap</code></h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c1 = c2;</code></td>
+<td>将<code>c1</code>中的元素替换成<code>c2</code>中的元素</td>
+</tr>
+<tr>
+<td><code>c1 = &#123;a, b, c...&#125;</code></td>
+<td>将<code>c1</code>中的元素替换成列表中的元素（不适用于<code>array</code>）</td>
+</tr>
+<tr>
+<td><code>c1.swap(c2)</code></td>
+<td>交换<code>c1</code>和<code>c2</code>的元素</td>
+</tr>
+<tr>
+<td><code>swap(c1, c2)</code></td>
+<td>等价于<code>c1.swap(c2)</code></td>
+</tr>
+<tr>
+<td><code>c.assign(b, e)</code></td>
+<td>将<code>c</code>中的元素替换成迭代器<code>b</code>和<code>e</code>表示范围中的元素，<code>b</code>和<code>e</code>不能指向<code>c</code>中的元素</td>
+</tr>
+<tr>
+<td><code>c.assign(il)</code></td>
+<td>将<code>c</code>中的元素替换成初始化列表<code>il</code>中的元素</td>
+</tr>
+<tr>
+<td><code>c.assign(n, r)</code></td>
+<td>将<code>c</code>中的元素替换为<code>n</code>个值是<code>t</code>的元素</td>
+</tr>
+</tbody></table>
+<ul>
+<li>使用非成员版本的<code>swap</code>是一个好习惯</li>
+<li><code>assign</code>操作不适用于关联容器和<code>array</code></li>
+</ul>
+<h3 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.size()</code></td>
+<td><code>c</code>中元素的数目（不支持<code>forward_list</code>）</td>
+</tr>
+<tr>
+<td><code>c.max_size()</code></td>
+<td><code>c</code>中可保存的最大元素数目</td>
+</tr>
+<tr>
+<td><code>c.empty()</code></td>
+<td>若<code>c</code>中存储了元素，返回<code>false</code>，否则返回<code>true</code></td>
+</tr>
+</tbody></table>
+<h3 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.push_back(t)</code></td>
+<td>在<code>c</code>尾部创建一个值为<code>t</code>的元素，返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>c.emplace_back(args)</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>c.push_front(t)</code></td>
+<td>在<code>c</code>头部创建一个值为<code>t</code>的元素，返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>c.emplace_front(args)</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>c.insert(p, t)</code></td>
+<td>在迭代器<code>p</code>指向的元素之前创建一个值是<code>t</code>的元素，返回指向新元素的迭代器</td>
+</tr>
+<tr>
+<td><code>c.emplace(p, args)</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>c.insert(p, n, t)</code></td>
+<td>在迭代器<code>p</code>指向的元素之前插入<code>n</code>个值为<code>t</code>的元素，返回指向第一个新元素的迭代器；如果<code>n</code>是0，则返回<code>p</code></td>
+</tr>
+<tr>
+<td><code>c.insert(p, b, e)</code></td>
+<td>将迭代器<code>b</code>和<code>e</code>范围内的元素，插入到<code>p</code>指向的元素之前；如果范围为空，则返回<code>p</code></td>
+</tr>
+<tr>
+<td><code>c.insert(p, il)</code></td>
+<td><code>il</code>是一个花括号包围中的元素值列表，将其插入到<code>p</code>指向的元素之前；如果<code>il</code>是空，则返回<code>p</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>因为这些操作会改变大小，因此不适用于<code>array</code></li>
+<li><code>forward_list</code>有自己专有版本的<code>insert</code>和<code>emplace</code></li>
+<li><code>forward_list</code>不支持<code>push_back</code>和<code>emplace_back</code></li>
+<li>当我们用一个对象去初始化容器或者将对象插入到容器时，实际上放入的是对象的拷贝</li>
+<li><code>emplace</code>开头的函数是新标准引入的，这些操作是构造而不是拷贝元素</li>
+<li>传递给<code>emplace</code>的参数必须和元素类型的构造函数相匹配</li>
+</ul>
+<h3 id="访问元素"><a href="#访问元素" class="headerlink" title="访问元素"></a>访问元素</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.back()</code></td>
+<td>返回<code>c</code>中尾元素的引用。若<code>c</code>为空，函数行为未定义</td>
+</tr>
+<tr>
+<td><code>c.front()</code></td>
+<td>返回<code>c</code>中头元素的引用。若<code>c</code>为空，函数行为未定义</td>
+</tr>
+<tr>
+<td><code>c[n]</code></td>
+<td>返回<code>c</code>中下标是<code>n</code>的元素的引用，<code>n</code>时候一个无符号证书。若<code>n&gt;=c.size()</code>，则函数行为未定义</td>
+</tr>
+<tr>
+<td><code>c.at(n)</code></td>
+<td>返回下标为<code>n</code>的元素引用。如果下标越界，则抛出<code>out_of_range</code>异常</td>
+</tr>
+</tbody></table>
+<ul>
+<li>访问成员函数返回的是引用</li>
+<li><code>at</code>和下标操作只适用于<code>string</code>、<code>vector</code>、<code>deque</code>、<code>array</code></li>
+<li><code>back</code>不适用于<code>forward_list</code></li>
+<li>如果希望下标是合法的，可以使用<code>at</code>函数</li>
+</ul>
+<h3 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.pop_back()</code></td>
+<td>删除<code>c</code>中尾元素，若<code>c</code>为空，则函数行为未定义。函数返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>c.pop_front()</code></td>
+<td>删除<code>c</code>中首元素，若<code>c</code>为空，则函数行为未定义。函数返回<code>void</code></td>
+</tr>
+<tr>
+<td><code>c.erase(p)</code></td>
+<td>删除迭代器<code>p</code>指向的元素，返回一个指向被删除元素之后的元素的迭代器，若<code>p</code>本身是尾后迭代器，则函数行为未定义</td>
+</tr>
+<tr>
+<td><code>c.erase(b, e)</code></td>
+<td>删除迭代器<code>b</code>和<code>e</code>范围内的元素，返回指向最后一个被删元素之后元素的迭代器，若<code>e</code>本身就是尾后迭代器，则返回尾后迭代器</td>
+</tr>
+<tr>
+<td><code>c.clear()</code></td>
+<td>删除<code>c</code>中所有元素，返回<code>void</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>会改变容器大小，不适用于<code>array</code></li>
+<li><code>forward_list</code>有特殊版本的<code>erase</code></li>
+<li><code>forward_list</code>不支持<code>pop_back</code></li>
+<li><code>vector</code>和<code>string</code>不支持<code>pop_front</code></li>
+</ul>
+<h3 id="特殊的forwad-list操作"><a href="#特殊的forwad-list操作" class="headerlink" title="特殊的forwad_list操作"></a>特殊的forwad_list操作</h3><ul>
+<li>链表在删除元素时需要修改前置节点的内容，双向链表会前驱的指针，但是单向链表没有保存，因此需要增加获取前置节点的方法</li>
+<li><code>forward_list</code>定义了<code>before_begin</code>，即首前（off-the-begining）迭代器，允许我们再在首元素之前添加或删除元素</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lst.before_begin()</code></td>
+<td>返回指向链表首元素之前不存在的元素的迭代器，此迭代器不能解引用</td>
+</tr>
+<tr>
+<td><code>lst.cbefore_begin()</code></td>
+<td>同上，但是返回的是常量迭代器</td>
+</tr>
+<tr>
+<td><code>lst.insert_after(p, t)</code></td>
+<td>在迭代器<code>p</code>之后插入元素。<code>t</code>是一个对象</td>
+</tr>
+<tr>
+<td><code>lst.insert_after(p, n, t)</code></td>
+<td>在迭代器<code>p</code>之后插入元素。<code>t</code>是一个对象，<code>n</code>是数量。若<code>n</code>是0则函数行为未定义</td>
+</tr>
+<tr>
+<td><code>lst.insert_after(p, b, e)</code></td>
+<td>在迭代器<code>p</code>之后插入元素。由迭代器<code>b</code>和<code>e</code>指定范围</td>
+</tr>
+<tr>
+<td><code>lst.insert_after(p, il)</code></td>
+<td>在迭代器<code>p</code>之后插入元素。由<code>il</code>指定初始化列表</td>
+</tr>
+<tr>
+<td><code>emplace_after(p, args)</code></td>
+<td>使用<code>args</code>在<code>p</code>之后的位置，创建一个元素，返回一个指向这个新元素的迭代器。若<code>p</code>为尾后迭代器，则函数行为未定义</td>
+</tr>
+<tr>
+<td><code>lst.erase_after(p)</code></td>
+<td>删除<code>p</code>指向位置之后的元素，返回一个指向被删元素之后的元素的迭代器，若<code>p</code>指向<code>lst</code>的尾元素或者是一个尾后迭代器，则函数行为未定义</td>
+</tr>
+<tr>
+<td><code>lst.erase_after(b, e)</code></td>
+<td>类似上面，删除对象换成从<code>b</code>到<code>e</code>指定的范围</td>
+</tr>
+</tbody></table>
+<h3 id="改变容器大小"><a href="#改变容器大小" class="headerlink" title="改变容器大小"></a>改变容器大小</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.resize(n)</code></td>
+<td>调整<code>c</code>的大小为<code>n</code>个元素，若<code>n&lt;c.size()</code>，则多出的元素被丢弃。若必须添加新元素，对新元素进行值初始化</td>
+</tr>
+<tr>
+<td><code>c.resize(n, t)</code></td>
+<td>调整<code>c</code>的大小为<code>n</code>个元素，任何新添加的元素都初始化为值<code>t</code></td>
+</tr>
+</tbody></table>
+<h3 id="获取迭代器"><a href="#获取迭代器" class="headerlink" title="获取迭代器"></a>获取迭代器</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.begin()</code>, <code>c.end()</code></td>
+<td>返回指向<code>c</code>的首元素和尾元素之后位置的迭代器</td>
+</tr>
+<tr>
+<td><code>c.cbegin()</code>, <code>c.cend()</code></td>
+<td>返回<code>const_iterator</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>以<code>c</code>开头的版本是C++11新标准引入的</li>
+<li>当不需要写访问时，应该使用<code>cbegin</code>和<code>cend</code>。</li>
+</ul>
+<h3 id="反向容器的额外成员"><a href="#反向容器的额外成员" class="headerlink" title="反向容器的额外成员"></a>反向容器的额外成员</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>reverse_iterator</code></td>
+<td>按逆序寻址元素的迭代器</td>
+</tr>
+<tr>
+<td><code>const_reverse_iterator</code></td>
+<td>不能修改元素的逆序迭代器</td>
+</tr>
+<tr>
+<td><code>c.rbegin()</code>, <code>c.rend()</code></td>
+<td>返回指向<code>c</code>的尾元素和首元素之前位置的迭代器</td>
+</tr>
+<tr>
+<td><code>c.crbegin()</code>, <code>c.crend()</code></td>
+<td>返回<code>const_reverse_iterator</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>不支持<code>forward_list</code></li>
+</ul>
+<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><ul>
+<li>迭代器范围：<code>begin</code>到<code>end</code>，即第一个元素到最后一个元素的后面一个位置</li>
+<li>左闭合区间：<code>[begin, end)</code></li>
+<li>左闭合范围蕴含的编程设定：<ul>
+<li>如果<code>begin</code>和<code>end</code>相等，则范围为空</li>
+<li>如果二者不等，则范围至少包含一个元素，且<code>begin</code>指向该范围中的第一个元素</li>
+<li>可以对<code>begin</code>递增若干次，使得<code>begin == end</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="容器操作可能使迭代器失效"><a href="#容器操作可能使迭代器失效" class="headerlink" title="容器操作可能使迭代器失效"></a>容器操作可能使迭代器失效</h3><ul>
+<li>在向容器添加元素后：<ul>
+<li>如果容器是<code>vector</code>或<code>string</code>，且存储空间被重新分配，则指向容器的迭代器、指针、引用都会失效。如果存储空间未重新分配，指向插入位置之前的元素的迭代器、指针和引用仍有效，但指向插入位置之后元素的迭代器、指针和引用将会失效</li>
+<li>对于<code>deque</code>，插入到除首尾位置之外的任何位置都会导致指向容器的迭代器、指针、引用失效。如果在首尾位置添加元素，迭代器会失效，但指向存在元素的引用和指针不会失效</li>
+<li>对于<code>list</code>和<code>forward_list</code>，指向容器的迭代器（包括尾后迭代器和首前迭代器）、指针和引用依然有效</li>
+</ul>
+</li>
+<li>在从一个容器中删除元素后：<ul>
+<li>指向被删除元素的迭代器、指针和引用会失效</li>
+<li>对于<code>list</code>和<code>forward_list</code>，指向容器其他位置的迭代器、引用和指针仍然有效</li>
+<li>对于<code>deque</code>，如果在首尾之外的任何位置删除元素，那么指向被删除元素外其他元素的迭代器、指针、引用都会失效；如果是删除<code>deque</code>的尾元素，则尾后迭代器会失效，但其他不受影响；如果删除的是<code>deque</code>的头元素，这些也不会受影响。</li>
+<li>对于<code>vector</code>和<code>string</code>，指向被删元素之前的迭代器、引用、指针仍然有效</li>
+<li>注意：当我们删除元素时，尾后迭代器总是会失效</li>
+<li>注意：使用失效的迭代器、指针、引用是严重的运行时错误</li>
+<li>建议：将要求迭代器必须保持有效的程序片段最小化</li>
+<li>建议：不要保存<code>end</code>返回的迭代器</li>
+<li>建议：每次改变容器的操作之后都正确地重新定位迭代器</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; arr = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> ,<span class="number">4</span> ,<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> iter = arr.<span class="built_in">begin</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (iter != arr.<span class="built_in">end</span>()) &#123; <span class="comment">//每次都重新计算end</span></span><br><span class="line">    <span class="keyword">if</span> (*iter == <span class="number">1</span>) &#123;</span><br><span class="line">        iter = arr.<span class="built_in">insert</span>(iter, <span class="number">0</span>); <span class="comment">//iter指向0</span></span><br><span class="line">        iter += <span class="number">2</span>; <span class="comment">//跳过0，1, iter指向3</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*iter == <span class="number">5</span>) &#123;</span><br><span class="line">        iter = arr.<span class="built_in">erase</span>(iter); <span class="comment">//iter == end</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        iter++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="容器内元素的类型约束"><a href="#容器内元素的类型约束" class="headerlink" title="容器内元素的类型约束"></a>容器内元素的类型约束</h3><ul>
+<li>元素类型必须支持赋值运算</li>
+<li>元素类型的对象必须可以复制</li>
+<li>除了输入输出标准库类型外，其他所有标准库类型都是有效的容器元素类型</li>
+</ul>
+<h2 id="vector对象是如何增长的"><a href="#vector对象是如何增长的" class="headerlink" title="vector对象是如何增长的"></a>vector对象是如何增长的</h2><p><code>vector</code>和<code>string</code>在内存中是连续保存的，如果原先分配的内存位置已经使用完，则需要重新分配新空间，将已有元素从就位置移动到新空间中，然后添加新元素</p>
+<h3 id="管理容量的成员函数"><a href="#管理容量的成员函数" class="headerlink" title="管理容量的成员函数"></a>管理容量的成员函数</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c.shrink_to_fit()</code></td>
+<td>将<code>capacity()</code>减少到和<code>size()</code>相同大小</td>
+</tr>
+<tr>
+<td><code>c.capacity()</code></td>
+<td>不重新分配内存空间的话，<code>c</code>可以保存多少个元素</td>
+</tr>
+<tr>
+<td><code>c.reverse(n)</code></td>
+<td>分配至少能容纳<code>n</code>个元素的内存空间</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>shrink_to_fit</code>只适用于<code>vector</code>、<code>string</code>和<code>deque</code></li>
+<li><code>capacity</code>和<code>reverse</code>只适用于<code>vector</code>和<code>string</code></li>
+</ul>
+<h2 id="额外的string操作"><a href="#额外的string操作" class="headerlink" title="额外的string操作"></a>额外的string操作</h2><h3 id="构造string的其他方法"><a href="#构造string的其他方法" class="headerlink" title="构造string的其他方法"></a>构造string的其他方法</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>string s(cp, n)</code></td>
+<td><code>s</code>是<code>cp</code>指向的数组中前<code>n</code>个字符的拷贝，此数组</td>
+</tr>
+<tr>
+<td><code>string s(s2, pos2)</code></td>
+<td><code>s</code>是<code>string s2</code>从下标<code>pos2</code>开始的字符的拷贝。若<code>pos2 &gt; s2.size()</code>，则构造函数的行为未定义。</td>
+</tr>
+<tr>
+<td><code>string s(s2, pos2, len2)</code></td>
+<td><code>s</code>是<code>string s2</code>从下标<code>pos2</code>开始的<code>len2</code>个字符的拷贝。</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>n</code>,<code>len2</code>,<code>pos2</code>都是无符号值</li>
+</ul>
+<h3 id="substr操作"><a href="#substr操作" class="headerlink" title="substr操作"></a>substr操作</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s.substr(pos, n)</code></td>
+<td>返回一个<code>string</code>，包含<code>s</code>中从<code>pos</code>开始的<code>n</code>个字符的拷贝。<code>pos</code>的默认值是0，<code>n</code>的默认值是<code>s.size() - pos</code>，即拷贝从<code>pos</code>开始的所有字符</td>
+</tr>
+</tbody></table>
+<h3 id="改变string的其他方法"><a href="#改变string的其他方法" class="headerlink" title="改变string的其他方法"></a>改变string的其他方法</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s.insert(pos, args)</code></td>
+<td>在<code>pos</code>之前插入<code>args</code>指定的字符。<code>pos</code>可以使是下标或者迭代器。接受下标的版本返回指向<code>s</code>的引用；接受迭代器的版本返回指向第一个插入字符的迭代器</td>
+</tr>
+<tr>
+<td><code>s.erase(pos, len)</code></td>
+<td>删除从<code>pos</code>开始的<code>len</code>个字符，如果<code>len</code>被省略，则删除后面所有字符，返回指向<code>s</code>的引用</td>
+</tr>
+<tr>
+<td><code>s.assign(args)</code></td>
+<td>将<code>s</code>中的字符替换成<code>args</code>指定的字符。返回一个指向<code>s</code>的引用</td>
+</tr>
+<tr>
+<td><code>s.append(args)</code></td>
+<td>将<code>args</code>指定的字符追加到<code>s</code>，返回一个指向<code>s</code>的引用</td>
+</tr>
+<tr>
+<td><code>s.replace(range, args)</code></td>
+<td>删除<code>s</code>中范围<code>range</code>中的字符，替换成<code>args</code>指定的字符。返回一个指向<code>s</code>的引用</td>
+</tr>
+</tbody></table>
+<h3 id="string搜索操作"><a href="#string搜索操作" class="headerlink" title="string搜索操作"></a>string搜索操作</h3><ul>
+<li><code>string</code>类提供了6个不同的搜索函数，每个函数都有4个重载版本</li>
+<li>每个搜索操作都返回一个<code>string::size_type</code>值，表示匹配发生位置的下标。如果搜索失败则返回一个名为<code>string::npos</code>的<code>static</code>成员（类型是<code>string::size_type</code>，初始化值是-1，也就是<code>string</code>最大的可能大小）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>搜索操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s.find(args)</code></td>
+<td>查找<code>s</code>中<code>args</code>第一次出现的位置</td>
+</tr>
+<tr>
+<td><code>s.rfind(args)</code></td>
+<td>查找<code>s</code>中<code>args</code>最后一次出现的位置</td>
+</tr>
+<tr>
+<td><code>s.find_first_of(args)</code></td>
+<td>在<code>s</code>中查找<code>args</code>中任何一个字符第一次出现的位置</td>
+</tr>
+<tr>
+<td><code>s.find_last_of(args)</code></td>
+<td>在<code>s</code>中查找<code>args</code>中任何一个字符最后一次出现的位置</td>
+</tr>
+<tr>
+<td><code>s.find_first_not_of(args)</code></td>
+<td>在<code>s</code>中查找第一个不在<code>args</code>中的字符</td>
+</tr>
+<tr>
+<td><code>s.find_first_not_of(args)</code></td>
+<td>在<code>s</code>中查找最后一个不在<code>args</code>中的字符</td>
+</tr>
+</tbody></table>
+<p>args必须是一下的形式之一：</p>
+<table>
+<thead>
+<tr>
+<th><code>args</code>形式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>c, pos</code></td>
+<td>从<code>s</code>中位置<code>pos</code>开始查找字符<code>c</code>。<code>pos</code>默认是0</td>
+</tr>
+<tr>
+<td><code>s2, pos</code></td>
+<td>从<code>s</code>中位置<code>pos</code>开始查找字符串<code>s</code>。<code>pos</code>默认是0</td>
+</tr>
+<tr>
+<td><code>cp, pos</code></td>
+<td>从<code>s</code>中位置<code>pos</code>开始查找指针<code>cp</code>指向的以空字符结尾的C风格字符串。<code>pos</code>默认是0</td>
+</tr>
+<tr>
+<td><code>cp, pos, n</code></td>
+<td>从<code>s</code>中位置<code>pos</code>开始查找指针<code>cp</code>指向的前<code>n</code>个字符。<code>pos</code>和<code>n</code>无默认值</td>
+</tr>
+</tbody></table>
+<h3 id="s-compare的几种参数形式"><a href="#s-compare的几种参数形式" class="headerlink" title="s.compare的几种参数形式"></a>s.compare的几种参数形式</h3><p>逻辑类似于C标准库的<code>strcmp</code>函数，根据<code>s</code>是等于、大于还是小于参数指定的字符串，<code>s.compare</code>返回0、正数或负数。</p>
+<table>
+<thead>
+<tr>
+<th>参数形式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s2</code></td>
+<td>比较<code>s</code>和<code>s2</code></td>
+</tr>
+<tr>
+<td><code>pos1, n1, s2</code></td>
+<td>比较<code>s</code>从<code>pos1</code>开始的<code>n1</code>个字符和<code>s2</code></td>
+</tr>
+<tr>
+<td><code>pos1, n1, s2, pos2, n2</code></td>
+<td>比较<code>s</code>从<code>pos1</code>开始的<code>n1</code>个字符和<code>s2</code></td>
+</tr>
+<tr>
+<td><code>cp</code></td>
+<td>比较<code>s</code>和<code>cp</code>指向的以空字符结尾的字符数组</td>
+</tr>
+<tr>
+<td><code>pos1, n1, cp</code></td>
+<td>比较<code>s</code>从<code>pos1</code>开始的<code>n1</code>个字符和<code>cp</code>指向的以空字符结尾的字符数组</td>
+</tr>
+<tr>
+<td><code>pos1, n1, cp, n2</code></td>
+<td>比较<code>s</code>从<code>pos1</code>开始的<code>n1</code>个字符和<code>cp</code>指向的地址开始<code>n2</code>个字符</td>
+</tr>
+</tbody></table>
+<h3 id="string和数值转换"><a href="#string和数值转换" class="headerlink" title="string和数值转换"></a>string和数值转换</h3><table>
+<thead>
+<tr>
+<th>转换</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>to_string(val)</code></td>
+<td>一组重载函数，返回数值<code>val</code>的<code>string</code>表示。<code>val</code>可以使任何算术类型。对每个浮点类型和<code>int</code>或更大的整型，都有相应版本的<code>to_string()</code>。和往常一样，小整型会被提升</td>
+</tr>
+<tr>
+<td><code>stoi(s, p, b)</code></td>
+<td>返回<code>s</code>起始子串（表示整数内容）的数值，<code>p</code>是<code>s</code>中第一个非数值字符的下标，默认是0，<code>b</code>是转换所用的基数。返回<code>int</code></td>
+</tr>
+<tr>
+<td><code>stol(s, p, b)</code></td>
+<td>返回<code>long</code></td>
+</tr>
+<tr>
+<td><code>stoul(s, p, b)</code></td>
+<td>返回<code>unsigned long</code></td>
+</tr>
+<tr>
+<td><code>stoll(s, p, b)</code></td>
+<td>返回<code>long long</code></td>
+</tr>
+<tr>
+<td><code>stoull(s, p, b)</code></td>
+<td>返回<code>unsigned long long</code></td>
+</tr>
+<tr>
+<td><code>stof(s, p)</code></td>
+<td>返回<code>s</code>起始子串（表示浮点数内容）的数值，<code>p</code>是<code>s</code>中第一个非数值字符的下标，默认是0。返回<code>float</code></td>
+</tr>
+<tr>
+<td><code>stod(s, p)</code></td>
+<td>返回<code>double</code></td>
+</tr>
+<tr>
+<td><code>stold(s, p)</code></td>
+<td>返回<code>long double</code></td>
+</tr>
+</tbody></table>
+<h2 id="容器适配器（adapter）"><a href="#容器适配器（adapter）" class="headerlink" title="容器适配器（adapter）"></a>容器适配器（adapter）</h2><ul>
+<li>适配器是使一事物的行为类似于另一事物的行为的一种机制，例如<code>stack</code>可以使任何一种顺序容器以栈的方式工作</li>
+<li>初始化 <code>deque&lt;int&gt; deq; stack&lt;int&gt; stk(deq);</code> 从<code>deq</code>拷贝元素到<code>stk</code></li>
+<li>创建适配器时，指定一个顺序容器，可以覆盖默认的基础容器： <code>stack&lt;string, vector&lt;string&gt; &gt; str_stk;</code></li>
+</ul>
+<h3 id="适配器的通用操作和类型"><a href="#适配器的通用操作和类型" class="headerlink" title="适配器的通用操作和类型"></a>适配器的通用操作和类型</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>size_type</code></td>
+<td>一种类型，须以保存当前类型的最大对象的大小</td>
+</tr>
+<tr>
+<td><code>value_type</code></td>
+<td>元素类型</td>
+</tr>
+<tr>
+<td><code>container_type</code></td>
+<td>实现适配器的底层容器类型</td>
+</tr>
+<tr>
+<td><code>A a;</code></td>
+<td>创建一个名为<code>a</code>的空适配器</td>
+</tr>
+<tr>
+<td><code>A a(c)</code></td>
+<td>创建一个名为<code>a</code>的适配器，带有容器<code>c</code>的一个拷贝</td>
+</tr>
+<tr>
+<td>关系运算符</td>
+<td>每个适配器都支持所有关系运算符：<code>==</code>、<code>!=</code>、<code>&lt;</code>、 <code>&lt;=</code>、<code>&gt;</code>、<code>&gt;=</code>这些运算符返回底层容器的比较结果</td>
+</tr>
+<tr>
+<td><code>a.empty()</code></td>
+<td>若<code>a</code>包含任何元素，返回<code>false</code>;否则返回<code>true</code></td>
+</tr>
+<tr>
+<td><code>a.size()</code></td>
+<td>返回<code>a</code>中的元素数目</td>
+</tr>
+<tr>
+<td><code>swap(a, b)</code></td>
+<td>交换<code>a</code>和<code>b</code>的内容，<code>a</code>和<code>b</code>必须有相同类型，包括底层容器类型也必须相同</td>
+</tr>
+<tr>
+<td><code>a.swap(b)</code></td>
+<td>同上</td>
+</tr>
+</tbody></table>
+<h3 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s.pop()</code></td>
+<td>删除栈顶元素，不返回</td>
+</tr>
+<tr>
+<td><code>s.push(item)</code></td>
+<td>创建一个新元素，压入栈顶，该元素通过拷贝或移动<code>item</code>而来</td>
+</tr>
+<tr>
+<td><code>s.emplace(args)</code></td>
+<td>同上，但元素由<code>args</code>来构造</td>
+</tr>
+<tr>
+<td><code>s.top()</code></td>
+<td>返回栈顶元素，不删除</td>
+</tr>
+</tbody></table>
+<ul>
+<li>定义在<code>stack</code>头文件中</li>
+<li><code>stack</code>默认基于<code>deque</code>实现，也可以在<code>list</code>或<code>vector</code>之上实现</li>
+</ul>
+<h3 id="queue和priority-queue"><a href="#queue和priority-queue" class="headerlink" title="queue和priority_queue"></a>queue和priority_queue</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>q.pop()</code></td>
+<td>删除队首元素，但不返回</td>
+</tr>
+<tr>
+<td><code>q.front()</code></td>
+<td>返回队首元素的值，不删除</td>
+</tr>
+<tr>
+<td><code>q.back()</code></td>
+<td>返回队尾元素的值，不删除。只适用于<code>queue</code></td>
+</tr>
+<tr>
+<td><code>q.top()</code></td>
+<td>返回具有最高优先级的元素值，不删除。只适用于<code>priority_queue</code></td>
+</tr>
+<tr>
+<td><code>q.push(item)</code></td>
+<td>在队尾压入一个新元素</td>
+</tr>
+<tr>
+<td><code>q.emplace(args)</code></td>
+<td>同上,但元素由<code>args</code>来构造</td>
+</tr>
+</tbody></table>
+<ul>
+<li>定义在<code>queue</code>头文件中</li>
+<li><code>queue</code>默认基于<code>deque</code>实现，<code>priority_queue</code>默认基于<code>vector</code>实现</li>
+<li><code>queue</code>可以在<code>list</code>或<code>vector</code>之上实现，<code>priority_queue</code>也可以用<code>deque</code>实现</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/13/cpp-09%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-08IO" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1340,211 +2562,6 @@
 
 
   
-    <article id="post-cpp-07类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/11/cpp-07%E7%B1%BB/">C++ 07类</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/11/cpp-07%E7%B1%BB/" class="archive-article-date">
-  	<time datetime="2021-08-11T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>类的基本思想是数据抽象（data abstraction）和封装（encapsulation）。数据抽象是一种依赖于接口（interface）和实现（implementation）分离的编程（以及设计）技术</p>
-<h2 id="类成员-（Member）"><a href="#类成员-（Member）" class="headerlink" title="类成员 （Member）"></a>类成员 （Member）</h2><ul>
-<li>必须在类的内部声明，不能在其他地方增加成员</li>
-<li>成员可以是数据，函数，类型别名</li>
-</ul>
-<h2 id="类的成员函数"><a href="#类的成员函数" class="headerlink" title="类的成员函数"></a>类的成员函数</h2><ul>
-<li>成员函数的<strong>声明</strong>必须在类的内部</li>
-<li>成员函数的<strong>定义</strong>既可以在类的内部也可以在外部</li>
-<li>使用点运算符 <code>.</code> 调用成员函数</li>
-<li>必须对任何<code>const</code>或引用类型成员以及没有默认构造函数的类类型的任何成员使用初始化式  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CTest</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CTest</span>(<span class="type">int</span> &amp;b) : <span class="built_in">i</span>(<span class="number">15</span>), <span class="built_in">ref</span>(b) &#123;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">int</span> &amp;ref;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-<li><code>*this</code>：<ul>
-<li>每个成员函数都有一个额外的，隐含的形参<code>this</code></li>
-<li><code>this</code>总是指向当前对象，因此<code>this</code>是一个常量指针</li>
-<li><code>total.isbn()</code>等价于<code>Sales_data::isbn(&amp;total)</code></li>
-<li>默认情况下不能在一个常量对象上调用普通的成员函(this类型是Sales_data ＊const),形参表后面的<code>const</code>，改变了隐含的<code>this</code>形参的类型(const Sales_data ＊const)，如 <code>bool same_isbn(const Sales_item &amp;rhs) const</code>，这种函数称为“常量成员函数”（<code>this</code>指向的当前对象是常量）,果成员被声明成常量成员函数，那么它的定义也必须在参数列表后明确指定<code>const</code>属性</li>
-<li>普通的非<code>const</code>成员函数：<code>this</code>是指向类类型的<code>const</code>指针（可以改变<code>this</code>所指向的值，不能改变<code>this</code>保存的地址）</li>
-<li><code>const</code>成员函数：<code>this</code>是指向const类类型的<code>const</code>指针（既不能改变<code>this</code>所指向的值，也不能改变<code>this</code>保存的地址）</li>
-<li><code>return *this;</code>可以让成员函数返回执行该函数的对象</li>
-</ul>
-</li>
-</ul>
-<h2 id="类的构造函数"><a href="#类的构造函数" class="headerlink" title="类的构造函数"></a>类的构造函数</h2><ul>
-<li>类通过一个或者几个特殊的成员函数来控制其对象的初始化过程，这些函数叫做<strong>构造函数</strong></li>
-<li>构造函数是特殊的成员函数</li>
-<li>构造函数放在类的<code>public</code>部分</li>
-<li>与类同名的成员函数</li>
-<li><code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
-<li><code>=default</code>要求编译器合成默认的构造函数。(<code>C++11</code>)</li>
-<li>初始化列表：冒号和花括号之间的代码： <code>Sales_item(): units_sold(0), revenue(0.0) &#123; &#125;</code></li>
-</ul>
-<h2 id="访问控制与封装"><a href="#访问控制与封装" class="headerlink" title="访问控制与封装"></a>访问控制与封装</h2><ul>
-<li>使用 <code>class</code>：在第一个访问说明符之前的成员是 <code>priavte</code>的</li>
-<li>使用 <code>struct</code>：在第一个访问说明符之前的成员是 <code>public</code>的</li>
-</ul>
-<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><ul>
-<li>允许特定的<strong>非成员函数</strong>访问一个类的<strong>私有成员</strong></li>
-<li>友元的声明以关键字 <code>friend</code>开始。 <code>friend Sales_data add(const Sales_data&amp;, const Sales_data&amp;);</code>表示非成员函数<code>add</code>可以访问类的非公有成员</li>
-<li>通常将友元声明成组地放在<strong>类定义的开始或者结尾</strong></li>
-<li>类之间的友元：<ul>
-<li>如果一个类指定了友元类，则友元类的成员函数可以访问此类包括非公有成员在内的所有成员</li>
-</ul>
-</li>
-</ul>
-<h2 id="类的其他特性"><a href="#类的其他特性" class="headerlink" title="类的其他特性"></a>类的其他特性</h2><ul>
-<li>成员函数作为内联函数 <code>inline</code><ul>
-<li>在类的内部，常有一些规模较小的函数适合于被声明成内联函数</li>
-<li><strong>定义</strong>在类内部的函数是<strong>自动内联</strong>的</li>
-<li>如果不是类内定义的函数，一般习惯不在类内函数声明加<code>inline</code>,而是在定义函数的时候声明<code>inline</code>，并且习惯将函数定义与相应的类写在同一头文件</li>
-</ul>
-</li>
-<li><strong>可变数据成员</strong> （mutable data member）<ul>
-<li><code>mutable size_t access_ctr;</code></li>
-<li>永远不会是<code>const</code>，即使它是<code>const</code>对象的成员</li>
-</ul>
-</li>
-<li><strong>类类型</strong>：<ul>
-<li>每个类定义了唯一的类型</li>
-</ul>
-</li>
-</ul>
-<h2 id="类的作用域"><a href="#类的作用域" class="headerlink" title="类的作用域"></a>类的作用域</h2><ul>
-<li>每个类都会定义它自己的作用域。在类的作用域之外，普通的数据和函数成员只能由引用、对象、指针使用成员访问运算符来访问</li>
-<li>函数的<strong>返回类型</strong>通常在函数名前面，因此当成员函数定义在类的外部时，返回类型中使用的名字都位于类的作用域之外</li>
-<li>如果成员使用了外层作用域中的某个名字，而该名字代表一种<strong>类型</strong>，则类不能在之后重新定义该名字</li>
-<li>类中的<strong>类型名定义</strong>都要放在一开始</li>
-</ul>
-<h2 id="构造函数再探"><a href="#构造函数再探" class="headerlink" title="构造函数再探"></a>构造函数再探</h2><ul>
-<li>构造函数初始值列表：<ul>
-<li>类似<code>python</code>使用赋值的方式有时候不行，比如<code>const</code>或者引用类型的数据，只能初始化，不能赋值。（注意初始化和赋值的区别）</li>
-<li>最好让构造函数初始值的顺序和成员声明的顺序保持一致</li>
-<li>如果一个构造函数为所有参数都提供了默认参数，那么它实际上也定义了默认的构造函数</li>
-</ul>
-</li>
-</ul>
-<h3 id="委托构造函数-（delegating-constructor-C-11）"><a href="#委托构造函数-（delegating-constructor-C-11）" class="headerlink" title="委托构造函数 （delegating constructor, C++11）"></a>委托构造函数 （delegating constructor, <code>C++11</code>）</h3><ul>
-<li>委托构造函数将自己的职责委托给了其他构造函数</li>
-<li><code>Sale_data(): Sale_data(&quot;&quot;, 0, 0) &#123;&#125;</code></li>
-</ul>
-<h3 id="隐式的类型转换"><a href="#隐式的类型转换" class="headerlink" title="隐式的类型转换"></a>隐式的类型转换</h3><ul>
-<li>如果构造函数<strong>只接受一个实参</strong>，则它实际上定义了转换为此类类型的<strong>隐式转换机制</strong>。这种构造函数又叫<strong>转换构造函数</strong>（converting constructor）</li>
-<li>编译器只会自动地执行<code>仅一步</code>类型转换</li>
-<li>抑制构造函数定义的隐式转换<ul>
-<li>将构造函数声明为<code>explicit</code>加以阻止</li>
-<li><code>explicit</code>构造函数只能用于直接初始化，不能用于拷贝形式的初始化</li>
-</ul>
-</li>
-</ul>
-<h3 id="聚合类-（aggregate-class）"><a href="#聚合类-（aggregate-class）" class="headerlink" title="聚合类 （aggregate class）"></a>聚合类 （aggregate class）</h3><ul>
-<li>满足以下所有条件：<ul>
-<li>所有成员都是<code>public</code>的</li>
-<li>没有定义任何构造函数</li>
-<li>没有类内初始值</li>
-<li>没有基类，也没有<code>virtual</code>函数</li>
-</ul>
-</li>
-<li>可以使用一个花括号括起来的成员初始值列表，初始值的顺序必须和声明的顺序一致</li>
-</ul>
-<h3 id="字面值常量类"><a href="#字面值常量类" class="headerlink" title="字面值常量类"></a>字面值常量类</h3><ul>
-<li><code>constexpr</code>函数的参数和返回值必须是字面值</li>
-<li><strong>字面值类型</strong>：除了算术类型、引用和指针外，某些类也是字面值类型</li>
-<li>数据成员都是字面值类型的聚合类是字面值常量类</li>
-<li>如果不是聚合类，则必须满足下面所有条件：<ul>
-<li>数据成员都必须是字面值类型</li>
-<li>类必须至少含有一个<code>constexpr</code>构造函数</li>
-<li>如果一个数据成员含有类内部初始值，则内置类型成员的初始值必须是一条常量表达式；或者如果成员属于某种类类型，则初始值必须使用成员自己的<code>constexpr</code>构造函数</li>
-<li>类必须使用析构函数的默认定义，该成员负责销毁类的对象</li>
-</ul>
-</li>
-</ul>
-<h2 id="类的静态成员"><a href="#类的静态成员" class="headerlink" title="类的静态成员"></a>类的静态成员</h2><ul>
-<li>非<code>static</code>数据成员存在于类类型的每个对象中</li>
-<li><code>static</code>数据成员独立于该类的任意对象而存在</li>
-<li>每个<code>static</code>数据成员是与类关联的对象，并不与该类的对象相关联</li>
-<li>声明：<ul>
-<li>声明之前加上关键词<code>static</code></li>
-</ul>
-</li>
-<li>使用：<ul>
-<li>使用<strong>作用域运算符</strong><code>::</code>直接访问静态成员:<code>r = Account::rate();</code></li>
-<li>也可以使用对象访问：<code>r = ac.rate();</code></li>
-</ul>
-</li>
-<li>定义：<ul>
-<li>在类外部定义时不用加<code>static</code></li>
-</ul>
-</li>
-<li>初始化：<ul>
-<li>通常不在类的内部初始化，而是在定义时进行初始化，如 <code>double Account::interestRate = initRate();</code></li>
-<li>如果一定要在类内部定义，则要求必须是字面值常量类型的<code>constexpr</code></li>
-</ul>
-</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/11/cpp-07%E7%B1%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1654,11 +2671,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
