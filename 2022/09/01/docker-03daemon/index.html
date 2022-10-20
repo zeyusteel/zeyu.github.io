@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Docker - 03Daemon | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaemon  初始化各项参">
+  <meta name="description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;docker.go&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaem">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker - 03Daemon">
 <meta property="og:url" content="http://example.com/2022/09/01/docker-03daemon/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaemon  初始化各项参">
+<meta property="og:description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;docker.go&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaem">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-01T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.410Z">
+<meta property="article:modified_time" content="2022-10-20T08:56:03.593Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -173,7 +173,7 @@
 <p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
 <p>dockerd将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
 <ul>
-<li><p>装载cobra命令模版<code>cmd/dockerd/newDaemonCommand</code></p>
+<li><p>装载cobra命令模版<code>cmd/dockerd/docker.go/newDaemonCommand</code></p>
 </li>
 <li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
 </li>
@@ -183,7 +183,7 @@
 </li>
 <li><p>设置umask</p>
 </li>
-<li><p>创建docker根目录,默认<code>/var/lib/docker</code>,以及docker exec目录,默认<code>/var/run/docker</code></p>
+<li><p>创建docker根目录,默认<code>/var/lib/docker</code>,以及<code>docker exec</code>目录,默认<code>/var/run/docker</code></p>
 </li>
 <li><p>检测pid文件</p>
 </li>
@@ -214,6 +214,21 @@
 <li>创建volumeService</li>
 <li>创建imageService</li>
 <li>创建容器客户端libcontainerd</li>
+</ul>
+<h2 id="创建容器流程"><a href="#创建容器流程" class="headerlink" title="创建容器流程"></a>创建容器流程</h2><p><code>docker create</code></p>
+<ul>
+<li>当客户端发起创建容器，<code>daemon</code>接收请求后创建容器在<code>daemon/creat.go/ContainerCreate</code></li>
+<li>通过<code>imageService</code>获取创建容器对应的镜像,并提取镜像<code>ID</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img, err = daemon.imageService.GetImage(opts.params.Config.Image, opts.params.Platform)</span><br></pre></td></tr></table></figure></li>
+<li>通过<code>newContainer</code>函数创建<code>Container</code>结构 <ul>
+<li>创建容器<code>ID</code>和名称<code>generateIDAndName</code></li>
+</ul>
+</li>
+<li>通过<code>imageService</code>的<code>CreateLayer</code>函数创建容器在<code>graphdriver</code>上的<code>init</code>层(daemon&#x2F;initlayer&#x2F;setup_unix.go&#x2F;Setup)和读写层</li>
+<li>创建容器根目录<code>/var/lib/docker/containers/container-id</code></li>
+<li>在容器根目录创建<code>checkpoint</code>和容器相关配置文件信息</li>
+<li>向<code>daemon</code>注册该容器</li>
+<li>将容器状态设置为<code>stopped</code></li>
+<li>函数调用成功后会返回容器<code>ID</code>和创建时的一些警告</li>
 </ul>
 <h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
 <li>v20.10.12</li>
@@ -466,11 +481,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
