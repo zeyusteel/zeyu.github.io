@@ -385,6 +385,21 @@
 <li>将容器状态设置为<code>stopped</code></li>
 <li>函数调用成功后会返回容器<code>ID</code>和创建时的一些警告</li>
 </ul>
+<h2 id="启动容器流程"><a href="#启动容器流程" class="headerlink" title="启动容器流程"></a>启动容器流程</h2><p><code>docker start</code></p>
+<ul>
+<li>当客户端发起启动容器流程时,<code>daemon</code>接收请求后执行容器核心流程在<code>daemon/start.go/ContainerStart</code></li>
+<li>根据容器的<code>ID</code>获取<code>Container</code>数据结构</li>
+<li>检查要运行的容器是否处于暂停、已经执行、被移除的状态</li>
+<li>对参数<code>ctr.HostConfig</code>进行验证</li>
+<li>挂载容器读写层到<code>merge</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := daemon.conditionalMountOnStart(container); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>初始化网络相关配置<code>hosts</code>、<code>hostname</code>、<code>resolv.conf</code></li>
+<li>后面就是和<code>containerd</code>交互</li>
+<li>基于容器的相关参数去初始化<code>oci</code>(Open Container Initiative)<code>runtime-spec</code>项目的<code>Spec</code>数据结构</li>
+<li>初始化<code>ShimConfig</code>,<code>containerd</code>将通过<code>shim</code>去调用<code>runc</code></li>
+<li>执行<code>daemon.containerd.Create</code>创建容器</li>
+<li>执行<code>daemon.containerd.Start</code>启动容器</li>
+<li>设置容器的状态</li>
+</ul>
 <h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
 <li>v20.10.12</li>
 <li>aarch linux20.04</li>
@@ -1270,11 +1285,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1294,11 +1309,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color4">markdown</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">markdown</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
             
             <div class="clearfix"></div>
