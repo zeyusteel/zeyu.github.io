@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Head First Go - 09定义类型 | zeyu的博客</title>
+  <title>C++ 14重载运算符与类型转换 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="定义基础类型12type myTypeA float64type myTypeB float64  虽然myTypeA,和myTypeB都是同一基础类型，但是不能把另一个类型的值赋给它 123456789101112131415161718192021package mainimport &quot;fmt&quot;type myTypeA float64type myTypeB float64">
+  <meta name="description" content="基本概念 重载运算符是具有特殊名字的函数：由关键字operator和其后要定义的运算符号共同组成 当一个重载的运算符是成员函数时，this绑定到左侧运算对象。动态运算符符函数的参数数量比运算对象的数量少一个 只能重载大多数的运算符，而不能发明新的运算符号 重载运算符的优先级和结合律跟对应的内置运算符保持一致 调用方式 data1 + data2; operator+(data1, data2);">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Head First Go - 09定义类型">
-<meta property="og:url" content="http://example.com/2022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:title" content="C++ 14重载运算符与类型转换">
+<meta property="og:url" content="http://example.com/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="定义基础类型12type myTypeA float64type myTypeB float64  虽然myTypeA,和myTypeB都是同一基础类型，但是不能把另一个类型的值赋给它 123456789101112131415161718192021package mainimport &quot;fmt&quot;type myTypeA float64type myTypeB float64">
+<meta property="og:description" content="基本概念 重载运算符是具有特殊名字的函数：由关键字operator和其后要定义的运算符号共同组成 当一个重载的运算符是成员函数时，this绑定到左侧运算对象。动态运算符符函数的参数数量比运算对象的数量少一个 只能重载大多数的运算符，而不能发明新的运算符号 重载运算符的优先级和结合律跟对应的内置运算符保持一致 调用方式 data1 + data2; operator+(data1, data2);">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-06T07:50:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.411Z">
-<meta property="article:tag" content="Go">
+<meta property="article:published_time" content="2021-08-18T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-10-25T11:46:52.198Z">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -148,53 +148,253 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-head-first-go-09定义类型" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-cpp-14重载运算符与类型转换" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Head First Go - 09定义类型
+      C++ 14重载运算符与类型转换
     </h1>
   
 
         
-        <a href="/2022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
-  	<time datetime="2022-08-06T07:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-06</time>
+        <a href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
+  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="定义基础类型"><a href="#定义基础类型" class="headerlink" title="定义基础类型"></a>定义基础类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"><span class="keyword">type</span> myTypeB <span class="type">float64</span></span><br></pre></td></tr></table></figure>
-
-<p>虽然myTypeA,和myTypeB都是同一基础类型，但是不能把另一个类型的值赋给它</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"><span class="keyword">type</span> myTypeB <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a myTypeA</span><br><span class="line">	<span class="keyword">var</span> b myTypeB</span><br><span class="line"></span><br><span class="line">	a = <span class="number">1.1</span> <span class="comment">//基础类型可以直接赋值，不过最好也用转换</span></span><br><span class="line">	b = <span class="number">2.1</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	fmt.Println(b)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//不能直接赋值,需要类型转换</span></span><br><span class="line">	<span class="comment">//a = b</span></span><br><span class="line">	a = myTypeA(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>一个定义类型提供所有与基础类型相同的运算</li>
-<li>一个定义类型可以被用来与字面值一起用于运算</li>
-<li>但是定义类型不能用来与不同类型的值一起运算，即使它们是来自相同的基础类型</li>
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>重载运算符是具有特殊名字的函数：由关键字<code>operator</code>和其后要定义的运算符号共同组成</li>
+<li>当一个重载的运算符是成员函数时，<code>this</code>绑定到左侧运算对象。动态运算符符函数的参数数量比运算对象的数量<strong>少一个</strong></li>
+<li>只能重载大多数的运算符，而不能发明新的运算符号</li>
+<li>重载运算符的优先级和结合律跟对应的内置运算符保持一致</li>
+<li>调用方式<ul>
+<li><code>data1 + data2;</code></li>
+<li><code>operator+(data1, data2);</code></li>
 </ul>
-<h2 id="定义方法"><a href="#定义方法" class="headerlink" title="定义方法"></a>定义方法</h2><p>可以为指定的类型定义方法</p>
-<p>一旦方法被定义在了某个类型，它就能被该类型的任何值调用</p>
-<p><code>func</code> (<code>接收器</code> <code>类型</code>) <code>函数名</code>() { }</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//将hello定义在了myTypeA上</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myTypeA)</span></span> hello() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">1.1</span></span><br><span class="line">	test.hello()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>接收器的参数类似C++的this指针</li>
-<li>按照惯例，Go开发者通常使用一个字母作为名称——小写的接收器类型名称的首字母</li>
-<li>方法和类型必须定义在同一包中</li>
-<li>Go使用接收器参数来代替self和this，self和this是隐含的，而Go显式地声明一个接收器参数</li>
+</li>
+<li>是否是成员函数<ul>
+<li>赋值（<code>=</code>）、下标（<code>[]</code>）、调用（<code>()</code>）和成员访问箭头（<code>-&gt;</code>）运算符必须是成员<ul>
+<li>要保证这几个符号都是被对象调用,使用友元会出现语义问题,<code>friend int operator=(int a, int b); 2 = a;</code></li>
 </ul>
-<h2 id="导出方法"><a href="#导出方法" class="headerlink" title="导出方法"></a>导出方法</h2><p>就像其他的函数，方法名称以大写字母开头，则认为是导出的</p>
-<h2 id="指针类型的接收器参数"><a href="#指针类型的接收器参数" class="headerlink" title="指针类型的接收器参数"></a>指针类型的接收器参数</h2><p>就像其他的参数一样，接收器参数接收一个原值的拷贝。如果你的方法需要修改接收器，你应该在接收器参数上使用指针类型，并且修改指针指向的值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *myTypeA)</span></span> helloA() &#123;</span><br><span class="line">	*m = <span class="number">0</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, *m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">1.1</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    不需要修改方法的调用。当你用一个非指针的变量调用一个需要指针的接收器的方法的时候，Go会自动为你将非指针类型转换为指针类型。同样指针类型也会自动转换为非指针类型，如果你调用一个要求值类型的接收器，Go会自动帮你获取指针指向的值，然后传递给方法</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	test.helloA()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>你需要将值保存在变量中，允许Go能得到一个指向它的指针</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myTypeA <span class="type">float64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *myTypeA)</span></span> hello() &#123;</span><br><span class="line">	*m = <span class="number">0</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;hello&quot;</span>, *m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myTypeA)</span></span> hi() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;hi&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test myTypeA = <span class="number">15</span></span><br><span class="line">	fmt.Println(&amp;test)</span><br><span class="line">	test.hi()</span><br><span class="line">	test.hello()</span><br><span class="line"></span><br><span class="line">	myTypeA(<span class="number">15</span>).hi()</span><br><span class="line">	<span class="comment">//myTypeA(15).hello() cannot take the address of myTypeA(15) </span></span><br><span class="line">	<span class="comment">//fmt.Println(&amp;myTypeA(15)) cannot take the address of myTypeA(15) </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>复合赋值运算符一般来说是成员</li>
+<li>改变对象状态的运算符或者和给定类型密切相关的运算符通常是成员，如递增、解引用</li>
+<li>具有对称性的运算符如算术、相等性、关系和位运算符等，通常是非成员函数</li>
+</ul>
+</li>
+</ul>
+<p><strong>运算符</strong></p>
+<table>
+<thead>
+<tr>
+<th>可以被重载</th>
+<th>不可以被重载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>^</code></td>
+<td><code>::</code>, <code>.*</code>, <code>.</code>, <code>? :</code>,</td>
+</tr>
+<tr>
+<td><code>&amp;</code>, <code>|</code>, <code>~</code>, <code>!</code>, <code>,</code>, <code>=</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>++</code>, <code>--</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>==</code>, <code>!=</code>, <code>&amp;&amp;</code>, &#96;</td>
+<td></td>
+</tr>
+<tr>
+<td><code>+=</code>, <code>-=</code>, <code>/=</code>, <code>%=</code>, <code>^=</code>, <code>&amp;=</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>|=</code>, <code>*=</code>, <code>&lt;&lt;=</code>, <code>&gt;&gt;=</code>, <code>[]</code>, <code>()</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-&gt;</code>, <code>-&gt;*</code>, <code>new</code>, <code>new[]</code>, <code>delete</code>, <code>delete[]</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>通常情况下，不应该重载逗号、取地址、逻辑与和逻辑或运算符</p>
+<h2 id="输入和输出运算符"><a href="#输入和输出运算符" class="headerlink" title="输入和输出运算符"></a>输入和输出运算符</h2><h3 id="重载输出运算符-lt-lt"><a href="#重载输出运算符-lt-lt" class="headerlink" title="重载输出运算符&lt;&lt;"></a>重载输出运算符&lt;&lt;</h3><ul>
+<li>第一个形参通常是一个非常量的<code>ostream</code>对象的引用。非常量是因为向流中写入会改变其状态；而引用是因为我们无法复制一个<code>ostream</code>对象</li>
+<li>输入输出运算符必须是非成员函数(运算符左侧对象必须是是iostream,不能是this)</li>
+</ul>
+<h3 id="重载输入运算符-gt-gt"><a href="#重载输入运算符-gt-gt" class="headerlink" title="重载输入运算符&gt;&gt;"></a>重载输入运算符&gt;&gt;</h3><ul>
+<li>第一个形参通常是运算符将要读取的流的引用，第二个形参是将要读取到的（非常量）对象的引用</li>
+<li>输入运算符必须处理输入可能失败的情况，而输出运算符不需要</li>
+</ul>
+<h2 id="算数和关系运算符（-、-、-、-x2F-）"><a href="#算数和关系运算符（-、-、-、-x2F-）" class="headerlink" title="算数和关系运算符（+、-、*、&#x2F;）"></a>算数和关系运算符（+、-、*、&#x2F;）</h2><ul>
+<li>如果类同时定义了算数运算符和相关的复合赋值运算符，则通常情况下应该使用复合赋值来实现算数运算符</li>
+</ul>
+<h3 id="相等运算符-x3D-x3D"><a href="#相等运算符-x3D-x3D" class="headerlink" title="相等运算符&#x3D;&#x3D;"></a>相等运算符&#x3D;&#x3D;</h3><ul>
+<li>如果定义了<code>operator==</code>，则这个类也应该定义<code>operator!=</code></li>
+<li>相等运算符和不等运算符的一个应该把工作委托给另一个</li>
+<li>相等运算符应该具有传递性</li>
+<li>如果某个类在逻辑上有相等性的含义，则该类应该定义<code>operator==</code>，这样做可以使用户更容易使用标准库算法来处理这个类</li>
+</ul>
+<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><ul>
+<li>如果存在唯一一种逻辑可靠的<code>&lt;</code>定义，则应该考虑为这个类定义<code>&lt;</code>运算符。如果同时还包含<code>==</code>，则当且仅当<code>&lt;</code>的定义和<code>==</code>产生的结果一直时才定义<code>&lt;</code>运算符</li>
+</ul>
+<h2 id="赋值运算符-x3D"><a href="#赋值运算符-x3D" class="headerlink" title="赋值运算符&#x3D;"></a>赋值运算符&#x3D;</h2><ul>
+<li>我们可以重载赋值运算符。不论形参的类型是什么，赋值运算符都必须定义为成员函数</li>
+<li>赋值运算符必须定义成类的成员，复合赋值运算符通常情况下也应该这么做。这两类运算符都应该返回左侧运算对象的引用</li>
+</ul>
+<h2 id="下标运算符"><a href="#下标运算符" class="headerlink" title="下标运算符[]"></a>下标运算符[]</h2><ul>
+<li>下标运算符必须是成员函数</li>
+<li>一般会定义两个版本<ul>
+<li>返回普通引用</li>
+<li>类的常量成员，并返回常量引用</li>
+</ul>
+</li>
+</ul>
+<h2 id="递增和递减运算符（-、–）"><a href="#递增和递减运算符（-、–）" class="headerlink" title="递增和递减运算符（++、–）"></a>递增和递减运算符（++、–）</h2><ul>
+<li>定义递增和递减运算符的类应该同时定义前置版本和后置版本</li>
+<li>通常应该被定义成类的成员</li>
+<li>为了和内置版本保持一致，前置运算符应该返回递增或递减后对象的引用</li>
+<li>同样为了和内置版本保持一致，后置运算符应该返回递增或递减前对象的值，而不是引用</li>
+<li>后置版本接受一个额外的，不被使用的<code>int</code>类型的形参。因为不会用到，所以无需命名</li>
+</ul>
+<h2 id="成员访问运算符（-、-gt-）"><a href="#成员访问运算符（-、-gt-）" class="headerlink" title="成员访问运算符（*、-&gt;）"></a>成员访问运算符（*、-&gt;）</h2><ul>
+<li>箭头运算符必须是类的成员。解引用运算符通常也是类的成员，尽管并非必须如此</li>
+<li>对于形如<code>point-&gt;mem</code>的表达式来说，<code>point</code>必须是指向类对象的指针或者是一个重载了<code>operator-&gt;</code>的类的对象<ul>
+<li><code>(*point).mem</code> <code>point</code>是指针 </li>
+<li><code>point.operator()-&gt;mem</code> <code>point</code>是对象</li>
+</ul>
+</li>
+<li>解引用和乘法的区别是一个是一元运算符，一个是二元运算符</li>
+</ul>
+<h2 id="函数调用运算符"><a href="#函数调用运算符" class="headerlink" title="函数调用运算符"></a>函数调用运算符</h2><ul>
+<li>可以像使用函数一样，调用该类的对象。因为这样对待类同时也能存储状态，所以与普通函数相比更加灵活</li>
+<li>函数调用运算符必须是成员函数</li>
+<li>一个类可以定义多个不同版本的调用运算符，相互之间应该在参数数量或类型上有所区别</li>
+<li>如果累定义了调用运算符，则该类的对象称作<strong>函数对象</strong></li>
+</ul>
+<h3 id="lambda是函数对象"><a href="#lambda是函数对象" class="headerlink" title="lambda是函数对象"></a><code>lambda</code>是函数对象</h3><ul>
+<li><code>lambda</code>捕获变量：<code>lambda</code>产生的类必须为每个值捕获的变量建立对应的数据成员，同时创建构造函数</li>
+</ul>
+<h3 id="标准库定义的函数对象"><a href="#标准库定义的函数对象" class="headerlink" title="标准库定义的函数对象"></a>标准库定义的函数对象</h3><p><strong>标准库函数对象</strong></p>
+<table>
+<thead>
+<tr>
+<th>算术</th>
+<th>关系</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>plus&lt;Type&gt;</code></td>
+<td><code>equal_to&lt;Type&gt;</code></td>
+<td><code>logical_and&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>minus&lt;Type&gt;</code></td>
+<td><code>not_equal_to&lt;Type&gt;</code></td>
+<td><code>logical_or&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>multiplies&lt;Type&gt;</code></td>
+<td><code>greater&lt;Type&gt;</code></td>
+<td><code>logical_not&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>divides&lt;Type&gt;</code></td>
+<td><code>greater_equal&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>modulus&lt;Type&gt;</code></td>
+<td><code>less&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>negate&lt;Type&gt;</code></td>
+<td><code>less_equal&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>可以在算法中使用标准库函数对象</li>
+</ul>
+<h3 id="可调用对象与function"><a href="#可调用对象与function" class="headerlink" title="可调用对象与function"></a>可调用对象与function</h3><p><strong>标准库function类型</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>function&lt;T&gt; f;</code></td>
+<td><code>f</code>是一个用来存储可调用对象的空<code>function</code>，这些可调用对象的调用形式应该与类型<code>T</code>相同</td>
+</tr>
+<tr>
+<td><code>function&lt;T&gt; f(nullptr);</code></td>
+<td>显式地构造一个空<code>function</code></td>
+</tr>
+<tr>
+<td><code>function&lt;T&gt; f(obj)</code></td>
+<td>在<code>f</code>中存储可调用对象<code>obj</code>的副本</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td>将<code>f</code>作为条件：当<code>f</code>含有一个可调用对象时为真；否则为假</td>
+</tr>
+<tr>
+<td>定义为<code>function&lt;T&gt;</code>的成员的类型</td>
+<td></td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td>该<code>function</code>类型的可调用对象返回的类型</td>
+</tr>
+<tr>
+<td><code>argument_type</code></td>
+<td>当<code>T</code>有一个或两个实参时定义的类型。如果<code>T</code>只有一个实参，则<code>argument_type</code></td>
+</tr>
+<tr>
+<td><code>first_argument_type</code></td>
+<td>第一个实参的类型</td>
+</tr>
+<tr>
+<td><code>second_argument_type</code></td>
+<td>第二个实参的类型</td>
+</tr>
+</tbody></table>
+<ul>
+<li>例如：声明一个<code>function</code>类型，它可以表示接受两个<code>int</code>，返回一个<code>int</code>的可调用对象。<code>function&lt;int(int, int)&gt;</code></li>
+</ul>
+<h2 id="重载、类型转换、运算符"><a href="#重载、类型转换、运算符" class="headerlink" title="重载、类型转换、运算符"></a>重载、类型转换、运算符</h2><h3 id="类型转换运算符"><a href="#类型转换运算符" class="headerlink" title="类型转换运算符"></a>类型转换运算符</h3><ul>
+<li>类型转换运算符是类的一种特殊成员函数，它负责将一个类类型的值转换成其他类型。类型转换函数的一般形式如下：<code>operator type() const;</code></li>
+<li>一个类型转换函数必须是类的成员函数；它不能声明返回类型，形参列表也必须为空。类型转换函数通常应该是<code>const</code></li>
+<li>避免过度使用类型转换函数</li>
+<li>C++11引入了显式的类型转换运算符</li>
+<li>向<code>bool</code>的类型转换通常用在条件部分，因此<code>operator bool</code>一般定义成<code>explicit</code>的</li>
+</ul>
+<h3 id="避免有二义性的类型转换"><a href="#避免有二义性的类型转换" class="headerlink" title="避免有二义性的类型转换"></a>避免有二义性的类型转换</h3><ul>
+<li>通常，不要为类定义相同的类型转换，也不要在类中定义两个及以上转换源或转换目标是算术类型的转换</li>
+<li>在调用重载函数时，如果需要额外的标准类型转换，则该转换的级别只有当所有可行函数都请求同一个用户定义的类型转换时才有用。如果所需的用户定义的类型转换不止一个，则该调用具有二义性</li>
+</ul>
+<h3 id="函数匹配与重载运算符"><a href="#函数匹配与重载运算符" class="headerlink" title="函数匹配与重载运算符"></a>函数匹配与重载运算符</h3><ul>
+<li>如果<code>a</code>是一种类型，则表达式<code>a sym b</code>可能是<ul>
+<li><code>a.operatorsym(b);</code></li>
+<li><code>operatorsym(a,b);</code></li>
+</ul>
+</li>
+<li>如果我们对同一个类既提供了转换目标是算术类型的类型转换，也提供了重载的运算符，则将会遇到重载运算符与内置运算符的二义性问题</li>
+</ul>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CDemo</span></span><br><span class="line">&#123;    </span><br><span class="line">    <span class="keyword">friend</span> std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp;, <span class="type">const</span> CDemo&amp;); </span><br><span class="line">    <span class="keyword">friend</span> std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp;, CDemo&amp;);</span><br><span class="line">    <span class="keyword">friend</span> CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp;, <span class="type">const</span> CDemo&amp;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CDemo</span><span class="params">(<span class="type">int</span> num = <span class="number">0</span>)</span>: m(num) &#123;</span>&#125; </span><br><span class="line">    ~<span class="built_in">CDemo</span>() &#123;&#125;</span><br><span class="line">    <span class="built_in">CDemo</span>(<span class="type">const</span> CDemo &amp;d): <span class="built_in">m</span>(d.m) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>=(<span class="type">const</span> CDemo &amp;d) &#123;</span><br><span class="line">        m = d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo <span class="keyword">operator</span>++(<span class="type">int</span>) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="function">CDemo <span class="title">tmp</span><span class="params">(*<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        ++*<span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>++() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;++d&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        ++m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	CDemo&amp; <span class="keyword">operator</span>+=(<span class="type">const</span> CDemo&amp; d) &#123;</span><br><span class="line">        m += d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d()&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="keyword">operator</span>[](<span class="type">size_t</span> n) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;[]&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string&amp; <span class="keyword">operator</span>*() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;*&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string* <span class="keyword">operator</span>-&gt;() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;-&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> &amp; <span class="keyword">this</span>-&gt;<span class="keyword">operator</span>*();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m;</span><br><span class="line">    std::string str = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; stream, <span class="type">const</span> CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> stream &lt;&lt; d.m;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp; stream, CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    stream &gt;&gt; d.m;</span><br><span class="line">    <span class="keyword">if</span> (!stream) &#123;</span><br><span class="line">        d = <span class="built_in">CDemo</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stream;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp; d1, <span class="type">const</span> CDemo&amp; d2)</span><br><span class="line">&#123;</span><br><span class="line">    CDemo d = d1;</span><br><span class="line">    d += d2;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -207,7 +407,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
@@ -263,7 +463,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/08/06/head-first-go-09%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -277,18 +477,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Head First Go - 10封装
+          C++ 多态
         
       </div>
     </a>
   
   
-    <a href="/2022/08/05/head-first-go-08struct/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Head First Go - 08struct</div>
+    <a href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C++ 左值、右值</div>
       <i class="icon-circle-right"></i>
     </a>
   
