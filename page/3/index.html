@@ -981,6 +981,188 @@
 
 
   
+    <article id="post-cpp-左值右值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/">C++ 左值、右值</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" class="archive-article-date">
+  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>C语言中的表达式被分为左值和其它(函数和非对象值)，其中左值被定义为标识一个对象的表达式。在C语言中<code>lvalue</code>是<code>locator value</code>的简写，因此<code>lvalue</code>对应了一块内存地址。</p>
+<p>C++11之前，左值遵循了C语言的分类法，但与C不同的是，其将非左值表达式统称为右值，函数为左值，并添加了引用能绑定到左值但<strong>唯有<code>const</code>的引用能绑定到右值</strong>的规则。几种非左值的C表达式在C++中成为了左值表达式。</p>
+<p>自C++11开始，对值类别又进行了详细分类，在原有左值的基础上增加了纯右值和消亡值，并对以上三种类型通过是否具名(identity)和可移动(moveable)，又增加了<code>glvalue</code>和<code>rvalue</code>两种组合类型。</p>
+<ul>
+<li><strong>具名</strong>(identity):可以确定表达式是否与另一表达式指代同一实体，例如通过比较它们所标识的对象或函数的（直接或间接获得的）地址</li>
+<li><strong>可被移动</strong>(moveable)：移动构造函数、移动赋值运算符或实现了移动语义的其他函数重载能够绑定于这个表达式</li>
+</ul>
+<p><strong>表达式是可求值的，对表达式求值可得到一个结果，这个结果有两个属性</strong></p>
+<ul>
+<li>类型，比如<code>int</code>、<code>string</code>、引用或者我们自定义的类</li>
+<li>值类别<ul>
+<li>在C++11之前，表达式的值分为左值和右值两种，其中右值就是我们理解中的字面值<code>1</code>、<code>true</code>、<code>nullptr</code>等</li>
+<li>自C++11开始，表达式的值分为<strong>左值</strong>(<code>lvalue</code>, left value)、<strong>将亡值</strong>(<code>xvalue</code>, expiring value)、<strong>纯右值</strong>(<code>pvalue</code>, pure ravlue)以及两种混合类别<strong>泛左值</strong>(<code>glvalue</code>, generalized lvalue)和<strong>右值</strong>(<code>rvalue</code>, right value)五种</li>
+</ul>
+</li>
+</ul>
+<h2 id="值类别"><a href="#值类别" class="headerlink" title="值类别"></a>值类别</h2><ul>
+<li>左值(lvalue):具名且不可被移动</li>
+<li>将亡值(xvaue):具名且可被移动</li>
+<li>纯右值(prvalue):不具名且可被移动</li>
+<li>泛左值(glvalue):具名，lvalue和xvalue都属于glvalue</li>
+<li>右值(rvalue):可被移动的表达式，prvalue和xvalue都属于rvalue</li>
+</ul>
+<h2 id="左值-lvalue-left-value"><a href="#左值-lvalue-left-value" class="headerlink" title="左值 (lvalue,left value)"></a>左值 (lvalue,left value)</h2><p>顾名思义就是赋值符号左边的值。准确来说，左值是表达式结束（不一定是赋值表达式）后依然存在的对象。</p>
+<p>可以将左值看作是一个关联了名称的内存位置，允许程序的其他部分来访问它。在这里，我们将 “名称” 解释为任何可用于访问内存位置的表达式。所以，如果<code>arr</code>是一个数组，那么<code>arr[1]</code>和<code>*(arr+1)</code>都将被视为相同内存位置的“名称”。</p>
+<h3 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>可通过取地址运算符获取其地址</li>
+<li>可修改的左值可用作内建赋值和内建符合赋值运算符的左操作数</li>
+<li>可以用来初始化左值引用</li>
+</ul>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><ul>
+<li>变量名、函数名以及数据成员名 <code>int a = 5</code></li>
+<li>返回左值引用的函数调用 <code>T&amp; f(); f();</code></li>
+<li>由赋值运算符或复合赋值运算符连接的表达式，<code>a=b;</code></li>
+<li>解引用表达式 <code>int *ptr = &amp;a;</code></li>
+<li>前置自增和自减表达式 <code>++a;</code></li>
+<li>成员访问<code>.</code>运算符的结果 <code>obj.m</code></li>
+<li>由指针访问成员<code>-&gt;</code>运算符的结果 <code>p-&gt;m</code></li>
+<li>下标运算符的结果<code>[]</code> <code>arr[0] = 10</code></li>
+<li>字符串字面值<code>&quot;abc&quot;</code></li>
+</ul>
+<p><strong>对于一个表达式，凡是对其取地址（&amp;）操作可以成功的都是左值</strong></p>
+<h2 id="纯右值-pvalue-pure-ravlue"><a href="#纯右值-pvalue-pure-ravlue" class="headerlink" title="纯右值 (pvalue, pure ravlue)"></a>纯右值 (pvalue, pure ravlue)</h2><p>自C++11开始，纯右值(pvalue, pure ravlue)相当于之前的右值,字面值或者函数返回的非引用都是纯右值。</p>
+<h3 id="特征-1"><a href="#特征-1" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>等同于C++11之前的右值</li>
+<li>不会是多态</li>
+<li>不会是抽象类型或数组</li>
+<li>不会是不完全类型</li>
+</ul>
+<h3 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h3><ul>
+<li>字面值(字符串字面值除外) <code>1; &#39;a&#39;; true;</code></li>
+<li>返回值为非引用的函数调用或操作符重载<code>int f(); f(); str1 + str2; it++;</code></li>
+<li>后置自增和自减表达式 <code>a++;</code></li>
+<li>算术表达式 <code>a+b;</code></li>
+<li>逻辑表达式 <code>a &amp;&amp; b;</code></li>
+<li>比较表达式 <code>a &gt; b;</code></li>
+<li>取地址表达式 <code>&amp;a;</code></li>
+<li><code>lambda</code>表达式 <code>[]&#123;&#125;;</code></li>
+</ul>
+<h2 id="将亡值-xvalue-expiring-value"><a href="#将亡值-xvalue-expiring-value" class="headerlink" title="将亡值(xvalue, expiring value)"></a>将亡值(xvalue, expiring value)</h2><p>顾名思义即将消亡的值，是C++11新增的跟右值引用相关的表达式，通常是将要被移动的对象（移为他用），比如返回右值引用T&amp;&amp;的函数返回值、std::move的返回值，或者转换为T&amp;&amp;的类型转换函数的返回值。</p>
+<p>将亡值可以理解为通过“盗取”其他变量内存空间的方式获取到的值。在确保其他变量不再被使用、或即将被销毁时，通过“盗取”的方式可以避免内存空间的释放和分配，能够延长变量值的生命期。（通过右值引用来续命）。</p>
+<p><strong>xvalue 只能通过两种方式来获得，这两种方式都涉及到将一个左值赋给(转化为)一个右值引用</strong></p>
+<ul>
+<li>返回右值引用的函数的调用表达式,如<code>T&amp;&amp; f(); f();</code>该表达式得到一个<code>xvalue</code></li>
+<li>转换为右值引用的转换函数的调用表达式，如：<code>std::move(t)、satic_cast&lt;T&amp;&amp;&gt;(t)</code></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">fun</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  std::string str;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">return</span> str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::string s = <span class="built_in">fun</span>();</span><br></pre></td></tr></table></figure>
+<p>在函数<code>fun()</code>中，<code>str</code>是一个局部变量，并在函数结束时候被返回。</p>
+<p>在C++11之前，<code>s = fun();</code>会调用拷贝构造函数，会将整个<code>str</code>复制一份，然后把<code>str</code>销毁。如果<code>str</code>特别大的话，会造成大量额外开销。在这一行中，<code>s</code>是左值，<code>fun()</code>是右值(纯右值)，<code>fun()</code>产生的那个返回值作为一个临时值，一旦<code>str</code>被<code>s</code>复制后，将被销毁，无法获取、也不能修改。</p>
+<p>自C++11开始，引入了<code>move</code>语义，编译器会将这部分优化成<code>move</code>操作，即不再是之前的复制操作，而是<code>move</code>。此时，<code>str</code>会被进行隐式右值转换，等价于<code>static_cast&lt;std::string&amp;&amp;&gt;(str)</code>，进而此处的<code>s</code>会将<code>fun</code>局部返回的值进行移动。</p>
+<p>无论是C++11之前的拷贝，还是C++11的<code>move</code>，<code>str</code>在填充(拷贝或者<code>move</code>)给<code>s</code>之后，将被销毁，而被销毁的这个值，就成为将亡值。</p>
+<p>将亡值就定义了这样一种行为：具名的临时值、同时又能够被<code>move</code>。</p>
+<h2 id="泛左值（glvalue-generalized-lvalue）"><a href="#泛左值（glvalue-generalized-lvalue）" class="headerlink" title="泛左值（glvalue, generalized lvalue）"></a>泛左值（glvalue, generalized lvalue）</h2><p>又称为广义左值，是具名表达式，对应了一块内存。<code>glvalue</code>有<code>lvalue</code>和<code>xvalue</code>两种形式。</p>
+<h3 id="特征-2"><a href="#特征-2" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>可以自动转换成<code>prvalue</code></li>
+<li>可以是多态的</li>
+<li>可以是不完整类型，如前置声明但未定义的类类型</li>
+</ul>
+<h2 id="右值-rvalue-right-value"><a href="#右值-rvalue-right-value" class="headerlink" title="右值(rvalue, right value)"></a>右值(rvalue, right value)</h2><p>是指可以移动的表达式,<code>prvalue</code>和<code>xvalue</code>都是<code>rvalue</code>。</p>
+<h3 id="特征-3"><a href="#特征-3" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>无法对<code>rvalue</code>进行取地址操作。例如：<code>&amp;1; &amp;(a + b);</code>，这些表达式没有意义，也编译不过</li>
+<li><code>rvalue</code>不能放在赋值或者组合赋值符号的左边。例如：<code>3 = 5; 3 += 5;</code> 这些表达式没有意义，也编译不过</li>
+<li><code>rvalue</code>可以用来初始化<code>const</code>左值引用。例如：<code>const int&amp; a = 1;</code></li>
+<li><code>rvalue</code>可以用来初始化右值引用</li>
+<li><code>rvalue</code>可以影响函数重载：当被用作函数实参且该函数有两种重载可用，其中之一接受右值引用的形参而另一个接受<code>const</code>的左值引用的形参时，右值将被绑定到右值引用的重载之上</li>
+</ul>
+<h2 id="例"><a href="#例" class="headerlink" title="例"></a>例</h2><h3 id="前置自增-减-是左值，后置自增-减-是纯右值"><a href="#前置自增-减-是左值，后置自增-减-是纯右值" class="headerlink" title="前置自增(减)是左值，后置自增(减)是纯右值"></a>前置自增(减)是左值，后置自增(减)是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">++i;</span><br><span class="line">--i;</span><br><span class="line">i++;</span><br><span class="line">i--;</span><br></pre></td></tr></table></figure>
+<p>在上面代码中，我们定义了一个int类型的变量i，并初始化为0。</p>
+<ul>
+<li>++i的操作是对i加1后再赋值给i，所以++i的结果是具名的，名称就是i，所以++i是左值</li>
+<li>对于i++而言，先将i的值进行拷贝(此处假设拷贝到临时变量ii)，然后再对i加1，最后返回ii(其实不存在的，为了在此表述方便)。所以i++是不具名的，因此不是glvaue，所以i++是右值，又因为不具名，且是右值，所以i++是纯右值</li>
+<li>同理，–i是左值，i–是纯右值</li>
+</ul>
+<h3 id="算术表达式是纯右值"><a href="#算术表达式是纯右值" class="headerlink" title="算术表达式是纯右值"></a>算术表达式是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> y = <span class="number">0</span>;</span><br><span class="line">x + y;</span><br><span class="line">x &amp;&amp; y;</span><br><span class="line">x == y;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，x + y得到的是一个不具名的临时对象，所以x+y是纯右值；而x &amp;&amp; y和x &#x3D;&#x3D; y得到的是一个bool常量值，要么是true要么是false，所以是纯右值。</p>
+<h3 id="解引用是左值，取地址是纯右值"><a href="#解引用是左值，取地址是纯右值" class="headerlink" title="解引用是左值，取地址是纯右值"></a>解引用是左值，取地址是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> *y = &amp;x;</span><br><span class="line">*y = <span class="number">1</span>;</span><br><span class="line">&amp;y;</span><br></pre></td></tr></table></figure>
+<p>*y得到的是y指向地址的实际值，所以&amp;(<em>y)是合法的，因此</em>y是左值;对&amp;y操作得到的是一个地址，即一个long值，所以是一个字面值，因此&amp;y是纯右值。</p>
+<h3 id="字符串字面值是左值"><a href="#字符串字面值是左值" class="headerlink" title="字符串字面值是左值"></a>字符串字面值是左值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; &amp;<span class="string">&quot;abc&quot;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<p>字符串字面值为左值，这个比较特殊。在前面提到过字面值都是纯右值(字符串字面值除外)，一个很重要的原因，就是可以字符串字面值可以获取地址，</p>
+<p>这是因为C++将字符串字面值实现为char型数组，实实在在地为每个字符都分配了空间并且允许程序员对其进行操作。如果从存储区的概念来理解，那就是字符串字面值存储在常量区。</p>
+<h2 id="左值引用"><a href="#左值引用" class="headerlink" title="左值引用"></a>左值引用</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> &amp;ref = a; <span class="comment">//左值引用</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> &amp;f1 = <span class="number">5</span>; <span class="comment">//错误</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;f2 = <span class="number">5</span>; <span class="comment">//只有常量左值引用能绑定到常量</span></span><br></pre></td></tr></table></figure>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>右值引用的引入，使得可以延长右值的生命周期。在C++中规定，右值引用是&amp;&amp;即由2个&amp;表示，而左值引用是一个&amp;表示。右值引用的作用是为了绑定右值</p>
+<p><strong>右值引用虽然是引用右值，但是其本身是左值</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> &amp;&amp;a = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，a是一个右值引用，但是其本身是左值</p>
+<ul>
+<li>a出现在等号(&#x3D;)的左边</li>
+<li>可以对a取地址</li>
+</ul>
+<h3 id="判断是否是左值引用和右值引用"><a href="#判断是否是左值引用和右值引用" class="headerlink" title="判断是否是左值引用和右值引用"></a>判断是否是左值引用和右值引用</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> &amp;lref = a;</span><br><span class="line"><span class="type">int</span> &amp;&amp;rref = <span class="number">7</span>;</span><br><span class="line">std::cout &lt;&lt; std::is_lvalue_reference&lt;<span class="keyword">decltype</span>(lref)&gt;::value &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; std::is_rvalue_reference&lt;<span class="keyword">decltype</span>(rref)&gt;::value &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-13拷贝控制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1590,392 +1772,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/16/cpp-12%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-11关联容器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/15/cpp-11%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8/">C++ 11关联容器</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/15/cpp-11%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2021-08-15T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>关联容器和顺序容器的不同：关联容器中的元素时按照<strong>关键字</strong>来保存和访问的</li>
-<li>关联容器支持通过关键字来高效地查找和读取元素，基本的关联容器类型是 <code>map</code>和 <code>set</code></li>
-</ul>
-<p><strong>关联容器类型</strong></p>
-<table>
-<thead>
-<tr>
-<th>容器类型</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>按顺序存储</td>
-<td></td>
-</tr>
-<tr>
-<td><code>map</code></td>
-<td>关键数组：保存<code>关键字-值</code>对</td>
-</tr>
-<tr>
-<td><code>set</code></td>
-<td>关键字即值，即只保存关键字的容器</td>
-</tr>
-<tr>
-<td><code>multimap</code></td>
-<td>支持同一个键多次出现的<code>map</code></td>
-</tr>
-<tr>
-<td><code>multiset</code></td>
-<td>支持同一个键多次出现的<code>set</code></td>
-</tr>
-<tr>
-<td>无序集合</td>
-<td></td>
-</tr>
-<tr>
-<td><code>unordered_map</code></td>
-<td>用哈希函数组织的<code>map</code></td>
-</tr>
-<tr>
-<td><code>unordered_set</code></td>
-<td>用哈希函数组织的<code>set</code></td>
-</tr>
-<tr>
-<td><code>unordered_multimap</code></td>
-<td>哈希组织的<code>map</code>，关键字可以重复出现</td>
-</tr>
-<tr>
-<td><code>unordered_multiset</code></td>
-<td>哈希组织的<code>set</code>，关键字可以重复出现</td>
-</tr>
-</tbody></table>
-<h2 id="关联容器概述"><a href="#关联容器概述" class="headerlink" title="关联容器概述"></a>关联容器概述</h2><h3 id="定义关联容器"><a href="#定义关联容器" class="headerlink" title="定义关联容器"></a>定义关联容器</h3><ul>
-<li>需要指定元素类型</li>
-<li>列表初始化：<ul>
-<li><code>map</code>：<code>map&lt;string, int&gt; word_count = &#123;&#123;"a", 1&#125;, &#123;"b", 2&#125;&#125;;</code></li>
-<li><code>set</code>：<code>set&lt;string&gt; exclude = &#123;&quot;the&quot;, &quot;a&quot;&#125;;</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="关键字类型的要求"><a href="#关键字类型的要求" class="headerlink" title="关键字类型的要求"></a>关键字类型的要求</h3><ul>
-<li>对于有序容器，关键字类型必须定义元素比较的方法。默认是<code>&lt;</code></li>
-<li>如果想传递一个比较的函数，可以这样定义：<code>multiset&lt;Sales_data, decltype(compareIsbn)*&gt; bookstore(compareIsbn);</code></li>
-</ul>
-<h3 id="pair"><a href="#pair" class="headerlink" title="pair"></a>pair</h3><ul>
-<li>在<code>utility</code>头文件中定义</li>
-<li>一个<code>pair</code>保存两个数据成员，两个类型不要求一样</li>
-</ul>
-<p><strong>pair的操作</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>pair&lt;T1, T2&gt; p;</code></td>
-<td><code>p</code>是一个<code>pair</code>，两个类型分别是<code>T1</code>和<code>T2</code>的成员都进行了值初始化</td>
-</tr>
-<tr>
-<td><code>pair&lt;T1, T2&gt; p(v1, v2);</code></td>
-<td><code>first</code>和<code>second</code>分别用<code>v1</code>和<code>v2</code>进行初始化</td>
-</tr>
-<tr>
-<td><code>pair&lt;T1, T2&gt;p = &#123;v1, v2&#125;;</code></td>
-<td>等价于&#96;p(v1, v2)</td>
-</tr>
-<tr>
-<td><code>make_pair(v1, v2);</code></td>
-<td><code>pair</code>的类型从<code>v1</code>和<code>v2</code>的类型推断出来</td>
-</tr>
-<tr>
-<td><code>p.first</code></td>
-<td>返回<code>p</code>的名为<code>first</code>的数据成员</td>
-</tr>
-<tr>
-<td><code>p.second</code></td>
-<td>返回<code>p</code>的名为<code>second</code>的数据成员</td>
-</tr>
-<tr>
-<td><code>p1 relop p2</code></td>
-<td>运算关系符按字典序定义</td>
-</tr>
-<tr>
-<td><code>p1 == p2</code></td>
-<td>必须两对元素两两相等</td>
-</tr>
-<tr>
-<td><code>p1 != p2</code></td>
-<td>同上</td>
-</tr>
-</tbody></table>
-<h2 id="关联容器操作"><a href="#关联容器操作" class="headerlink" title="关联容器操作"></a>关联容器操作</h2><p><strong>关联容器额外的类型别名</strong></p>
-<table>
-<thead>
-<tr>
-<th>类型别名</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>key_type</code></td>
-<td>此容器类型的关键字类型</td>
-</tr>
-<tr>
-<td><code>mapped_type</code></td>
-<td>每个关键字关联的类型，只适用于<code>map</code></td>
-</tr>
-<tr>
-<td><code>value_type</code></td>
-<td>对于<code>map</code>，是<code>pair&lt;const key_type, mapped_type&gt;</code>; 对于<code>set</code>，和<code>key_type</code>相同</td>
-</tr>
-</tbody></table>
-<h3 id="关联容器迭代器"><a href="#关联容器迭代器" class="headerlink" title="关联容器迭代器"></a>关联容器迭代器</h3><ul>
-<li>解引用一个关联容器迭代器时，会得到一个类型为容器的<code>value_type</code>的值的引用</li>
-<li><code>set</code>的迭代器是<code>const</code>的</li>
-<li>遍历关联容器：使用<code>begin</code>和<code>end</code>，遍历<code>map</code>、<code>multimap</code>、<code>set</code>、<code>multiset</code>时，迭代器按<strong>关键字升序</strong>遍历元素</li>
-</ul>
-<h3 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h3><p><strong>关联容器<code>insert</code>操作</strong></p>
-<table>
-<thead>
-<tr>
-<th><code>insert</code>操作</th>
-<th>关联容器</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>c.insert(v)</code>  <code>c.emplace(args)</code></td>
-<td><code>v</code>是<code>value_type</code>类型的对象；<code>args</code>用来构造一个元素。 对于<code>map</code>和<code>set</code>，只有元素的关键字不存在<code>c</code>中才插入或构造元素。函数返回一个<code>pair</code>，包含一个迭代器，指向具有指定关键字的元素，以及一个指示插入是否成功的<code>bool</code>值。对于<code>multimap</code>和<code>multiset</code>则会插入范围中的每个元素</td>
-</tr>
-<tr>
-<td><code>c.insert(b, e)</code> <code>c.insert(il)</code></td>
-<td><code>b</code>和<code>e</code>是迭代器，表示一个<code>c::value_type</code>类型值的范围；<code>il</code>是这种值的花括号列表。函数返回<code>void</code>。对于 <code>map</code>和<code>set</code>，只插入关键字不在<code>c</code>中的元素</td>
-</tr>
-<tr>
-<td><code>c.insert(p, v)</code>  <code>c.emplace(p, args)</code></td>
-<td>类似<code>insert(v)</code>，但将迭代器<code>p</code>作为一个提示，指出从哪里开始搜索新元素应该存储的位置。返回一个迭代器，指向具有给定关键字的元素</td>
-</tr>
-</tbody></table>
-<p>向<code>map</code>添加元素：</p>
-<ul>
-<li><code>word_count.insert(&#123;word, 1&#125;);</code></li>
-<li><code>word_count.insert(make_pair(word, 1));</code></li>
-<li><code>word_count.insert(pair&lt;string, size_t&gt;(word, 1));</code></li>
-<li><code>word_count.insert(map&lt;string, size_t&gt;::value_type (word, 1));</code></li>
-</ul>
-<h3 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h3><p><strong>从关联容器中删除元素</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>c.erase(k)</code></td>
-<td>从<code>c</code>中删除每个关键字为<code>k</code>的元素。返回一个<code>size_type</code>值，指出删除的元素的数量</td>
-</tr>
-<tr>
-<td><code>c.erase(p)</code></td>
-<td>从<code>c</code>中删除迭代器<code>p</code>指定的元素。<code>p</code>必须指向<code>c</code>中一个真实元素，不能等于<code>c.end()</code>。返回一个指向<code>p</code>之后元素的迭代器，若<code>p</code>指向<code>c</code>中的尾元素，则返回<code>c.end()</code></td>
-</tr>
-<tr>
-<td><code>c.erase(b, e)</code></td>
-<td>删除迭代器对<code>b</code>和<code>e</code>所表示范围中的元素。返回<code>e</code></td>
-</tr>
-</tbody></table>
-<h3 id="下标操作"><a href="#下标操作" class="headerlink" title="下标操作"></a>下标操作</h3><p><strong><code>map</code>和<code>unordered_map</code>的下标操作</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>c[k]</code></td>
-<td>返回关键字为<code>k</code>的元素；如果<code>k</code>不在<code>c</code>中，添加一个关键字为<code>k</code>的元素，对其值初始化</td>
-</tr>
-<tr>
-<td><code>c.at(k)</code></td>
-<td>访问关键字为<code>k</code>的元素，带参数检查；若<code>k</code>不存在在<code>c</code>中，抛出一个<code>out_of_range</code>异常</td>
-</tr>
-</tbody></table>
-<h3 id="查找元素"><a href="#查找元素" class="headerlink" title="查找元素"></a>查找元素</h3><p><strong>在一个关联容器中查找元素</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>c.find(k)</code></td>
-<td>返回一个迭代器，指向第一个关键字为<code>k</code>的元素，若<code>k</code>不在容器中，则返回尾后迭代器</td>
-</tr>
-<tr>
-<td><code>c.count(k)</code></td>
-<td>返回关键字等于<code>k</code>的元素的数量。对于不允许重复关键字的容器，返回值永远是0或1</td>
-</tr>
-<tr>
-<td><code>c.lower_bound(k)</code></td>
-<td>返回一个迭代器，指向第一个关键字<strong>不小于</strong><code>k</code>的元素</td>
-</tr>
-<tr>
-<td><code>c.upper_bound(k)</code></td>
-<td>返回一个迭代器，指向第一个关键字<strong>大于</strong><code>k</code>的元素</td>
-</tr>
-<tr>
-<td><code>c.equal_range(k)</code></td>
-<td>返回一个迭代器<code>pair</code>，表示关键字等于<code>k</code>的元素的范围。若<code>k</code>不存在，<code>pair</code>的两个成员均等于<code>c.end()</code></td>
-</tr>
-</tbody></table>
-<ul>
-<li><code>lower_bound</code>和<code>upper_bound</code>不适用于无序容器</li>
-<li>下标和<code>at</code>操作只适用于非<code>const</code>的<code>map</code>和<code>unordered_map</code></li>
-</ul>
-<h2 id="无序容器"><a href="#无序容器" class="headerlink" title="无序容器"></a>无序容器</h2><ul>
-<li>有序容器使用比较运算符来组织元素；无序容器使用哈希函数和关键字类型的<code>==</code>运算符</li>
-<li>理论上哈希技术可以获得更好的性能</li>
-<li>无序容器在存储上组织为一组桶(bucket)，每个桶保存零个或多个元素。无序容器使用一个哈希函数将元素映射到桶</li>
-</ul>
-<p><strong>无序容器管理操作</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>桶接口</strong></td>
-<td></td>
-</tr>
-<tr>
-<td><code>c.bucket_count()</code></td>
-<td>正在使用的桶的数目</td>
-</tr>
-<tr>
-<td><code>c.max_bucket_count()</code></td>
-<td>容器能容纳的最多的桶的数目</td>
-</tr>
-<tr>
-<td><code>c.bucket_size(n)</code></td>
-<td>第<code>n</code>个桶中有多少个元素</td>
-</tr>
-<tr>
-<td><code>c.bucket(k)</code></td>
-<td>关键字为<code>k</code>的元素在哪个桶中</td>
-</tr>
-<tr>
-<td><strong>桶迭代</strong></td>
-<td></td>
-</tr>
-<tr>
-<td><code>local_iterator</code></td>
-<td>可以用来访问桶中元素的迭代器类型</td>
-</tr>
-<tr>
-<td><code>const_local_iterator</code></td>
-<td>桶迭代器的<code>const</code>版本</td>
-</tr>
-<tr>
-<td><code>c.begin(n)</code>，<code>c.end(n)</code></td>
-<td>桶<code>n</code>的首元素迭代器</td>
-</tr>
-<tr>
-<td><code>c.cbegin(n)</code>，<code>c.cend(n)</code></td>
-<td>与前两个函数类似，但返回<code>const_local_iterator</code></td>
-</tr>
-<tr>
-<td><strong>哈希策略</strong></td>
-<td></td>
-</tr>
-<tr>
-<td><code>c.load_factor()</code></td>
-<td>每个桶的平均元素数量，返回<code>float</code>值</td>
-</tr>
-<tr>
-<td><code>c.max_load_factor()</code></td>
-<td><code>c</code>试图维护的平均比桶大小，返回<code>float</code>值。<code>c</code>会在需要时添加新的桶，以使得<code>load_factor&lt;=max_load_factor</code></td>
-</tr>
-<tr>
-<td><code>c.rehash(n)</code></td>
-<td>重组存储，使得<code>bucket_count&gt;=n</code>，且<code>bucket_count&gt;size/max_load_factor</code></td>
-</tr>
-<tr>
-<td><code>c.reverse(n)</code></td>
-<td>重组存储，使得<code>c</code>可以保存<code>n</code>个元素且不必<code>rehash</code></td>
-</tr>
-</tbody></table>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/15/cpp-11%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8/">展开全文 >></a>
         </p>
       
 
