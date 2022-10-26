@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Head First Go - 13goroutine | zeyu的博客</title>
+  <title>C++ 15面向对象程序设计 | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="goroutine在Go中，并发任务称为goroutine。其他编程语言有一个类似的概念，叫作线程，但是goroutine比线程需要更少的计算机内存 go 函数() 每个Go程序的main函数都是使 用goroutine启动的 goroutine无法接收函数的返回值 123456789101112131415161718192021222324252627package mainimport (">
+  <meta name="description" content="面向对象程序设计（object-oriented programming）的核心思想是数据抽象、继承和动态绑定 继承（inheritance） 通过继承联系在一起的类构成一种层次关系 通常在层次关系的根部有一个基类（base class） 其他类直接或者简介从基类继承而来，这些继承得到的类成为派生类（derived class） 基类负责定义在层次关系中所有类共同拥有的成员，而每个派生类定义各自">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Head First Go - 13goroutine">
-<meta property="og:url" content="http://example.com/2022/08/12/head-first-go-13goroutine/index.html">
+<meta property="og:title" content="C++ 15面向对象程序设计">
+<meta property="og:url" content="http://example.com/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="goroutine在Go中，并发任务称为goroutine。其他编程语言有一个类似的概念，叫作线程，但是goroutine比线程需要更少的计算机内存 go 函数() 每个Go程序的main函数都是使 用goroutine启动的 goroutine无法接收函数的返回值 123456789101112131415161718192021222324252627package mainimport (">
+<meta property="og:description" content="面向对象程序设计（object-oriented programming）的核心思想是数据抽象、继承和动态绑定 继承（inheritance） 通过继承联系在一起的类构成一种层次关系 通常在层次关系的根部有一个基类（base class） 其他类直接或者简介从基类继承而来，这些继承得到的类成为派生类（derived class） 基类负责定义在层次关系中所有类共同拥有的成员，而每个派生类定义各自">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-12T00:40:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.412Z">
-<meta property="article:tag" content="Go">
+<meta property="article:published_time" content="2021-08-19T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-10-26T05:53:17.464Z">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -148,45 +148,128 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-head-first-go-13goroutine" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-cpp-15面向对象程序设计" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Head First Go - 13goroutine
+      C++ 15面向对象程序设计
     </h1>
   
 
         
-        <a href="/2022/08/12/head-first-go-13goroutine/" class="archive-article-date">
-  	<time datetime="2022-08-12T00:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-12</time>
+        <a href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" class="archive-article-date">
+  	<time datetime="2021-08-19T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-19</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="goroutine"><a href="#goroutine" class="headerlink" title="goroutine"></a>goroutine</h2><p>在Go中，并发任务称为goroutine。其他编程语言有一个类似的概念，叫作线程，但是goroutine比线程需要更少的计算机内存</p>
-<p><code>go 函数()</code></p>
-<p>每个Go程序的main函数都是使 用goroutine启动的</p>
-<p>goroutine无法接收函数的返回值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">50</span>; i++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">`A`</span>,i)</span><br><span class="line">		time.Sleep(time.Microsecond)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskB</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">50</span>; i++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">`B`</span>,i)</span><br><span class="line">		time.Sleep(time.Microsecond)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> taskA()</span><br><span class="line">	<span class="keyword">go</span> taskB()</span><br><span class="line">	time.Sleep(time.Second * <span class="number">5</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p>channel可以在不同goroutine传递消息</p>
-<p>每个channel只携带特定类型的值</p>
-<p>创建channel需要调用内置的make函数</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myChannel <span class="keyword">chan</span> <span class="type">int</span></span><br><span class="line">myChannel = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用channel发送和接收值"><a href="#使用channel发送和接收值" class="headerlink" title="使用channel发送和接收值"></a>使用channel发送和接收值</h2><ul>
-<li>发送 <code>myChannel &lt;- value</code></li>
-<li>接收 <code>value &lt;- myChannel</code></li>
+        <ul>
+<li>面向对象程序设计（object-oriented programming）的核心思想是数据抽象、继承和动态绑定</li>
+<li><strong>继承</strong>（inheritance）<ul>
+<li>通过继承联系在一起的类构成一种层次关系</li>
+<li>通常在层次关系的根部有一个<strong>基类</strong>（base class）</li>
+<li>其他类直接或者简介从基类继承而来，这些继承得到的类成为<strong>派生类</strong>（derived class）</li>
+<li>基类负责定义在层次关系中所有类共同拥有的成员，而每个派生类定义各自特有的成员</li>
+<li>对于某些函数，基类希望它的派生类个自定义适合自己的版本，此时基类就将这些函数声明成<strong>虚函数</strong>（virtual function）</li>
+<li>派生类必须通过使用<strong>类派生列表</strong>（class derivation list）明确指出它是从哪个基类继承而来。形式：一个冒号，后面紧跟以逗号分隔的基类列表，每个基类前都可以有访问说明符。<code>class Bulk_quote : public Quote&#123;&#125;;</code></li>
+<li>基类通过在其成员函数的声明语句之前加上关键字<code>virtual</code>使得该函数执行动态绑定。任何构造函数之外的非静态函数都可以是虚函数。关键字<code>virtual</code>只能出现在类内部的声明语句之前而不能用于类外部的函数定义。如果基类把一个函数声明成虚函数，则该函数在派生类中隐式地也是虚函数</li>
+<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加。C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">15</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	myCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	<span class="keyword">go</span> taskA(myCh)</span><br><span class="line">	fmt.Println(&lt;-myCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><strong>动态绑定</strong>（dynamic binding，又称运行时绑定）<ul>
+<li>使用同一段代码可以分别处理基类和派生类的对象</li>
+<li>函数的运行版本由实参决定，即在运行时选择函数的版本</li>
+</ul>
+</li>
+</ul>
+<h2 id="定义基类和派生类"><a href="#定义基类和派生类" class="headerlink" title="定义基类和派生类"></a>定义基类和派生类</h2><h3 id="定义基类"><a href="#定义基类" class="headerlink" title="定义基类"></a>定义基类</h3><ul>
+<li>基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此</li>
+<li>基类通过在其成员函数的声明语句前加上关键字<code>virtual</code>使得该函数执行<strong>动态绑定</strong></li>
+<li>如果成员函数没有被声明为虚函数，则解析过程发生在编译时而非运行时</li>
+<li>访问控制<ul>
+<li><code>protected</code> ： 基类和和其派生类还有友元可以访问</li>
+<li><code>private</code> ： 只有基类本身和友元可以访问</li>
+</ul>
+</li>
+</ul>
+<h3 id="定义派生类"><a href="#定义派生类" class="headerlink" title="定义派生类"></a>定义派生类</h3><ul>
+<li>派生类必须通过类派生列表（class derivation list）明确指出它是从哪个基类继承而来。形式：冒号，后面紧跟以逗号分隔的基类列表，每个基类前面可以有一下三种访问说明符的一个：<code>public</code>、<code>protected</code>、<code>private</code></li>
+<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+<li>派生类构造函数：派生类必须使用基类的构造函数去初始化它的基类部分</li>
+<li>静态成员：如果基类定义了一个基类成员，则在整个继承体系中只存在该成员的唯一定义</li>
+<li>派生类的声明：声明中不包含它的派生列表</li>
+<li>C++11新标准提供了一种防止继承的方法，在类名后面跟一个关键字<code>final</code></li>
+</ul>
+<h3 id="类型转换与继承"><a href="#类型转换与继承" class="headerlink" title="类型转换与继承"></a>类型转换与继承</h3><ul>
+<li>理解基类和派生类之间的类型关键是理解C++语言面向对象编程的关键所在</li>
+<li>可以将基类的指针或引用绑定到派生类对象上</li>
+<li>不存在从基类向派生类的隐式类型转换</li>
+<li>派生类向基类的自动类型转换只对指针或引用类型有效，对象之间不存在类型转换</li>
+</ul>
+<h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
+<li>使用虚函数可以执行动态绑定</li>
+<li>OOP的核心思想是多态性（polymorphism）</li>
+<li>当且仅当对通过指针或引用调用虚函数时，才会在运行时解析该调用，也只有在这种情况下对象的动态类型才有可能与静态类型不同</li>
+<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加</li>
+<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+<li>如果我们想覆盖某个虚函数，但不小心把形参列表弄错了，这个时候就不会覆盖基类中的虚函数。加上<code>override</code>可以明确程序员的意图，让编译器帮忙确认参数列表是否出错</li>
+<li>如果虚函数使用默认实参，则基类和派生类中定义的默认实参最好一致</li>
+<li>通常，只有成员函数（或友元）中的代码才需要使用<strong>作用域运算符</strong>（<code>::</code>）来回避虚函数的机制</li>
+</ul>
+<h2 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h2><ul>
+<li><strong>纯虚函数</strong>（pure virtual）：清晰地告诉用户当前的函数是没有实际意义的。纯虚函数无需定义，只用在函数体的位置前书写<code>=0</code>就可以将一个虚函数说明为纯虚函数</li>
+<li>含有纯虚函数的类是<strong>抽象基类</strong>（abstract base class）。不能创建抽象基类的对象</li>
+</ul>
+<h2 id="访问控制与继承"><a href="#访问控制与继承" class="headerlink" title="访问控制与继承"></a>访问控制与继承</h2><ul>
+<li>受保护的成员<ul>
+<li><code>protected</code>说明符可以看做是<code>public</code>和<code>private</code>中的产物</li>
+<li>类似于私有成员，受保护的成员对类的用户来说是不可访问的</li>
+<li>类似于公有成员，受保护的成员对于派生类的成员和友元来说是可访问的</li>
+<li>派生类的成员或友元只能通过派生类对象来访问基类的受保护成员。派生类对于一个基类对象中的受保护成员没有任何访问特权</li>
+</ul>
+</li>
+<li>派生访问说明符<ul>
+<li>对于派生类的成员（及友元）能否访问其直接基类的成员没什么影响</li>
+<li>派生访问说明符的目的是：控制派生类用户对于基类成员的访问权限。比如<code>struct Priv_Drev: private Base&#123;&#125;</code>意味着在派生类<code>Priv_Drev</code>中，从<code>Base</code>继承而来的部分都是<code>private</code>的</li>
+</ul>
+</li>
+<li>友元关系不能继承</li>
+<li>改变个别成员的可访问性：使用<code>using</code></li>
+<li>默认情况下，使用<code>class</code>关键字定义的派生类是私有继承的；使用<code>struct</code>关键字定义的派生类是公有继承的</li>
+</ul>
+<h2 id="继承中的类作用域"><a href="#继承中的类作用域" class="headerlink" title="继承中的类作用域"></a>继承中的类作用域</h2><ul>
+<li>每个类定义自己的作用域，在这个作用域内我们定义类的成员。当存在继承关系时，派生类的作用域嵌套在其基类的作用域之内</li>
+<li>派生类的成员将隐藏同名的基类成员</li>
+<li>除了覆盖继承而来的虚函数之外，派生类最好不要重用其他定义在基类中的名字</li>
+</ul>
+<h2 id="构造函数与拷贝控制"><a href="#构造函数与拷贝控制" class="headerlink" title="构造函数与拷贝控制"></a>构造函数与拷贝控制</h2><h3 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h3><ul>
+<li>基类通常应该定义一个虚析构函数，这样我们就能动态分配继承体系中的对象了</li>
+<li>如果基类的析构函数不是虚函数，则<code>delete</code>一个指向派生类对象的基类指针将产生未定义的行为</li>
+<li>虚析构函数将阻止合成移动操作</li>
+</ul>
+<h3 id="合成拷贝控制与继承"><a href="#合成拷贝控制与继承" class="headerlink" title="合成拷贝控制与继承"></a>合成拷贝控制与继承</h3><ul>
+<li>基类或派生类的合成拷贝控制成员的行为和其他合成的构造函数、赋值运算符或析构函数类似：他们对类本身的成员依次进行初始化、赋值或销毁的操作</li>
+</ul>
+<h3 id="派生类的拷贝控制成员"><a href="#派生类的拷贝控制成员" class="headerlink" title="派生类的拷贝控制成员"></a>派生类的拷贝控制成员</h3><ul>
+<li>当派生类定义了拷贝或移动操作时，该操作负责拷贝或移动包括基类部分成员在内的整个对象</li>
+<li>派生类析构函数：派生类析构函数先执行，然后执行基类的析构函数</li>
+</ul>
+<h3 id="继承的构造函数"><a href="#继承的构造函数" class="headerlink" title="继承的构造函数"></a>继承的构造函数</h3><ul>
+<li>C++11新标准中，派生类可以重用其直接基类定义的构造函数</li>
+<li>如<code>using Disc_quote::Disc_quote;</code>，注明了要继承<code>Disc_quote</code>的构造函数</li>
+</ul>
+<h2 id="容器与继承"><a href="#容器与继承" class="headerlink" title="容器与继承"></a>容器与继承</h2><ul>
+<li>当我们使用容器存放继承体系中的对象时，通常必须采用间接存储的方式</li>
+<li>派生类对象直接赋值给基类对象，其中的派生类部分会被切掉</li>
+<li>在容器中放置（智能）指针而非对象</li>
+<li>对于C++面向对象的编程来说，一个悖论是我们无法直接使用对象进行面向对象编程。相反，我们必须使用指针和引用。因为指针会增加程序的复杂性，所以经常定义一些辅助的类来处理这些复杂的情况</li>
+</ul>
 
-<p>默认情况下发送方会阻塞当前goroutine,直到发送的值被接收;接收方也会阻塞当前goroutine，直到channel被接收</p>
-<p>所以跨goroutine要保证channel有发就有收,并且要按收发的顺序来,避免出现死锁</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">1</span></span><br><span class="line">	myCh &lt;- <span class="number">2</span></span><br><span class="line">	myCh &lt;- <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskB</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">4</span></span><br><span class="line">	myCh &lt;- <span class="number">5</span></span><br><span class="line">	myCh &lt;- <span class="number">6</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	chA := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	chB := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> taskA(chA)</span><br><span class="line">	<span class="keyword">go</span> taskB(chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line">    <span class="comment">//1 2 3 4 5 6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -199,7 +282,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
@@ -255,7 +338,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/08/12/head-first-go-13goroutine/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -269,18 +352,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/08/14/head-first-go-14%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Head First Go - 14自动化测试
+          C++ 多态
         
       </div>
     </a>
   
   
-    <a href="/2022/08/10/head-first-go-12%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Head First Go - 12异常处理</div>
+    <a href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C++ 14重载运算符与类型转换</div>
       <i class="icon-circle-right"></i>
     </a>
   
