@@ -145,6 +145,180 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-15面向对象程序设计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">C++ 15面向对象程序设计</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" class="archive-article-date">
+  	<time datetime="2021-08-19T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>面向对象程序设计（object-oriented programming）的核心思想是数据抽象、继承和动态绑定</li>
+<li><strong>继承</strong>（inheritance）<ul>
+<li>通过继承联系在一起的类构成一种层次关系</li>
+<li>通常在层次关系的根部有一个<strong>基类</strong>（base class）</li>
+<li>其他类直接或者简介从基类继承而来，这些继承得到的类成为<strong>派生类</strong>（derived class）</li>
+<li>基类负责定义在层次关系中所有类共同拥有的成员，而每个派生类定义各自特有的成员</li>
+<li>对于某些函数，基类希望它的派生类个自定义适合自己的版本，此时基类就将这些函数声明成<strong>虚函数</strong>（virtual function）</li>
+<li>派生类必须通过使用<strong>类派生列表</strong>（class derivation list）明确指出它是从哪个基类继承而来。形式：一个冒号，后面紧跟以逗号分隔的基类列表，每个基类前都可以有访问说明符。<code>class Bulk_quote : public Quote&#123;&#125;;</code></li>
+<li>基类通过在其成员函数的声明语句之前加上关键字<code>virtual</code>使得该函数执行动态绑定。任何构造函数之外的非静态函数都可以是虚函数。关键字<code>virtual</code>只能出现在类内部的声明语句之前而不能用于类外部的函数定义。如果基类把一个函数声明成虚函数，则该函数在派生类中隐式地也是虚函数</li>
+<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加。C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+</ul>
+</li>
+<li><strong>动态绑定</strong>（dynamic binding，又称运行时绑定）<ul>
+<li>使用同一段代码可以分别处理基类和派生类的对象</li>
+<li>函数的运行版本由实参决定，即在运行时选择函数的版本</li>
+</ul>
+</li>
+</ul>
+<h2 id="定义基类和派生类"><a href="#定义基类和派生类" class="headerlink" title="定义基类和派生类"></a>定义基类和派生类</h2><h3 id="定义基类"><a href="#定义基类" class="headerlink" title="定义基类"></a>定义基类</h3><ul>
+<li>基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此</li>
+<li>基类通过在其成员函数的声明语句前加上关键字<code>virtual</code>使得该函数执行<strong>动态绑定</strong></li>
+<li>如果成员函数没有被声明为虚函数，则解析过程发生在编译时而非运行时</li>
+<li>访问控制<ul>
+<li><code>protected</code> ： 基类和和其派生类还有友元可以访问</li>
+<li><code>private</code> ： 只有基类本身和友元可以访问</li>
+</ul>
+</li>
+</ul>
+<h3 id="定义派生类"><a href="#定义派生类" class="headerlink" title="定义派生类"></a>定义派生类</h3><ul>
+<li>派生类必须通过类派生列表（class derivation list）明确指出它是从哪个基类继承而来。形式：冒号，后面紧跟以逗号分隔的基类列表，每个基类前面可以有一下三种访问说明符的一个：<code>public</code>、<code>protected</code>、<code>private</code></li>
+<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+<li>派生类构造函数：派生类必须使用基类的构造函数去初始化它的基类部分</li>
+<li>静态成员：如果基类定义了一个基类成员，则在整个继承体系中只存在该成员的唯一定义</li>
+<li>派生类的声明：声明中不包含它的派生列表</li>
+<li>C++11新标准提供了一种防止继承的方法，在类名后面跟一个关键字<code>final</code></li>
+</ul>
+<h3 id="类型转换与继承"><a href="#类型转换与继承" class="headerlink" title="类型转换与继承"></a>类型转换与继承</h3><ul>
+<li>理解基类和派生类之间的类型关键是理解C++语言面向对象编程的关键所在</li>
+<li>可以将基类的指针或引用绑定到派生类对象上</li>
+<li>不存在从基类向派生类的隐式类型转换</li>
+<li>派生类向基类的自动类型转换只对指针或引用类型有效，对象之间不存在类型转换</li>
+</ul>
+<h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
+<li>使用虚函数可以执行动态绑定</li>
+<li>OOP的核心思想是多态性（polymorphism）</li>
+<li>当且仅当对通过指针或引用调用虚函数时，才会在运行时解析该调用，也只有在这种情况下对象的动态类型才有可能与静态类型不同</li>
+<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加</li>
+<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+<li>如果我们想覆盖某个虚函数，但不小心把形参列表弄错了，这个时候就不会覆盖基类中的虚函数。加上<code>override</code>可以明确程序员的意图，让编译器帮忙确认参数列表是否出错</li>
+<li>如果虚函数使用默认实参，则基类和派生类中定义的默认实参最好一致</li>
+<li>通常，只有成员函数（或友元）中的代码才需要使用<strong>作用域运算符</strong>（<code>::</code>）来回避虚函数的机制</li>
+</ul>
+<h2 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h2><ul>
+<li><strong>纯虚函数</strong>（pure virtual）：清晰地告诉用户当前的函数是没有实际意义的。纯虚函数无需定义，只用在函数体的位置前书写<code>=0</code>就可以将一个虚函数说明为纯虚函数</li>
+<li>含有纯虚函数的类是<strong>抽象基类</strong>（abstract base class）。不能创建抽象基类的对象</li>
+</ul>
+<h2 id="访问控制与继承"><a href="#访问控制与继承" class="headerlink" title="访问控制与继承"></a>访问控制与继承</h2><ul>
+<li>受保护的成员<ul>
+<li><code>protected</code>说明符可以看做是<code>public</code>和<code>private</code>中的产物</li>
+<li>类似于私有成员，受保护的成员对类的用户来说是不可访问的</li>
+<li>类似于公有成员，受保护的成员对于派生类的成员和友元来说是可访问的</li>
+<li>派生类的成员或友元只能通过派生类对象来访问基类的受保护成员。派生类对于一个基类对象中的受保护成员没有任何访问特权</li>
+</ul>
+</li>
+<li>派生访问说明符<ul>
+<li>对于派生类的成员（及友元）能否访问其直接基类的成员没什么影响</li>
+<li>派生访问说明符的目的是：控制派生类用户对于基类成员的访问权限。比如<code>struct Priv_Drev: private Base&#123;&#125;</code>意味着在派生类<code>Priv_Drev</code>中，从<code>Base</code>继承而来的部分都是<code>private</code>的</li>
+</ul>
+</li>
+<li>友元关系不能继承</li>
+<li>改变个别成员的可访问性：使用<code>using</code></li>
+<li>默认情况下，使用<code>class</code>关键字定义的派生类是私有继承的；使用<code>struct</code>关键字定义的派生类是公有继承的</li>
+</ul>
+<h2 id="继承中的类作用域"><a href="#继承中的类作用域" class="headerlink" title="继承中的类作用域"></a>继承中的类作用域</h2><ul>
+<li>每个类定义自己的作用域，在这个作用域内我们定义类的成员。当存在继承关系时，派生类的作用域嵌套在其基类的作用域之内</li>
+<li>派生类的成员将隐藏同名的基类成员</li>
+<li>除了覆盖继承而来的虚函数之外，派生类最好不要重用其他定义在基类中的名字</li>
+</ul>
+<h2 id="构造函数与拷贝控制"><a href="#构造函数与拷贝控制" class="headerlink" title="构造函数与拷贝控制"></a>构造函数与拷贝控制</h2><h3 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h3><ul>
+<li>基类通常应该定义一个虚析构函数，这样我们就能动态分配继承体系中的对象了</li>
+<li>如果基类的析构函数不是虚函数，则<code>delete</code>一个指向派生类对象的基类指针将产生未定义的行为</li>
+<li>虚析构函数将阻止合成移动操作</li>
+</ul>
+<h3 id="合成拷贝控制与继承"><a href="#合成拷贝控制与继承" class="headerlink" title="合成拷贝控制与继承"></a>合成拷贝控制与继承</h3><ul>
+<li>基类或派生类的合成拷贝控制成员的行为和其他合成的构造函数、赋值运算符或析构函数类似：他们对类本身的成员依次进行初始化、赋值或销毁的操作</li>
+</ul>
+<h3 id="派生类的拷贝控制成员"><a href="#派生类的拷贝控制成员" class="headerlink" title="派生类的拷贝控制成员"></a>派生类的拷贝控制成员</h3><ul>
+<li>当派生类定义了拷贝或移动操作时，该操作负责拷贝或移动包括基类部分成员在内的整个对象</li>
+<li>派生类析构函数：派生类析构函数先执行，然后执行基类的析构函数</li>
+</ul>
+<h3 id="继承的构造函数"><a href="#继承的构造函数" class="headerlink" title="继承的构造函数"></a>继承的构造函数</h3><ul>
+<li>C++11新标准中，派生类可以重用其直接基类定义的构造函数</li>
+<li>如<code>using Disc_quote::Disc_quote;</code>，注明了要继承<code>Disc_quote</code>的构造函数</li>
+</ul>
+<h2 id="容器与继承"><a href="#容器与继承" class="headerlink" title="容器与继承"></a>容器与继承</h2><ul>
+<li>当我们使用容器存放继承体系中的对象时，通常必须采用间接存储的方式</li>
+<li>派生类对象直接赋值给基类对象，其中的派生类部分会被切掉</li>
+<li>在容器中放置（智能）指针而非对象</li>
+<li>对于C++面向对象的编程来说，一个悖论是我们无法直接使用对象进行面向对象编程。相反，我们必须使用指针和引用。因为指针会增加程序的复杂性，所以经常定义一些辅助的类来处理这些复杂的情况</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-14重载运算符与类型转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -3411,244 +3585,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/11/cpp-07%E7%B1%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-06函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/">C++ 06函数</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/" class="archive-article-date">
-  	<time datetime="2021-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="函数基础"><a href="#函数基础" class="headerlink" title="函数基础"></a>函数基础</h2><ul>
-<li><strong>函数定义</strong>：包括返回类型、函数名字和0个或者多个<strong>形参</strong>（parameter）组成的列表和函数体</li>
-<li><strong>调用运算符</strong>：调用运算符的形式是一对圆括号 <code>()</code>，作用于一个表达式，该表达式是函数或者指向函数的指针</li>
-<li>圆括号内是用逗号隔开的<strong>实参</strong>（argument）列表</li>
-<li>函数调用过程：<ul>
-<li>1.主调函数（calling function）的执行被中断</li>
-<li>2.被调函数（called function）开始执行</li>
-</ul>
-</li>
-<li><strong>形参和实参</strong>：形参和实参的<strong>个数</strong>和<strong>类型</strong>必须匹配上</li>
-<li><strong>返回类型</strong>： <code>void</code>表示函数不返回任何值。函数的返回类型不能是数组类型或者函数类型，但可以是指向数组或者函数的指针</li>
-<li><strong>名字</strong>：名字的作用于是程序文本的一部分，名字在其中可见</li>
-</ul>
-<h3 id="局部对象"><a href="#局部对象" class="headerlink" title="局部对象"></a>局部对象</h3><ul>
-<li><strong>生命周期</strong>：对象的生命周期是程序执行过程中该对象存在的一段时间</li>
-<li><strong>局部变量</strong>（local variable）：形参和函数体内部定义的变量统称为局部变量。它对函数而言是局部的，对函数外部而言是<strong>隐藏</strong>的</li>
-<li><strong>自动对象</strong>：只存在于块执行期间的对象。当块的执行结束后，它的值就变成<strong>未定义</strong>的了</li>
-<li><strong>局部静态对象</strong>： <code>static</code>类型的局部变量，生命周期贯穿函数调用前后</li>
-</ul>
-<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><ul>
-<li><strong>函数声明</strong>：函数的声明和定义唯一的区别是声明无需函数体，用一个分号替代。函数声明主要用于描述函数的接口，也称<strong>函数原型</strong></li>
-<li><strong>在头文件中进行函数声明</strong>：建议变量在头文件中声明；在源文件中定义</li>
-<li><strong>分离编译</strong>： <code>CC a.cc b.cc</code>直接编译生成可执行文件；<code>CC -c a.cc b.cc</code>编译生成对象代码<code>a.o b.o</code>； <code>CC a.o b.o</code>编译生成可执行文件</li>
-</ul>
-<h2 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h2><ul>
-<li>形参初始化的机理和变量初始化一样</li>
-<li><strong>引用传递</strong>（passed by reference）：又称传引用调用（called by reference），指<strong>形参是引用类型</strong>，引用形参是它对应的实参的别名</li>
-<li><strong>值传递</strong>（passed by value）：又称传值调用（called by value），指实参的值是通过<strong>拷贝</strong>传递给形参</li>
-</ul>
-<h3 id="传值参数"><a href="#传值参数" class="headerlink" title="传值参数"></a>传值参数</h3><ul>
-<li>当初始化一个非引用类型的变量时，初始值被拷贝给变量</li>
-<li>函数对形参做的所有操作都不会影响实参</li>
-<li><strong>指针形参</strong>：常用在C中，<code>C++</code>建议使用引用类型的形参代替指针</li>
-</ul>
-<h3 id="传引用参数"><a href="#传引用参数" class="headerlink" title="传引用参数"></a>传引用参数</h3><ul>
-<li>通过使用引用形参，允许函数改变一个或多个实参的值</li>
-<li>引用形参直接关联到绑定的对象，而非对象的副本</li>
-<li>使用引用形参可以用于<strong>返回额外的信息</strong></li>
-<li>经常用引用形参来避免不必要的复制</li>
-<li><code>void swap(int &amp;v1, int &amp;v2)</code></li>
-<li>如果无需改变引用形参的值，最好将其声明为常量引用</li>
-</ul>
-<h3 id="const形参和实参"><a href="#const形参和实参" class="headerlink" title="const形参和实参"></a>const形参和实参</h3><ul>
-<li>形参的顶层<code>const</code>被忽略。<code>void func(const int i);</code>调用时既可以传入<code>const int</code>也可以传入<code>int</code></li>
-<li>我们可以使用非常量初始化一个底层<code>const</code>对象，但是反过来不行</li>
-<li>在函数中，不能改变实参的<strong>局部副本</strong></li>
-<li>尽量使用常量引用</li>
-</ul>
-<h3 id="数组形参"><a href="#数组形参" class="headerlink" title="数组形参"></a>数组形参</h3><ul>
-<li>当我们为函数传递一个数组时，实际上传递的是指向数组首元素的指针</li>
-<li>要注意数组的实际长度，不能越界</li>
-</ul>
-<h3 id="main处理命令行选项"><a href="#main处理命令行选项" class="headerlink" title="main处理命令行选项"></a>main处理命令行选项</h3><ul>
-<li><code>int main(int argc, char *argv[])&#123;...&#125;</code></li>
-<li>第一个形参代表参数的个数；第二个形参是参数C风格字符串数组</li>
-</ul>
-<h3 id="可变形参"><a href="#可变形参" class="headerlink" title="可变形参"></a>可变形参</h3><p><code>initializer_list</code>提供的操作（<code>C++11</code>）：</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>initializer_list&lt;T&gt; lst;</code></td>
-<td>默认初始化；<code>T</code>类型元素的空列表</td>
-</tr>
-<tr>
-<td><code>initializer_list&lt;T&gt; lst&#123;a,b,c...&#125;;</code></td>
-<td><code>lst</code>的元素数量和初始值一样多；<code>lst</code>的元素是对应初始值的副本；列表中的元素是<code>const</code>。</td>
-</tr>
-<tr>
-<td><code>lst2(lst)</code></td>
-<td>拷贝或赋值一个<code>initializer_list</code>对象不会拷贝列表中的元素；拷贝后，原始列表和副本共享元素。</td>
-</tr>
-<tr>
-<td><code>lst2 = lst</code></td>
-<td>同上</td>
-</tr>
-<tr>
-<td><code>lst.size()</code></td>
-<td>列表中的元素数量</td>
-</tr>
-<tr>
-<td><code>lst.begin()</code></td>
-<td>返回指向<code>lst</code>中首元素的指针</td>
-</tr>
-<tr>
-<td><code>lst.end()</code></td>
-<td>返回指向<code>lst</code>中微元素下一位置的指针</td>
-</tr>
-</tbody></table>
-<p><code>initializer_list</code>使用demo：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">err_msg</span><span class="params">(ErrCode e, initializer_list&lt;string&gt; il)</span></span>&#123;</span><br><span class="line">    cout &lt;&lt; e.msg &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> bed = il.<span class="built_in">begin</span>(); beg != il.<span class="built_in">end</span>(); ++ beg)</span><br><span class="line">        cout &lt;&lt; *beg &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">err_msg</span>(<span class="built_in">ErrCode</span>(<span class="number">0</span>), &#123;<span class="string">&quot;functionX&quot;</span>, <span class="string">&quot;okay&#125;);</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>所有实参类型相同，可以使用 <code>initializer_list</code>的标准库类型</li>
-<li>实参类型不同，可以使用<code>可变参数模板</code></li>
-<li>省略形参符： <code>...</code>，便于<code>C++</code>访问某些C代码，这些C代码使用了 <code>varargs</code>的C标准功能</li>
-</ul>
-<h2 id="返回类型和return语句"><a href="#返回类型和return语句" class="headerlink" title="返回类型和return语句"></a>返回类型和return语句</h2><h3 id="无返回值函数"><a href="#无返回值函数" class="headerlink" title="无返回值函数"></a>无返回值函数</h3><p>没有返回值的 <code>return</code>语句只能用在返回类型是 <code>void</code>的函数中，返回 <code>void</code>的函数不要求非得有 <code>return</code>语句</p>
-<h3 id="有返回值函数"><a href="#有返回值函数" class="headerlink" title="有返回值函数"></a>有返回值函数</h3><ul>
-<li><code>return</code>语句的返回值的类型必须和函数的返回类型相同，或者能够<strong>隐式地</strong>转换成函数的返回类型</li>
-<li>值的返回：返回的值用于初始化调用点的一个<strong>临时量</strong>，该临时量就是函数调用的结果</li>
-<li><strong>不要返回局部对象的引用或指针</strong></li>
-<li><strong>引用返回左值</strong>：函数的返回类型决定函数调用是否是左值。调用一个返回引用的函数得到左值；其他返回类型得到右值</li>
-<li><strong>列表初始化返回值</strong>：函数可以返回花括号包围的值的列表。（<code>C++11</code>）</li>
-<li><strong>主函数main的返回值</strong>：如果结尾没有<code>return</code>，编译器将隐式地插入一条返回0的<code>return</code>语句。返回0代表执行成功</li>
-</ul>
-<h3 id="返回数组指针"><a href="#返回数组指针" class="headerlink" title="返回数组指针"></a>返回数组指针</h3><ul>
-<li><code>Type (*function (parameter_list))[dimension]</code></li>
-<li><code>int (*func(int i))[10];</code> 括号必须存在</li>
-<li>使用类型别名： <code>typedef int arrT[10];</code> 或者 <code>using arrT = int[10];</code>，然后 <code>arrT* func() &#123;...&#125;</code></li>
-<li>使用 <code>decltype</code>： <code>decltype(odd) *arrPtr(int i) &#123;...&#125;</code></li>
-<li><strong>尾置返回类型</strong>： 在形参列表后面以一个<code>-&gt;</code>开始：<code>auto func(int i) -&gt; int(*)[10]</code>（<code>C++11</code>）</li>
-</ul>
-<h2 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h2><ul>
-<li><strong>重载</strong>：如果同一作用域内几个函数名字相同但形参列表不同，我们称之为重载（overload）函数</li>
-<li><code>main</code>函数不能重载</li>
-<li><strong>重载和const形参</strong>：<ul>
-<li>一个有顶层const的形参和没有它的函数无法区分。 <code>Record lookup(Phone* const)</code>和 <code>Record lookup(Phone*)</code>无法区分</li>
-<li>相反，是否有某个底层const形参可以区分。 <code>Record lookup(Account*)</code>和 <code>Record lookup(const Account*)</code>可以区分</li>
-</ul>
-</li>
-<li><strong>重载和作用域</strong>：若在内层作用域中声明名字，它将隐藏外层作用域中声明的同名实体，在不同的作用域中无法重载函数名</li>
-</ul>
-<h2 id="特殊用途语言特性"><a href="#特殊用途语言特性" class="headerlink" title="特殊用途语言特性"></a>特殊用途语言特性</h2><h3 id="默认实参"><a href="#默认实参" class="headerlink" title="默认实参"></a>默认实参</h3><ul>
-<li><code>string screen(sz ht = 24, sz wid = 80, char backgrnd = &#39; &#39;);</code></li>
-<li>一旦某个形参被赋予了默认值，那么它之后的形参都必须要有默认值</li>
-</ul>
-<h3 id="内联（inline）函数"><a href="#内联（inline）函数" class="headerlink" title="内联（inline）函数"></a>内联（inline）函数</h3><ul>
-<li>普通函数的缺点：调用函数比求解等价表达式要慢得多</li>
-<li><code>inline</code>函数可以避免函数调用的开销，可以让编译器在编译时<strong>内联地展开</strong>该函数</li>
-<li><code>inline</code>函数应该在头文件中定义</li>
-</ul>
-<h3 id="constexpr函数"><a href="#constexpr函数" class="headerlink" title="constexpr函数"></a>constexpr函数</h3><ul>
-<li>指能用于常量表达式的函数</li>
-<li><code>constexpr int new_sz() &#123;return 42;&#125;</code></li>
-<li>函数的返回类型及所有形参类型都要是字面值类型</li>
-<li><code>constexpr</code>函数应该在头文件中定义</li>
-</ul>
-<h3 id="调试帮助"><a href="#调试帮助" class="headerlink" title="调试帮助"></a>调试帮助</h3><ul>
-<li><code>assert</code>预处理宏（preprocessor macro）：<code>assert(expr);</code></li>
-</ul>
-<p>开关调试状态：</p>
-<p><code>CC -D NDEBUG main.c</code>可以定义这个变量<code>NDEBUG</code></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="keyword">ifndef</span> NDEBUG</span></span><br><span class="line">        cerr &lt;&lt; __func__ &lt;&lt; <span class="string">&quot;...&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="函数匹配"><a href="#函数匹配" class="headerlink" title="函数匹配"></a>函数匹配</h2><ul>
-<li>重载函数匹配的<strong>三个步骤</strong>：1.候选函数；2.可行函数；3.寻找最佳匹配</li>
-<li><strong>候选函数</strong>：选定本次调用对应的重载函数集，集合中的函数称为候选函数（candidate function）</li>
-<li><strong>可行函数</strong>：考察本次调用提供的实参，选出可以被这组实参调用的函数，新选出的函数称为可行函数（viable function）</li>
-<li><strong>寻找最佳匹配</strong>：基本思想：实参类型和形参类型越接近，它们匹配地越好</li>
-</ul>
-<h2 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h2><ul>
-<li><strong>函数指针</strong>：是指向函数的指针</li>
-<li><code>bool (*pf)(const string &amp;, const string &amp;);</code> 注：两端的括号不可少</li>
-<li><strong>函数指针形参</strong>：<ul>
-<li>形参中使用函数定义或者函数指针定义效果一样</li>
-<li>使用类型别名或者<code>decltype</code></li>
-</ul>
-</li>
-<li><strong>返回指向函数的指针</strong>：1.类型别名；2.尾置返回类型</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/">展开全文 >></a>
         </p>
       
 

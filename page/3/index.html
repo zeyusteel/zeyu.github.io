@@ -875,6 +875,177 @@
 
 
   
+    <article id="post-cpp-18用于大型程序的工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/22/cpp-18%E7%94%A8%E4%BA%8E%E5%A4%A7%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B7%A5%E5%85%B7/">C++ 18用于大型程序的工具</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/22/cpp-18%E7%94%A8%E4%BA%8E%E5%A4%A7%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2021-08-22T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大规模应用程序的特殊要求包括</p>
+<ul>
+<li>在独立开发的子系统之间协同处理错误的能力</li>
+<li>使用各种库进行协同开发的能力</li>
+<li>对比较复杂的应用概念建模的能力</li>
+</ul>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p><strong>异常处理</strong>（exception handling）机制允许程序中独立开发的部分能够在运行时就出现的问题进行通信并作出相应的处理。</p>
+<h3 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h3><ul>
+<li>在C++语言中，我们通过<strong>抛出</strong>（throwing）一条表达式来<strong>引发</strong>（raised）一个异常。异常类型和当前的调用链决定了哪段<strong>处理代码</strong>（handler）将用来处理该异常</li>
+<li>程序的控制权从<code>throw</code>转移到<code>catch</code>模块</li>
+<li><strong>栈展开</strong>：当<code>throw</code>出现在一个<code>try语句块</code>时，检查该<code>try语句块</code>相关的<code>catch</code>字句，若有匹配则处理；若无匹配，则继续检查外层的<code>try</code>匹配的<code>catch</code></li>
+<li>若一个异常没有被捕获，则它将终止当前的程序</li>
+</ul>
+<h3 id="对象销毁"><a href="#对象销毁" class="headerlink" title="对象销毁"></a>对象销毁</h3><ul>
+<li>块退出后，它的局部对象将被销毁</li>
+<li>若异常发生在构造函数中，即使某个对象只构造了一部分，也要确保已构造的成员正确地被销毁</li>
+<li>将资源释放放在类的析构函数中，以保证资源能被正确释放。析构函数本身不会引发异常</li>
+</ul>
+<h3 id="捕获异常"><a href="#捕获异常" class="headerlink" title="捕获异常"></a>捕获异常</h3><ul>
+<li>若无需访问抛出的异常对象，则可以忽略捕获形参的名字</li>
+<li>通常，若<code>catch</code>接受的异常与某个继承体系有关，则最好将该<code>catch</code>的参数定义成引用类型</li>
+<li>搜索<code>catch</code>未必是最佳匹配，而是第一个匹配，因此，越细化的<code>catch</code>越应该放在<code>catch</code>列表前段</li>
+<li>重新抛出：<code>catch</code>代码执行一条<code>throw;</code>将异常传递给另一个<code>catch</code>语句</li>
+<li>捕获所有异常：<code>catch(...)</code></li>
+</ul>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><p>处理构造函数初始值异常的唯一方法是将构造函数协程函数<code>try</code>语句块。</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">Blob&lt;T&gt;::<span class="built_in">Blob</span>(std::initializer_list&lt;T&gt; il) <span class="keyword">try</span>: </span><br><span class="line">    <span class="built_in">data</span>(std::make_shared&lt;std::vector&lt;T&gt; &gt;(il)&#123;</span><br><span class="line">        <span class="comment">/*函数体*/</span></span><br><span class="line">    &#125; <span class="built_in">catch</span>(<span class="type">const</span> std::bad_alloc &amp;e)&#123; <span class="built_in">handle_out_of_memory</span>(e); &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="noexcept异常说明"><a href="#noexcept异常说明" class="headerlink" title="noexcept异常说明"></a>noexcept异常说明</h3><p>使用<code>noexcept</code>说明指定某个函数不会抛出异常</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">recoup</span><span class="params">(<span class="type">int</span>)</span> <span class="keyword">noexcept</span></span>; <span class="comment">//C++11</span></span><br><span class="line"><span class="function">coid <span class="title">recoup</span><span class="params">(<span class="type">int</span>)</span> <span class="title">throw</span><span class="params">()</span></span>; <span class="comment">//老版本</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="异常类层次"><a href="#异常类层次" class="headerlink" title="异常类层次"></a>异常类层次</h3><p>标准exception层次：</p>
+<ul>
+<li>exception<ul>
+<li>bad_cast</li>
+<li>bad_alloc</li>
+<li>runtime_error<ul>
+<li>overflow_error</li>
+<li>underflow_error</li>
+<li>range_error</li>
+</ul>
+</li>
+<li>logic_error<ul>
+<li>domain_error</li>
+<li>invalid_argument</li>
+<li>out_of_range</li>
+<li>length_error</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>自定义异常类：</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">out_of_stock</span>: <span class="keyword">public</span> std::runtime_error &#123;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">out_of_stock</span><span class="params">(<span class="type">const</span> std::string &amp;s)</span>:</span></span><br><span class="line"><span class="function">    std::runtime_error(s)&#123;</span> &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h2><p>多个库将名字放置在全局命名空间中将引发<strong>命名空间污染</strong>（namespace pollution）。<strong>命名空间</strong>（namespace）分割了全局命名空间，其中每个命名空间是一个作用域。</p>
+<h3 id="命名空间定义"><a href="#命名空间定义" class="headerlink" title="命名空间定义"></a>命名空间定义</h3><p>命名空间的定义包含两部分：1.关键字<code>namespace</code>；2.命名空间名称。后面是一系列由花括号括起来的声明和定义。命名空间作用域后面无需分号。</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> cplusplus_primer&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个命名空间都是一个<strong>作用域</strong>。定义在某个命名空间内的名字可以被该命名空间内的其他成员直接访问，也可以被这些成员内嵌套作用域中的任何单位访问。位于该命名空间之外的代码必须明确指出所用的名字是属于哪个命名空间的。</p>
+<p>命名空间可以是<strong>不连续</strong>的。这点不同于其他作用域，意味着同一命名空间可以在多处出现。</p>
+<p><strong>内联命名空间</strong>（C++11）</p>
+<p>无需使用该命名空间的前缀，通过外层命名空间就可以直接访问。</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> cplusplus_primer&#123;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">namespace</span> FifthEd&#123;</span><br><span class="line">        <span class="comment">// 表示本书第5版代码</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">Query_base</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cplusplus_primer::Query_base qb;</span><br></pre></td></tr></table></figure>
+
+<p><strong>未命名的命名空间</strong></p>
+<p>指关键字<code>namespace</code>后面紧跟花括号的用法。未命名的命名空间中定义的变量拥有静态的声明周期：在第一次使用前创建，直到程序结束才销毁。不能跨越多个文件。</p>
+<h3 id="使用命名空间成员"><a href="#使用命名空间成员" class="headerlink" title="使用命名空间成员"></a>使用命名空间成员</h3><p>像<code>namespace_name::member_name</code>这样使用命名空间的成员非常繁琐。</p>
+<p><strong>命名空间的别名</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> primer = cplusplus_primer;</span><br></pre></td></tr></table></figure>
+
+<p><strong>using声明</strong>（using declaration）</p>
+<p>一条<code>using</code>声明语句一次只引入命名空间的一个成员。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> std::string;</span><br><span class="line"></span><br><span class="line">string s = <span class="string">&quot;hello&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>using指示</strong>（using directive）</p>
+<p>使得某个特定的命名空间中所有的名字都可见。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line">string s = <span class="string">&quot;hello&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="类、命名空间与作用域"><a href="#类、命名空间与作用域" class="headerlink" title="类、命名空间与作用域"></a>类、命名空间与作用域</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> A&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">C1</span>&#123;</span><br><span class="line">        <span class="keyword">public</span>:</span><br><span class="line">            <span class="function"><span class="type">int</span> <span class="title">f3</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">A::C1::f3</span><br></pre></td></tr></table></figure>
+
+<h3 id="重载与命名空间"><a href="#重载与命名空间" class="headerlink" title="重载与命名空间"></a>重载与命名空间</h3><p><code>using</code>声明语句声明的是一个名字，而非特定的函数，也就是包括该函数的所有版本，都被引入到当前作用域中。</p>
+<h2 id="多重继承与虚继承"><a href="#多重继承与虚继承" class="headerlink" title="多重继承与虚继承"></a>多重继承与虚继承</h2><h3 id="多重继承"><a href="#多重继承" class="headerlink" title="多重继承"></a>多重继承</h3><h3 id="类型转换与多个基类"><a href="#类型转换与多个基类" class="headerlink" title="类型转换与多个基类"></a>类型转换与多个基类</h3><h3 id="多重继承下的类作用域"><a href="#多重继承下的类作用域" class="headerlink" title="多重继承下的类作用域"></a>多重继承下的类作用域</h3><ul>
+<li>当一个类拥有多个基类时，有可能出现派生类从两个或更多基类中继承了同名成员的情况。此时，不加前缀限定符直接使用该名字将引发二义性。</li>
+</ul>
+<h3 id="虚继承"><a href="#虚继承" class="headerlink" title="虚继承"></a>虚继承</h3><ul>
+<li>虚继承的目的是令某个类做出声明，承诺愿意共享它的基类。其中，共享的基类子对象成为<strong>虚基类</strong>。在这种机制下，不论虚基类在继承体系中出现了多少次，在派生类中都只包含唯一一个共享的虚基类子对象。</li>
+<li>虚派生只影响从指定了虚基类的派生类中进一步派生出的类，它不会影响派生类本身。</li>
+</ul>
+<h3 id="构造函数与虚继承"><a href="#构造函数与虚继承" class="headerlink" title="构造函数与虚继承"></a>构造函数与虚继承</h3><ul>
+<li>含有虚基类的对象的构造顺序与一般的顺序稍有<strong>区别</strong>：首先使用提供给最底层派生类构造函数的初始值初始化该对象的虚基类子部分，接下来按照直接基类在派生列表中出现的次序对其进行初始化。</li>
+<li>虚基类总是先于非虚基类构造，与它们在继承体系中的次序和位置无关。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/22/cpp-18%E7%94%A8%E4%BA%8E%E5%A4%A7%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-17标准库特殊设施" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1769,112 +1940,6 @@
 
 
   
-    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
-  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>用<code>virtual</code>关键字说明的函数</li>
-<li>虚函数是实现运行时多态性基础</li>
-<li>C++中的虚函数是动态绑定的函数</li>
-<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
-</ul>
-<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
-<li>一般成员函数可以是虚函数</li>
-<li>构造函数不能是虚函数 </li>
-<li>析构函数可以是虚函数</li>
-</ul>
-<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
-<li><p>虚函数的声明</p>
-<p>  virtual 函数类型 函数名（形参表);</p>
-</li>
-<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
-</li>
-<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
-</li>
-<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
-</li>
-</ul>
-<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
-<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
-<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
-<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
-</ul>
-</li>
-<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
-<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
-<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
-</ul>
-<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-cpp-16模板和泛型编程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2232,127 +2297,59 @@
 
 
   
-    <article id="post-cpp-15面向对象程序设计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">C++ 15面向对象程序设计</a>
+      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
     </h1>
   
 
         
-        <a href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" class="archive-article-date">
-  	<time datetime="2021-08-19T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-19</time>
+        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
+  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ul>
-<li>面向对象程序设计（object-oriented programming）的核心思想是数据抽象、继承和动态绑定</li>
-<li><strong>继承</strong>（inheritance）<ul>
-<li>通过继承联系在一起的类构成一种层次关系</li>
-<li>通常在层次关系的根部有一个<strong>基类</strong>（base class）</li>
-<li>其他类直接或者简介从基类继承而来，这些继承得到的类成为<strong>派生类</strong>（derived class）</li>
-<li>基类负责定义在层次关系中所有类共同拥有的成员，而每个派生类定义各自特有的成员</li>
-<li>对于某些函数，基类希望它的派生类个自定义适合自己的版本，此时基类就将这些函数声明成<strong>虚函数</strong>（virtual function）</li>
-<li>派生类必须通过使用<strong>类派生列表</strong>（class derivation list）明确指出它是从哪个基类继承而来。形式：一个冒号，后面紧跟以逗号分隔的基类列表，每个基类前都可以有访问说明符。<code>class Bulk_quote : public Quote&#123;&#125;;</code></li>
-<li>基类通过在其成员函数的声明语句之前加上关键字<code>virtual</code>使得该函数执行动态绑定。任何构造函数之外的非静态函数都可以是虚函数。关键字<code>virtual</code>只能出现在类内部的声明语句之前而不能用于类外部的函数定义。如果基类把一个函数声明成虚函数，则该函数在派生类中隐式地也是虚函数</li>
-<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加。C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
+        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
+<li>用<code>virtual</code>关键字说明的函数</li>
+<li>虚函数是实现运行时多态性基础</li>
+<li>C++中的虚函数是动态绑定的函数</li>
+<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
 </ul>
+<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
+<li>一般成员函数可以是虚函数</li>
+<li>构造函数不能是虚函数 </li>
+<li>析构函数可以是虚函数</li>
+</ul>
+<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
+<li><p>虚函数的声明</p>
+<p>  virtual 函数类型 函数名（形参表);</p>
 </li>
-<li><strong>动态绑定</strong>（dynamic binding，又称运行时绑定）<ul>
-<li>使用同一段代码可以分别处理基类和派生类的对象</li>
-<li>函数的运行版本由实参决定，即在运行时选择函数的版本</li>
-</ul>
+<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
 </li>
-</ul>
-<h2 id="定义基类和派生类"><a href="#定义基类和派生类" class="headerlink" title="定义基类和派生类"></a>定义基类和派生类</h2><h3 id="定义基类"><a href="#定义基类" class="headerlink" title="定义基类"></a>定义基类</h3><ul>
-<li>基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此</li>
-<li>基类通过在其成员函数的声明语句前加上关键字<code>virtual</code>使得该函数执行<strong>动态绑定</strong></li>
-<li>如果成员函数没有被声明为虚函数，则解析过程发生在编译时而非运行时</li>
-<li>访问控制<ul>
-<li><code>protected</code> ： 基类和和其派生类还有友元可以访问</li>
-<li><code>private</code> ： 只有基类本身和友元可以访问</li>
-</ul>
+<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
+</li>
+<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
 </li>
 </ul>
-<h3 id="定义派生类"><a href="#定义派生类" class="headerlink" title="定义派生类"></a>定义派生类</h3><ul>
-<li>派生类必须通过类派生列表（class derivation list）明确指出它是从哪个基类继承而来。形式：冒号，后面紧跟以逗号分隔的基类列表，每个基类前面可以有一下三种访问说明符的一个：<code>public</code>、<code>protected</code>、<code>private</code></li>
-<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
-<li>派生类构造函数：派生类必须使用基类的构造函数去初始化它的基类部分</li>
-<li>静态成员：如果基类定义了一个基类成员，则在整个继承体系中只存在该成员的唯一定义</li>
-<li>派生类的声明：声明中不包含它的派生列表</li>
-<li>C++11新标准提供了一种防止继承的方法，在类名后面跟一个关键字<code>final</code></li>
-</ul>
-<h3 id="类型转换与继承"><a href="#类型转换与继承" class="headerlink" title="类型转换与继承"></a>类型转换与继承</h3><ul>
-<li>理解基类和派生类之间的类型关键是理解C++语言面向对象编程的关键所在</li>
-<li>可以将基类的指针或引用绑定到派生类对象上</li>
-<li>不存在从基类向派生类的隐式类型转换</li>
-<li>派生类向基类的自动类型转换只对指针或引用类型有效，对象之间不存在类型转换</li>
-</ul>
-<h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>使用虚函数可以执行动态绑定</li>
-<li>OOP的核心思想是多态性（polymorphism）</li>
-<li>当且仅当对通过指针或引用调用虚函数时，才会在运行时解析该调用，也只有在这种情况下对象的动态类型才有可能与静态类型不同</li>
-<li>派生类必须在其内部对所有重新定义的虚函数进行声明。可以在函数之前加上<code>virtual</code>关键字，也可以不加</li>
-<li>C++11新标准允许派生类显式地注明它将使用哪个成员函数改写基类的虚函数，即在函数的形参列表之后加一个<code>override</code>关键字</li>
-<li>如果我们想覆盖某个虚函数，但不小心把形参列表弄错了，这个时候就不会覆盖基类中的虚函数。加上<code>override</code>可以明确程序员的意图，让编译器帮忙确认参数列表是否出错</li>
-<li>如果虚函数使用默认实参，则基类和派生类中定义的默认实参最好一致</li>
-<li>通常，只有成员函数（或友元）中的代码才需要使用<strong>作用域运算符</strong>（<code>::</code>）来回避虚函数的机制</li>
-</ul>
-<h2 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h2><ul>
-<li><strong>纯虚函数</strong>（pure virtual）：清晰地告诉用户当前的函数是没有实际意义的。纯虚函数无需定义，只用在函数体的位置前书写<code>=0</code>就可以将一个虚函数说明为纯虚函数</li>
-<li>含有纯虚函数的类是<strong>抽象基类</strong>（abstract base class）。不能创建抽象基类的对象</li>
-</ul>
-<h2 id="访问控制与继承"><a href="#访问控制与继承" class="headerlink" title="访问控制与继承"></a>访问控制与继承</h2><ul>
-<li>受保护的成员<ul>
-<li><code>protected</code>说明符可以看做是<code>public</code>和<code>private</code>中的产物</li>
-<li>类似于私有成员，受保护的成员对类的用户来说是不可访问的</li>
-<li>类似于公有成员，受保护的成员对于派生类的成员和友元来说是可访问的</li>
-<li>派生类的成员或友元只能通过派生类对象来访问基类的受保护成员。派生类对于一个基类对象中的受保护成员没有任何访问特权</li>
+<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
+<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
+<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
+<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
 </ul>
 </li>
-<li>派生访问说明符<ul>
-<li>对于派生类的成员（及友元）能否访问其直接基类的成员没什么影响</li>
-<li>派生访问说明符的目的是：控制派生类用户对于基类成员的访问权限。比如<code>struct Priv_Drev: private Base&#123;&#125;</code>意味着在派生类<code>Priv_Drev</code>中，从<code>Base</code>继承而来的部分都是<code>private</code>的</li>
+<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
+<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
+<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
 </ul>
-</li>
-<li>友元关系不能继承</li>
-<li>改变个别成员的可访问性：使用<code>using</code></li>
-<li>默认情况下，使用<code>class</code>关键字定义的派生类是私有继承的；使用<code>struct</code>关键字定义的派生类是公有继承的</li>
-</ul>
-<h2 id="继承中的类作用域"><a href="#继承中的类作用域" class="headerlink" title="继承中的类作用域"></a>继承中的类作用域</h2><ul>
-<li>每个类定义自己的作用域，在这个作用域内我们定义类的成员。当存在继承关系时，派生类的作用域嵌套在其基类的作用域之内</li>
-<li>派生类的成员将隐藏同名的基类成员</li>
-<li>除了覆盖继承而来的虚函数之外，派生类最好不要重用其他定义在基类中的名字</li>
-</ul>
-<h2 id="构造函数与拷贝控制"><a href="#构造函数与拷贝控制" class="headerlink" title="构造函数与拷贝控制"></a>构造函数与拷贝控制</h2><h3 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h3><ul>
-<li>基类通常应该定义一个虚析构函数，这样我们就能动态分配继承体系中的对象了</li>
-<li>如果基类的析构函数不是虚函数，则<code>delete</code>一个指向派生类对象的基类指针将产生未定义的行为</li>
-<li>虚析构函数将阻止合成移动操作</li>
-</ul>
-<h3 id="合成拷贝控制与继承"><a href="#合成拷贝控制与继承" class="headerlink" title="合成拷贝控制与继承"></a>合成拷贝控制与继承</h3><ul>
-<li>基类或派生类的合成拷贝控制成员的行为和其他合成的构造函数、赋值运算符或析构函数类似：他们对类本身的成员依次进行初始化、赋值或销毁的操作</li>
-</ul>
-<h3 id="派生类的拷贝控制成员"><a href="#派生类的拷贝控制成员" class="headerlink" title="派生类的拷贝控制成员"></a>派生类的拷贝控制成员</h3><ul>
-<li>当派生类定义了拷贝或移动操作时，该操作负责拷贝或移动包括基类部分成员在内的整个对象</li>
-<li>派生类析构函数：派生类析构函数先执行，然后执行基类的析构函数</li>
-</ul>
-<h3 id="继承的构造函数"><a href="#继承的构造函数" class="headerlink" title="继承的构造函数"></a>继承的构造函数</h3><ul>
-<li>C++11新标准中，派生类可以重用其直接基类定义的构造函数</li>
-<li>如<code>using Disc_quote::Disc_quote;</code>，注明了要继承<code>Disc_quote</code>的构造函数</li>
-</ul>
-<h2 id="容器与继承"><a href="#容器与继承" class="headerlink" title="容器与继承"></a>容器与继承</h2><ul>
-<li>当我们使用容器存放继承体系中的对象时，通常必须采用间接存储的方式</li>
-<li>派生类对象直接赋值给基类对象，其中的派生类部分会被切掉</li>
-<li>在容器中放置（智能）指针而非对象</li>
-<li>对于C++面向对象的编程来说，一个悖论是我们无法直接使用对象进行面向对象编程。相反，我们必须使用指针和引用。因为指针会增加程序的复杂性，所以经常定义一些辅助的类来处理这些复杂的情况</li>
-</ul>
+<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
 
       
 
@@ -2376,7 +2373,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
         </p>
       
 
