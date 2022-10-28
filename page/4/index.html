@@ -145,6 +145,305 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-14重载运算符与类型转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">C++ 14重载运算符与类型转换</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
+  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>重载运算符是具有特殊名字的函数：由关键字<code>operator</code>和其后要定义的运算符号共同组成</li>
+<li>当一个重载的运算符是成员函数时，<code>this</code>绑定到左侧运算对象。动态运算符符函数的参数数量比运算对象的数量<strong>少一个</strong></li>
+<li>只能重载大多数的运算符，而不能发明新的运算符号</li>
+<li>重载运算符的优先级和结合律跟对应的内置运算符保持一致</li>
+<li>调用方式<ul>
+<li><code>data1 + data2;</code></li>
+<li><code>operator+(data1, data2);</code></li>
+</ul>
+</li>
+<li>是否是成员函数<ul>
+<li>赋值（<code>=</code>）、下标（<code>[]</code>）、调用（<code>()</code>）和成员访问箭头（<code>-&gt;</code>）运算符必须是成员<ul>
+<li>要保证这几个符号都是被对象调用,使用友元会出现语义问题,<code>friend int operator=(int a, int b); 2 = a;</code></li>
+</ul>
+</li>
+<li>复合赋值运算符一般来说是成员</li>
+<li>改变对象状态的运算符或者和给定类型密切相关的运算符通常是成员，如递增、解引用</li>
+<li>具有对称性的运算符如算术、相等性、关系和位运算符等，通常是非成员函数</li>
+</ul>
+</li>
+</ul>
+<p><strong>运算符</strong></p>
+<table>
+<thead>
+<tr>
+<th>可以被重载</th>
+<th>不可以被重载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>^</code></td>
+<td><code>::</code>, <code>.*</code>, <code>.</code>, <code>? :</code>,</td>
+</tr>
+<tr>
+<td><code>&amp;</code>, <code>|</code>, <code>~</code>, <code>!</code>, <code>,</code>, <code>=</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>++</code>, <code>--</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>==</code>, <code>!=</code>, <code>&amp;&amp;</code>, &#96;</td>
+<td></td>
+</tr>
+<tr>
+<td><code>+=</code>, <code>-=</code>, <code>/=</code>, <code>%=</code>, <code>^=</code>, <code>&amp;=</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>|=</code>, <code>*=</code>, <code>&lt;&lt;=</code>, <code>&gt;&gt;=</code>, <code>[]</code>, <code>()</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-&gt;</code>, <code>-&gt;*</code>, <code>new</code>, <code>new[]</code>, <code>delete</code>, <code>delete[]</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>通常情况下，不应该重载逗号、取地址、逻辑与和逻辑或运算符</p>
+<h2 id="输入和输出运算符"><a href="#输入和输出运算符" class="headerlink" title="输入和输出运算符"></a>输入和输出运算符</h2><h3 id="重载输出运算符-lt-lt"><a href="#重载输出运算符-lt-lt" class="headerlink" title="重载输出运算符&lt;&lt;"></a>重载输出运算符&lt;&lt;</h3><ul>
+<li>第一个形参通常是一个非常量的<code>ostream</code>对象的引用。非常量是因为向流中写入会改变其状态；而引用是因为我们无法复制一个<code>ostream</code>对象</li>
+<li>输入输出运算符必须是非成员函数(运算符左侧对象必须是是iostream,不能是this)</li>
+</ul>
+<h3 id="重载输入运算符-gt-gt"><a href="#重载输入运算符-gt-gt" class="headerlink" title="重载输入运算符&gt;&gt;"></a>重载输入运算符&gt;&gt;</h3><ul>
+<li>第一个形参通常是运算符将要读取的流的引用，第二个形参是将要读取到的（非常量）对象的引用</li>
+<li>输入运算符必须处理输入可能失败的情况，而输出运算符不需要</li>
+</ul>
+<h2 id="算数和关系运算符（-、-、-、-x2F-）"><a href="#算数和关系运算符（-、-、-、-x2F-）" class="headerlink" title="算数和关系运算符（+、-、*、&#x2F;）"></a>算数和关系运算符（+、-、*、&#x2F;）</h2><ul>
+<li>如果类同时定义了算数运算符和相关的复合赋值运算符，则通常情况下应该使用复合赋值来实现算数运算符</li>
+</ul>
+<h3 id="相等运算符-x3D-x3D"><a href="#相等运算符-x3D-x3D" class="headerlink" title="相等运算符&#x3D;&#x3D;"></a>相等运算符&#x3D;&#x3D;</h3><ul>
+<li>如果定义了<code>operator==</code>，则这个类也应该定义<code>operator!=</code></li>
+<li>相等运算符和不等运算符的一个应该把工作委托给另一个</li>
+<li>相等运算符应该具有传递性</li>
+<li>如果某个类在逻辑上有相等性的含义，则该类应该定义<code>operator==</code>，这样做可以使用户更容易使用标准库算法来处理这个类</li>
+</ul>
+<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><ul>
+<li>如果存在唯一一种逻辑可靠的<code>&lt;</code>定义，则应该考虑为这个类定义<code>&lt;</code>运算符。如果同时还包含<code>==</code>，则当且仅当<code>&lt;</code>的定义和<code>==</code>产生的结果一直时才定义<code>&lt;</code>运算符</li>
+</ul>
+<h2 id="赋值运算符-x3D"><a href="#赋值运算符-x3D" class="headerlink" title="赋值运算符&#x3D;"></a>赋值运算符&#x3D;</h2><ul>
+<li>我们可以重载赋值运算符。不论形参的类型是什么，赋值运算符都必须定义为成员函数</li>
+<li>赋值运算符必须定义成类的成员，复合赋值运算符通常情况下也应该这么做。这两类运算符都应该返回左侧运算对象的引用</li>
+</ul>
+<h2 id="下标运算符"><a href="#下标运算符" class="headerlink" title="下标运算符[]"></a>下标运算符[]</h2><ul>
+<li>下标运算符必须是成员函数</li>
+<li>一般会定义两个版本<ul>
+<li>返回普通引用</li>
+<li>类的常量成员，并返回常量引用</li>
+</ul>
+</li>
+</ul>
+<h2 id="递增和递减运算符（-、–）"><a href="#递增和递减运算符（-、–）" class="headerlink" title="递增和递减运算符（++、–）"></a>递增和递减运算符（++、–）</h2><ul>
+<li>定义递增和递减运算符的类应该同时定义前置版本和后置版本</li>
+<li>通常应该被定义成类的成员</li>
+<li>为了和内置版本保持一致，前置运算符应该返回递增或递减后对象的引用</li>
+<li>同样为了和内置版本保持一致，后置运算符应该返回递增或递减前对象的值，而不是引用</li>
+<li>后置版本接受一个额外的，不被使用的<code>int</code>类型的形参。因为不会用到，所以无需命名</li>
+</ul>
+<h2 id="成员访问运算符（-、-gt-）"><a href="#成员访问运算符（-、-gt-）" class="headerlink" title="成员访问运算符（*、-&gt;）"></a>成员访问运算符（*、-&gt;）</h2><ul>
+<li>箭头运算符必须是类的成员。解引用运算符通常也是类的成员，尽管并非必须如此</li>
+<li>对于形如<code>point-&gt;mem</code>的表达式来说，<code>point</code>必须是指向类对象的指针或者是一个重载了<code>operator-&gt;</code>的类的对象<ul>
+<li><code>(*point).mem</code> <code>point</code>是指针 </li>
+<li><code>point.operator()-&gt;mem</code> <code>point</code>是对象</li>
+</ul>
+</li>
+<li>解引用和乘法的区别是一个是一元运算符，一个是二元运算符</li>
+</ul>
+<h2 id="函数调用运算符"><a href="#函数调用运算符" class="headerlink" title="函数调用运算符"></a>函数调用运算符</h2><ul>
+<li>可以像使用函数一样，调用该类的对象。因为这样对待类同时也能存储状态，所以与普通函数相比更加灵活</li>
+<li>函数调用运算符必须是成员函数</li>
+<li>一个类可以定义多个不同版本的调用运算符，相互之间应该在参数数量或类型上有所区别</li>
+<li>如果累定义了调用运算符，则该类的对象称作<strong>函数对象</strong></li>
+</ul>
+<h3 id="lambda是函数对象"><a href="#lambda是函数对象" class="headerlink" title="lambda是函数对象"></a><code>lambda</code>是函数对象</h3><ul>
+<li><code>lambda</code>捕获变量：<code>lambda</code>产生的类必须为每个值捕获的变量建立对应的数据成员，同时创建构造函数</li>
+</ul>
+<h3 id="标准库定义的函数对象"><a href="#标准库定义的函数对象" class="headerlink" title="标准库定义的函数对象"></a>标准库定义的函数对象</h3><p><strong>标准库函数对象</strong></p>
+<table>
+<thead>
+<tr>
+<th>算术</th>
+<th>关系</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>plus&lt;Type&gt;</code></td>
+<td><code>equal_to&lt;Type&gt;</code></td>
+<td><code>logical_and&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>minus&lt;Type&gt;</code></td>
+<td><code>not_equal_to&lt;Type&gt;</code></td>
+<td><code>logical_or&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>multiplies&lt;Type&gt;</code></td>
+<td><code>greater&lt;Type&gt;</code></td>
+<td><code>logical_not&lt;Type&gt;</code></td>
+</tr>
+<tr>
+<td><code>divides&lt;Type&gt;</code></td>
+<td><code>greater_equal&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>modulus&lt;Type&gt;</code></td>
+<td><code>less&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>negate&lt;Type&gt;</code></td>
+<td><code>less_equal&lt;Type&gt;</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>可以在算法中使用标准库函数对象</li>
+</ul>
+<h3 id="可调用对象与function"><a href="#可调用对象与function" class="headerlink" title="可调用对象与function"></a>可调用对象与function</h3><p><strong>标准库function类型</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>function&lt;T&gt; f;</code></td>
+<td><code>f</code>是一个用来存储可调用对象的空<code>function</code>，这些可调用对象的调用形式应该与类型<code>T</code>相同</td>
+</tr>
+<tr>
+<td><code>function&lt;T&gt; f(nullptr);</code></td>
+<td>显式地构造一个空<code>function</code></td>
+</tr>
+<tr>
+<td><code>function&lt;T&gt; f(obj)</code></td>
+<td>在<code>f</code>中存储可调用对象<code>obj</code>的副本</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td>将<code>f</code>作为条件：当<code>f</code>含有一个可调用对象时为真；否则为假</td>
+</tr>
+<tr>
+<td>定义为<code>function&lt;T&gt;</code>的成员的类型</td>
+<td></td>
+</tr>
+<tr>
+<td><code>result_type</code></td>
+<td>该<code>function</code>类型的可调用对象返回的类型</td>
+</tr>
+<tr>
+<td><code>argument_type</code></td>
+<td>当<code>T</code>有一个或两个实参时定义的类型。如果<code>T</code>只有一个实参，则<code>argument_type</code></td>
+</tr>
+<tr>
+<td><code>first_argument_type</code></td>
+<td>第一个实参的类型</td>
+</tr>
+<tr>
+<td><code>second_argument_type</code></td>
+<td>第二个实参的类型</td>
+</tr>
+</tbody></table>
+<ul>
+<li>例如：声明一个<code>function</code>类型，它可以表示接受两个<code>int</code>，返回一个<code>int</code>的可调用对象。<code>function&lt;int(int, int)&gt;</code></li>
+</ul>
+<h2 id="重载、类型转换、运算符"><a href="#重载、类型转换、运算符" class="headerlink" title="重载、类型转换、运算符"></a>重载、类型转换、运算符</h2><h3 id="类型转换运算符"><a href="#类型转换运算符" class="headerlink" title="类型转换运算符"></a>类型转换运算符</h3><ul>
+<li>类型转换运算符是类的一种特殊成员函数，它负责将一个类类型的值转换成其他类型。类型转换函数的一般形式如下：<code>operator type() const;</code></li>
+<li>一个类型转换函数必须是类的成员函数；它不能声明返回类型，形参列表也必须为空。类型转换函数通常应该是<code>const</code></li>
+<li>避免过度使用类型转换函数</li>
+<li>C++11引入了显式的类型转换运算符</li>
+<li>向<code>bool</code>的类型转换通常用在条件部分，因此<code>operator bool</code>一般定义成<code>explicit</code>的</li>
+</ul>
+<h3 id="避免有二义性的类型转换"><a href="#避免有二义性的类型转换" class="headerlink" title="避免有二义性的类型转换"></a>避免有二义性的类型转换</h3><ul>
+<li>通常，不要为类定义相同的类型转换，也不要在类中定义两个及以上转换源或转换目标是算术类型的转换</li>
+<li>在调用重载函数时，如果需要额外的标准类型转换，则该转换的级别只有当所有可行函数都请求同一个用户定义的类型转换时才有用。如果所需的用户定义的类型转换不止一个，则该调用具有二义性</li>
+</ul>
+<h3 id="函数匹配与重载运算符"><a href="#函数匹配与重载运算符" class="headerlink" title="函数匹配与重载运算符"></a>函数匹配与重载运算符</h3><ul>
+<li>如果<code>a</code>是一种类型，则表达式<code>a sym b</code>可能是<ul>
+<li><code>a.operatorsym(b);</code></li>
+<li><code>operatorsym(a,b);</code></li>
+</ul>
+</li>
+<li>如果我们对同一个类既提供了转换目标是算术类型的类型转换，也提供了重载的运算符，则将会遇到重载运算符与内置运算符的二义性问题</li>
+</ul>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CDemo</span></span><br><span class="line">&#123;    </span><br><span class="line">    <span class="keyword">friend</span> std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp;, <span class="type">const</span> CDemo&amp;); </span><br><span class="line">    <span class="keyword">friend</span> std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp;, CDemo&amp;);</span><br><span class="line">    <span class="keyword">friend</span> CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp;, <span class="type">const</span> CDemo&amp;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CDemo</span><span class="params">(<span class="type">int</span> num = <span class="number">0</span>)</span>: m(num) &#123;</span>&#125; </span><br><span class="line">    ~<span class="built_in">CDemo</span>() &#123;&#125;</span><br><span class="line">    <span class="built_in">CDemo</span>(<span class="type">const</span> CDemo &amp;d): <span class="built_in">m</span>(d.m) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>=(<span class="type">const</span> CDemo &amp;d) &#123;</span><br><span class="line">        m = d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo <span class="keyword">operator</span>++(<span class="type">int</span>) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="function">CDemo <span class="title">tmp</span><span class="params">(*<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        ++*<span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>++() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;++d&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        ++m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	CDemo&amp; <span class="keyword">operator</span>+=(<span class="type">const</span> CDemo&amp; d) &#123;</span><br><span class="line">        m += d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d()&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="keyword">operator</span>[](<span class="type">size_t</span> n) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;[]&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string&amp; <span class="keyword">operator</span>*() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;*&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string* <span class="keyword">operator</span>-&gt;() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;-&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> &amp; <span class="keyword">this</span>-&gt;<span class="keyword">operator</span>*();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m;</span><br><span class="line">    std::string str = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; stream, <span class="type">const</span> CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> stream &lt;&lt; d.m;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp; stream, CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    stream &gt;&gt; d.m;</span><br><span class="line">    <span class="keyword">if</span> (!stream) &#123;</span><br><span class="line">        d = <span class="built_in">CDemo</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stream;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp; d1, <span class="type">const</span> CDemo&amp; d2)</span><br><span class="line">&#123;</span><br><span class="line">    CDemo d = d1;</span><br><span class="line">    d += d2;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-左值右值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -3350,206 +3649,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-cpp-继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">C++ 继承</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/" class="archive-article-date">
-  	<time datetime="2021-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="C-特性"><a href="#C-特性" class="headerlink" title="C++特性"></a>C++特性</h2><p>封装 继承 多态</p>
-<h2 id="成员类型"><a href="#成员类型" class="headerlink" title="成员类型"></a>成员类型</h2><ul>
-<li><p>公有成员类型</p>
-<p>  任何外部的函数都可以访问共有类型数据和函数</p>
-<p>  是类与外部的接口</p>
-</li>
-<li><p>私有类型成员</p>
-<p>  只允许本类中的函数访问，类外的任何函数不能访问</p>
-<p>  不写关键字，默认为私有成员</p>
-</li>
-<li><p>保护成员</p>
-<p>  与私有很像，差别在继承与派生时对派生类的影响不同</p>
-</li>
-</ul>
-<h2 id="内联成员函数"><a href="#内联成员函数" class="headerlink" title="内联成员函数"></a>内联成员函数</h2><pre><code>直接在类内写函数
-
-使用inline关键字
-</code></pre>
-<h2 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h2><pre><code>class 类名&#123;
-public:
-    类名（const 类名 &amp;对象名）；
-&#125;
-
-类名::类名（const 类名 &amp;对象名）
-&#123;
-&#125;
-</code></pre>
-<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><pre><code>~类名（）
-</code></pre>
-<h2 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h2><p>友元都是单向的</p>
-<h2 id="友元函数"><a href="#友元函数" class="headerlink" title="友元函数"></a>友元函数</h2><pre><code>声明类外函数为本类朋友
-</code></pre>
-<h2 id="友元类"><a href="#友元类" class="headerlink" title="友元类"></a>友元类</h2><pre><code>friend class B;  (对B类授权可以访问自己)
-</code></pre>
-<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>继承与派生概述</p>
-<ul>
-<li>继承与派生是同一过程从不同的角度看<ul>
-<li>保持已有类的特性而构造新类的过程称为继承</li>
-<li>在已有类的基础上新增自己的特性而产生新类的过程称为派生</li>
-</ul>
-</li>
-<li>被继承的已有类称为基类（或父类）</li>
-<li>派生出的新类称为派生类（或子类）</li>
-<li>直接参与派生出某类的基类称为直接基类</li>
-<li>基类的基类甚至更高层的基类称为间接基类</li>
-</ul>
-<p>派生是为了解决原有程序无法完全解决问题，对程序的改造</p>
-<p>派生类的构成</p>
-<ul>
-<li>吸收基类成员</li>
-<li>改造基类成员<ul>
-<li>如果派生类声明了一个和某基类成员同名的新成员，派生的新成员就隐藏或覆盖了外层同名成员</li>
-</ul>
-</li>
-<li>添加新的成员</li>
-</ul>
-<h3 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h3><ul>
-<li><p>公有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:访问属性在派生类中<strong>保持不变</strong> </li>
-<li>基类的<code>private</code>成员:不可直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:只能访问<code>public</code>成员。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>私有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>private</code>身份出现在派生类中</li>
-<li>基类的<code>private</code>成员:不可以直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>保护继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的<code>public</code>和<code>protected</code>成员:都以<code>protected</code>身份出现在派生类中</li>
-<li>基类的<code>private</code>成员:不可以直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数:可以直接访问基类中的<code>public</code>和<code>protected</code>成员,但不能直接访问基类的<code>private</code>成员</li>
-<li>通过派生类的对象:不能直接访问从基类继承的任何成员</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>不要重新定义继承来的非虚函数</strong></p>
-<h2 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h2><p>基类的构造函数不被继承,派生类需要编写自己的构造函数</p>
-<h3 id="单继承时构造函数"><a href="#单继承时构造函数" class="headerlink" title="单继承时构造函数"></a>单继承时构造函数</h3><pre><code>派生类名:派生类名(基类所需的型参,本类成员所需的型参):基类名(参数表),本类成员初始化列表 
-&#123;
-    //其他初始化
-&#125;
-</code></pre>
-<h3 id="多继承时构造函数"><a href="#多继承时构造函数" class="headerlink" title="多继承时构造函数"></a>多继承时构造函数</h3><pre><code>派生类名:派生类名(参数表):基类名1(基类1初始化参数表),基类名2(基类2初始化参数表),基类名n(基类n初始化参数表),本类成员初始化列表 
-&#123;
-    //其他初始化
-&#125;
-</code></pre>
-<h3 id="构造函数的执行顺序"><a href="#构造函数的执行顺序" class="headerlink" title="构造函数的执行顺序"></a>构造函数的执行顺序</h3><ol>
-<li>调用基类的构造函数,<ul>
-<li>顺序按照它们被继承时声明的顺序(从左向右)</li>
-</ul>
-</li>
-<li>对初始化列表中的成员进行初始化<ul>
-<li>顺序按照它们在类中定义的顺序</li>
-<li>对象成员初始化时自动调用其所属类的构造函数,由初始化列表提供参数</li>
-</ul>
-</li>
-<li>执行派生类的构造函数体中的内容</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> : <span class="keyword">public</span> BaseB, <span class="keyword">public</span> BaseA &#123; <span class="comment">//顺序 BaseB -&gt; BaseA</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Demo</span>(<span class="type">int</span> a, std::string str) : <span class="built_in">BaseA</span>(), <span class="built_in">BaseB</span>(),  <span class="comment">//和这里的顺序无关</span></span><br><span class="line">        <span class="built_in">m_a</span>(a),</span><br><span class="line">        <span class="built_in">m_b</span>(str) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:       <span class="comment">//顺序 m_a -&gt;  m_b</span></span><br><span class="line">    CItemA m_a;</span><br><span class="line">    CItemB m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>析构函数与构造函数顺序相反</strong></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/10/cpp-%E7%BB%A7%E6%89%BF/">展开全文 >></a>
         </p>
       
 
