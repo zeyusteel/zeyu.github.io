@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Docker - 02Client | zeyu的博客</title>
+  <title>Docker - 05 libcontainer | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="写在前面自从20.10版本,原来Docker-CE的仓库就不再使用，而是分成了Docker CLI和Docker Engine,后续涉及源码的地方都将基于v20.10.12展开 Docker Client1​​docker [OPTIONS] COMMAND [arg...]​​  docker client入口函数在cmd&#x2F;docker&#x2F;docker.go 01 初始化DockerCli调用cl">
+  <meta name="description" content="libcontainer已经被docker捐给OCI,并包装成runc:runc 以下内容基于runc 1.0.3版本展开 OCI BundleOCI Bundle是指满足OCI标准的一系列文件，这些文件包含了运行容器所需要的所有数据，它们存放在一个共同的目录，该目录包含以下两项：  config.json文件包含容器运行的配置数据 root目录为container的root filesystem">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker - 02Client">
-<meta property="og:url" content="http://example.com/2022/08/30/docker-02client/index.html">
+<meta property="og:title" content="Docker - 05 libcontainer">
+<meta property="og:url" content="http://example.com/2022/10/31/docker-05libcontainer/index.html">
 <meta property="og:site_name" content="zeyu的博客">
-<meta property="og:description" content="写在前面自从20.10版本,原来Docker-CE的仓库就不再使用，而是分成了Docker CLI和Docker Engine,后续涉及源码的地方都将基于v20.10.12展开 Docker Client1​​docker [OPTIONS] COMMAND [arg...]​​  docker client入口函数在cmd&#x2F;docker&#x2F;docker.go 01 初始化DockerCli调用cl">
+<meta property="og:description" content="libcontainer已经被docker捐给OCI,并包装成runc:runc 以下内容基于runc 1.0.3版本展开 OCI BundleOCI Bundle是指满足OCI标准的一系列文件，这些文件包含了运行容器所需要的所有数据，它们存放在一个共同的目录，该目录包含以下两项：  config.json文件包含容器运行的配置数据 root目录为container的root filesystem">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-30T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.410Z">
+<meta property="article:published_time" content="2022-10-31T01:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-07T01:57:15.484Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -148,54 +148,70 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-docker-02client" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-docker-05libcontainer" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Docker - 02Client
+      Docker - 05 libcontainer
     </h1>
   
 
         
-        <a href="/2022/08/30/docker-02client/" class="archive-article-date">
-  	<time datetime="2022-08-30T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-30</time>
+        <a href="/2022/10/31/docker-05libcontainer/" class="archive-article-date">
+  	<time datetime="2022-10-31T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-10-31</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>v20.10.12</code>展开</p>
-<h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
-
-<p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
-<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个cli,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
-<p><code>DockerCli</code>将作为客户端的上下文存在于整个生命周期</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DockerCli <span class="keyword">struct</span> &#123;</span><br><span class="line">	configFile         *configfile.ConfigFile</span><br><span class="line">	in                 *streams.In</span><br><span class="line">	out                *streams.Out</span><br><span class="line">	err                io.Writer</span><br><span class="line">	client             client.APIClient</span><br><span class="line">	serverInfo         ServerInfo</span><br><span class="line">	clientInfo         *ClientInfo</span><br><span class="line">	contentTrust       <span class="type">bool</span></span><br><span class="line">	contextStore       store.Store</span><br><span class="line">	currentContext     <span class="type">string</span></span><br><span class="line">	dockerEndpoint     docker.Endpoint</span><br><span class="line">	contextStoreConfig store.Config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="02-runDocker"><a href="#02-runDocker" class="headerlink" title="02 runDocker"></a>02 runDocker</h3><ol>
-<li>初始化命令模版: 在<code>newDockerCommand</code>中初始化命令行模版,命令模版:<code>vendor/github.com/spf13/cobra/command.go/command</code></li>
-<li>初始化<code>Flags</code>并关联<code>Options</code>: <code>cli/flags/common.go/InstallFlags</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CommonOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Debug      <span class="type">bool</span></span><br><span class="line">    Hosts      []<span class="type">string</span></span><br><span class="line">    LogLevel   <span class="type">string</span></span><br><span class="line">    TLS        <span class="type">bool</span></span><br><span class="line">    TLSVerify  <span class="type">bool</span></span><br><span class="line">    TLSOptions *tlsconfig.Options</span><br><span class="line">    Context    <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>初始化命令: <code>cli/command/commands/commands.go/AddCommands</code>,<code>cli/command/container</code>下包含容器相关的命令,<code>cli/command/image</code>下包含镜像相关的命令,以此类推</li>
-<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将os.Args的<code>Options</code>切分后面就是<code>args</code></li>
-<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和daemon通信)</li>
-<li>解析<code>os.Args</code>后面的args,匹配相关命令</li>
-<li>执行匹配到的命令</li>
-</ol>
-<h2 id="源码编译cli"><a href="#源码编译cli" class="headerlink" title="源码编译cli"></a>源码编译cli</h2><p>cli是在docker容器中编译的,但是通过dockerfile构建容器时可能会遇到网络问题导致部分依赖拉取失败</p>
-<ol>
-<li><p>修改<code>dockerfiles/Dockerfile.binary-native</code>,换源</p>
- <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">FROM</span>    golang:$&#123;GO_VERSION&#125;-alpine</span><br><span class="line"><span class="comment">#换源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g&#x27;</span> /etc/apk/repositories</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">     apk add -U git bash coreutils gcc musl-dev</span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+        <p><code>libcontainer</code>已经被<code>docker</code>捐给<code>OCI</code>,并包装成<code>runc</code>:<br><a target="_blank" rel="noopener" href="https://github.com/opencontainers/runc">runc</a></p>
+<p>以下内容基于<code>runc 1.0.3</code>版本展开</p>
+<h2 id="OCI-Bundle"><a href="#OCI-Bundle" class="headerlink" title="OCI Bundle"></a>OCI Bundle</h2><p><code>OCI Bundle</code>是指满足<code>OCI</code>标准的一系列文件，这些文件包含了运行容器所需要的所有数据，它们存放在一个共同的目录，该目录包含以下两项：</p>
+<ul>
+<li><code>config.json</code>文件包含容器运行的配置数据</li>
+<li><code>root</code>目录为<code>container</code>的<code>root filesystem</code></li>
+</ul>
+<h2 id="整理流程"><a href="#整理流程" class="headerlink" title="整理流程"></a>整理流程</h2><p>在<code>runc</code>中所有二级命令都有单独的<code>go</code>文件，通过<code>packege cli</code>中的<code>App</code>命令模版统一调用</p>
+<h2 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h2><p><code>runc create -b /mycontainer test</code></p>
+<ul>
+<li><code>create.go</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Action: <span class="function"><span class="keyword">func</span><span class="params">(context *cli.Context)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">       <span class="comment">// 入参检查</span></span><br><span class="line"> <span class="keyword">if</span> err := checkArgs(context, <span class="number">1</span>, exactArgs); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//保存pid文件</span></span><br><span class="line"> <span class="keyword">if</span> err := revisePidFile(context); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//加载config.json到spec数据结构</span></span><br><span class="line"> spec, err := setupSpec(context)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//创建容器</span></span><br><span class="line"> status, err := startContainer(context, spec, CT_ACT_CREATE, <span class="literal">nil</span>)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">// exit with the container&#x27;s exit status so any external supervisor is</span></span><br><span class="line"> <span class="comment">// notified of the exit with the correct exit status.</span></span><br><span class="line"> os.Exit(status)</span><br><span class="line"> <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></li>
+<li><code>utils_linux.go/createContainer/CreateLibcontainerConfig</code>将<code>Spec</code>等相关配置信息转存到<code>Config</code>数据结构,为后续工厂执行操作提供入参</li>
+<li>加载<code>Factory</code>接口，其中<code>LinuxFactory</code>将作为一种实现<ul>
+<li>创建<code>root</code>目录 <code>root</code>用户执行是<code>/run/runc</code></li>
+<li>创建<code>LinuxFactory</code>数据结构</li>
+</ul>
 </li>
-<li><p>修改<code>dockerfiles/Dockerfile.dev</code>,添加代理, <code>GOPROXY=https://goproxy.cn,direct</code></p>
- <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">FROM</span> golang AS esc</span><br><span class="line"><span class="keyword">ARG</span> ESC_VERSION=v0.<span class="number">2.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/mjibson/esc@<span class="variable">$&#123;ESC_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS gotestsum</span><br><span class="line"><span class="keyword">ARG</span> GOTESTSUM_VERSION=v0.<span class="number">4.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install gotest.tools/gotestsum@<span class="variable">$&#123;GOTESTSUM_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS vndr</span><br><span class="line"><span class="keyword">ARG</span> VNDR_VERSION=v0.<span class="number">1.2</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/LK4D4/vndr@<span class="variable">$&#123;VNDR_VERSION&#125;</span></span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+<li>调用<code>Factory</code>的<code>Create()</code>方法，返回<code>Container</code>接口<strong>创建逻辑容器</strong>,其中<code>linuxContainer</code>将作为其中一种实现<ul>
+<li>验证容器<code>id</code>合法性</li>
+<li>验证<code>config</code>合法性</li>
+<li>通过<code>SecureJoinVFS</code>创建容器的<code>root</code>目录 <code>$&#123;root&#125;/containerid</code></li>
+<li>返回<code>Container</code>对象</li>
+</ul>
 </li>
-<li><p><code>sudo make -f docker.Makefile binary</code>, 最后二进制文件在工作目录下的<code>build</code></p>
+<li>创建<code>runner</code>在<code>r.run(spec.Process)</code>中执行<code>container.Start(process)</code><strong>创建物理容器</strong>*<code>Container</code>主要包含了容器配置、控制等信息，是对不同操作系统下容器实现的抽象,目前在<code>linux</code>平台相当于执行<code>func (c *linuxContainer) Start(process *Process) error</code><ul>
+<li>在容器<code>root</code>目录下创建<code>exec.fifo</code></li>
+<li>执行内置函数<code>func (c *linuxContainer) start(process *Process) (retErr error)</code><ul>
+<li>创建<code>parentProcess</code>,参与物理容器创建过程的<code>Process</code>一共有两个实例<ul>
+<li><p>第一个叫<code>Process</code>，用于物理容器内进程的配置和<code>IO</code>的管理，前面在<code>runner run</code>创建的<code>Process</code>就是指它,该实例主要来自<code>spec.Process</code></p>
 </li>
-</ol>
+<li><p>另一个叫<code>ParentProcess</code>，负责从物理容器外部处理物理容器启动工作，与<code>Container</code>对象直接进行交互。启动工作完成后，<code>ParentProcess</code>负责执行等待、发信号、获得容器内进程<code>pid</code>等管理工作,<code>initProcess</code>是<code>ParentProcess</code>的一个实现</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> parentProcess <span class="keyword">interface</span> &#123;</span><br><span class="line"> <span class="comment">// pid returns the pid for the running process.</span></span><br><span class="line"> pid() <span class="type">int</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// start starts the process execution.</span></span><br><span class="line"> start() <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// send a SIGKILL to the process and wait for the exit.</span></span><br><span class="line"> terminate() <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// wait waits on the process returning the process state.</span></span><br><span class="line"> wait() (*os.ProcessState, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line"> <span class="comment">// startTime returns the process start time.</span></span><br><span class="line"> startTime() (<span class="type">uint64</span>, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line"> signal(os.Signal) <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> externalDescriptors() []<span class="type">string</span></span><br><span class="line"></span><br><span class="line"> setExternalDescriptors(fds []<span class="type">string</span>)</span><br><span class="line"></span><br><span class="line"> forwardChildLogs() <span class="keyword">chan</span> <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> initProcess <span class="keyword">struct</span> &#123;</span><br><span class="line"> cmd             *exec.Cmd</span><br><span class="line"> messageSockPair filePair</span><br><span class="line"> logFilePair     filePair</span><br><span class="line"> config          *initConfig</span><br><span class="line"> manager         cgroups.Manager</span><br><span class="line"> intelRdtManager intelrdt.Manager</span><br><span class="line"> container       *linuxContainer</span><br><span class="line"> fds             []<span class="type">string</span></span><br><span class="line"> process         *Process</span><br><span class="line"> bootstrapData   io.Reader</span><br><span class="line"> sharePidns      <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>调用<code>parentProcess</code>的<code>forwardChildLogs</code>通过管道不断获取容器内的日志</li>
+<li>调用<code>parentProcess</code>的<code>start</code>，其实就是执行<code>func (p *initProcess) start() (retErr error)</code><ul>
+<li>这里会执行<code>runc init</code>,创建子进程完成容器的初始化工作,父子进程通过管道通信</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
       
 
@@ -265,7 +281,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/08/30/docker-02client/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/10/31/docker-05libcontainer/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -279,18 +295,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/09/01/docker-03daemon/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Docker - 03Daemon
-        
-      </div>
-    </a>
   
-  
-    <a href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Docker - 01Docker架构</div>
+    <a href="/2022/10/11/docker-04%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Docker - 04存储管理</div>
       <i class="icon-circle-right"></i>
     </a>
   

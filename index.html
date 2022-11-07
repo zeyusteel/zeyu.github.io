@@ -145,6 +145,123 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-05libcontainer" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/10/31/docker-05libcontainer/">Docker - 05 libcontainer</a>
+    </h1>
+  
+
+        
+        <a href="/2022/10/31/docker-05libcontainer/" class="archive-article-date">
+  	<time datetime="2022-10-31T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-10-31</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>libcontainer</code>已经被<code>docker</code>捐给<code>OCI</code>,并包装成<code>runc</code>:<br><a target="_blank" rel="noopener" href="https://github.com/opencontainers/runc">runc</a></p>
+<p>以下内容基于<code>runc 1.0.3</code>版本展开</p>
+<h2 id="OCI-Bundle"><a href="#OCI-Bundle" class="headerlink" title="OCI Bundle"></a>OCI Bundle</h2><p><code>OCI Bundle</code>是指满足<code>OCI</code>标准的一系列文件，这些文件包含了运行容器所需要的所有数据，它们存放在一个共同的目录，该目录包含以下两项：</p>
+<ul>
+<li><code>config.json</code>文件包含容器运行的配置数据</li>
+<li><code>root</code>目录为<code>container</code>的<code>root filesystem</code></li>
+</ul>
+<h2 id="整理流程"><a href="#整理流程" class="headerlink" title="整理流程"></a>整理流程</h2><p>在<code>runc</code>中所有二级命令都有单独的<code>go</code>文件，通过<code>packege cli</code>中的<code>App</code>命令模版统一调用</p>
+<h2 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h2><p><code>runc create -b /mycontainer test</code></p>
+<ul>
+<li><code>create.go</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Action: <span class="function"><span class="keyword">func</span><span class="params">(context *cli.Context)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">       <span class="comment">// 入参检查</span></span><br><span class="line"> <span class="keyword">if</span> err := checkArgs(context, <span class="number">1</span>, exactArgs); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//保存pid文件</span></span><br><span class="line"> <span class="keyword">if</span> err := revisePidFile(context); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//加载config.json到spec数据结构</span></span><br><span class="line"> spec, err := setupSpec(context)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//创建容器</span></span><br><span class="line"> status, err := startContainer(context, spec, CT_ACT_CREATE, <span class="literal">nil</span>)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">// exit with the container&#x27;s exit status so any external supervisor is</span></span><br><span class="line"> <span class="comment">// notified of the exit with the correct exit status.</span></span><br><span class="line"> os.Exit(status)</span><br><span class="line"> <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></li>
+<li><code>utils_linux.go/createContainer/CreateLibcontainerConfig</code>将<code>Spec</code>等相关配置信息转存到<code>Config</code>数据结构,为后续工厂执行操作提供入参</li>
+<li>加载<code>Factory</code>接口，其中<code>LinuxFactory</code>将作为一种实现<ul>
+<li>创建<code>root</code>目录 <code>root</code>用户执行是<code>/run/runc</code></li>
+<li>创建<code>LinuxFactory</code>数据结构</li>
+</ul>
+</li>
+<li>调用<code>Factory</code>的<code>Create()</code>方法，返回<code>Container</code>接口<strong>创建逻辑容器</strong>,其中<code>linuxContainer</code>将作为其中一种实现<ul>
+<li>验证容器<code>id</code>合法性</li>
+<li>验证<code>config</code>合法性</li>
+<li>通过<code>SecureJoinVFS</code>创建容器的<code>root</code>目录 <code>$&#123;root&#125;/containerid</code></li>
+<li>返回<code>Container</code>对象</li>
+</ul>
+</li>
+<li>创建<code>runner</code>在<code>r.run(spec.Process)</code>中执行<code>container.Start(process)</code><strong>创建物理容器</strong>*<code>Container</code>主要包含了容器配置、控制等信息，是对不同操作系统下容器实现的抽象,目前在<code>linux</code>平台相当于执行<code>func (c *linuxContainer) Start(process *Process) error</code><ul>
+<li>在容器<code>root</code>目录下创建<code>exec.fifo</code></li>
+<li>执行内置函数<code>func (c *linuxContainer) start(process *Process) (retErr error)</code><ul>
+<li>创建<code>parentProcess</code>,参与物理容器创建过程的<code>Process</code>一共有两个实例<ul>
+<li><p>第一个叫<code>Process</code>，用于物理容器内进程的配置和<code>IO</code>的管理，前面在<code>runner run</code>创建的<code>Process</code>就是指它,该实例主要来自<code>spec.Process</code></p>
+</li>
+<li><p>另一个叫<code>ParentProcess</code>，负责从物理容器外部处理物理容器启动工作，与<code>Container</code>对象直接进行交互。启动工作完成后，<code>ParentProcess</code>负责执行等待、发信号、获得容器内进程<code>pid</code>等管理工作,<code>initProcess</code>是<code>ParentProcess</code>的一个实现</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> parentProcess <span class="keyword">interface</span> &#123;</span><br><span class="line"> <span class="comment">// pid returns the pid for the running process.</span></span><br><span class="line"> pid() <span class="type">int</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// start starts the process execution.</span></span><br><span class="line"> start() <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// send a SIGKILL to the process and wait for the exit.</span></span><br><span class="line"> terminate() <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// wait waits on the process returning the process state.</span></span><br><span class="line"> wait() (*os.ProcessState, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line"> <span class="comment">// startTime returns the process start time.</span></span><br><span class="line"> startTime() (<span class="type">uint64</span>, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line"> signal(os.Signal) <span class="type">error</span></span><br><span class="line"></span><br><span class="line"> externalDescriptors() []<span class="type">string</span></span><br><span class="line"></span><br><span class="line"> setExternalDescriptors(fds []<span class="type">string</span>)</span><br><span class="line"></span><br><span class="line"> forwardChildLogs() <span class="keyword">chan</span> <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> initProcess <span class="keyword">struct</span> &#123;</span><br><span class="line"> cmd             *exec.Cmd</span><br><span class="line"> messageSockPair filePair</span><br><span class="line"> logFilePair     filePair</span><br><span class="line"> config          *initConfig</span><br><span class="line"> manager         cgroups.Manager</span><br><span class="line"> intelRdtManager intelrdt.Manager</span><br><span class="line"> container       *linuxContainer</span><br><span class="line"> fds             []<span class="type">string</span></span><br><span class="line"> process         *Process</span><br><span class="line"> bootstrapData   io.Reader</span><br><span class="line"> sharePidns      <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>调用<code>parentProcess</code>的<code>forwardChildLogs</code>通过管道不断获取容器内的日志</li>
+<li>调用<code>parentProcess</code>的<code>start</code>，其实就是执行<code>func (p *initProcess) start() (retErr error)</code><ul>
+<li>这里会执行<code>runc init</code>,创建子进程完成容器的初始化工作,父子进程通过管道通信</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/10/31/docker-05libcontainer/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-04存储管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -697,6 +814,12 @@
 
 <h2 id="有缓冲的channel"><a href="#有缓冲的channel" class="headerlink" title="有缓冲的channel"></a>有缓冲的channel</h2><p>当goroutine通过channel发送一个值时，该值被添加到缓冲区中。发送的goroutine将继续运行，而不被阻塞,直到缓冲区满。另一个goroutine从channel接收一个值时，它从缓冲区中提取最早添加的值</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendLetters</span><span class="params">(channel <span class="keyword">chan</span> <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;a&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;b&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;c&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;d&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">	channel := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>, <span class="number">3</span>)<span class="comment">// 大小为3的缓冲区</span></span><br><span class="line">	<span class="keyword">go</span> sendLetters(channel)</span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>chan&lt;- int</code>是一个只能发送的通道，可以发送但是不能接收</li>
+<li><code>&lt;-chan int</code>是一个只能接收的通道，可以接收但是不能发送</li>
+</ul>
+
       
 
       
@@ -1105,97 +1228,6 @@
 
 
   
-    <article id="post-head-first-go-13goroutine" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/12/head-first-go-13goroutine/">Head First Go - 13goroutine</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/12/head-first-go-13goroutine/" class="archive-article-date">
-  	<time datetime="2022-08-12T00:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="goroutine"><a href="#goroutine" class="headerlink" title="goroutine"></a>goroutine</h2><p>在Go中，并发任务称为goroutine。其他编程语言有一个类似的概念，叫作线程，但是goroutine比线程需要更少的计算机内存</p>
-<p><code>go 函数()</code></p>
-<p>每个Go程序的main函数都是使 用goroutine启动的</p>
-<p>goroutine无法接收函数的返回值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">50</span>; i++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">`A`</span>,i)</span><br><span class="line">		time.Sleep(time.Microsecond)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskB</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">50</span>; i++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">`B`</span>,i)</span><br><span class="line">		time.Sleep(time.Microsecond)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> taskA()</span><br><span class="line">	<span class="keyword">go</span> taskB()</span><br><span class="line">	time.Sleep(time.Second * <span class="number">5</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p>channel可以在不同goroutine传递消息</p>
-<p>每个channel只携带特定类型的值</p>
-<p>创建channel需要调用内置的make函数</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myChannel <span class="keyword">chan</span> <span class="type">int</span></span><br><span class="line">myChannel = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用channel发送和接收值"><a href="#使用channel发送和接收值" class="headerlink" title="使用channel发送和接收值"></a>使用channel发送和接收值</h2><ul>
-<li>发送 <code>myChannel &lt;- value</code></li>
-<li>接收 <code>value &lt;- myChannel</code></li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">15</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	myCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	<span class="keyword">go</span> taskA(myCh)</span><br><span class="line">	fmt.Println(&lt;-myCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>默认情况下发送方会阻塞当前goroutine,直到发送的值被接收;接收方也会阻塞当前goroutine，直到channel被接收</p>
-<p>所以跨goroutine要保证channel有发就有收,并且要按收发的顺序来,避免出现死锁</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskA</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">1</span></span><br><span class="line">	myCh &lt;- <span class="number">2</span></span><br><span class="line">	myCh &lt;- <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">taskB</span><span class="params">(myCh <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	myCh &lt;- <span class="number">4</span></span><br><span class="line">	myCh &lt;- <span class="number">5</span></span><br><span class="line">	myCh &lt;- <span class="number">6</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	chA := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	chB := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> taskA(chA)</span><br><span class="line">	<span class="keyword">go</span> taskB(chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&lt;- chA)</span><br><span class="line">	fmt.Println(&lt;- chB)</span><br><span class="line">    <span class="comment">//1 2 3 4 5 6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/12/head-first-go-13goroutine/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1285,11 +1317,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">

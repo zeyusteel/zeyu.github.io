@@ -16,7 +16,7 @@
 <meta property="og:description" content="if语句初始化if 初始化; 条件 &amp;#123;  &amp;#125;  1234567891011121314151617181920package mainimport (	&quot;io&#x2F;ioutil&quot;	&quot;log&quot;)func saveString(fileName string, str string) error &amp;#123;	err :&#x3D; ioutil.Writ">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-18T00:50:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.412Z">
+<meta property="article:modified_time" content="2022-11-04T08:16:31.071Z">
 <meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
   
@@ -182,6 +182,12 @@
 
 <h2 id="有缓冲的channel"><a href="#有缓冲的channel" class="headerlink" title="有缓冲的channel"></a>有缓冲的channel</h2><p>当goroutine通过channel发送一个值时，该值被添加到缓冲区中。发送的goroutine将继续运行，而不被阻塞,直到缓冲区满。另一个goroutine从channel接收一个值时，它从缓冲区中提取最早添加的值</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendLetters</span><span class="params">(channel <span class="keyword">chan</span> <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;a&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;b&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;c&quot;</span></span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	channel &lt;- <span class="string">&quot;d&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">	channel := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>, <span class="number">3</span>)<span class="comment">// 大小为3的缓冲区</span></span><br><span class="line">	<span class="keyword">go</span> sendLetters(channel)</span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(&lt;-channel, time.Now())</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>chan&lt;- int</code>是一个只能发送的通道，可以发送但是不能接收</li>
+<li><code>&lt;-chan int</code>是一个只能接收的通道，可以接收但是不能发送</li>
+</ul>
+
       
 
       
@@ -393,11 +399,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
