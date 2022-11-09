@@ -16,7 +16,7 @@
 <meta property="og:description" content="if语句初始化if 初始化; 条件 &amp;#123;  &amp;#125;  1234567891011121314151617181920package mainimport (	&quot;io&#x2F;ioutil&quot;	&quot;log&quot;)func saveString(fileName string, str string) error &amp;#123;	err :&#x3D; ioutil.Writ">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-18T00:50:00.000Z">
-<meta property="article:modified_time" content="2022-11-04T08:16:31.071Z">
+<meta property="article:modified_time" content="2022-11-09T03:30:41.451Z">
 <meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
   
@@ -187,7 +187,18 @@
 <li><code>chan&lt;- int</code>是一个只能发送的通道，可以发送但是不能接收</li>
 <li><code>&lt;-chan int</code>是一个只能接收的通道，可以接收但是不能发送</li>
 </ul>
+<h2 id="select"><a href="#select" class="headerlink" title="select"></a>select</h2><p><code>select</code>用于监听<code>channel</code>有关的<code>IO</code>操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch1:</span><br><span class="line">        <span class="comment">// 如果从 ch1 信道成功接收数据，则执行该分支代码</span></span><br><span class="line">    <span class="keyword">case</span> ch2 &lt;- <span class="number">1</span>:</span><br><span class="line">        <span class="comment">// 如果成功向 ch2 信道成功发送数据，则执行该分支代码</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// 如果上面都没有成功，则进入 default 分支处理流程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li><code>select</code>语句 只能用于<code>channel</code>信道的<code>IO</code>操作，每个<code>case</code>都必须是一个信道</li>
+<li>如果不设置<code>default</code>条件，当没有<code>IO</code>操作发生时，<code>select</code>语句就会一直阻塞</li>
+<li>如果有一个或多个<code>IO</code>操作发生时，<code>Go</code>运行时会随机选择一个<code>case</code>执行，但此时将无法保证执行顺序</li>
+<li>对于<code>case</code>语句，如果存在信道值为<code>nil</code>的读写操作，则该分支将被忽略，可以理解为相当于从<code>select</code>语句中删除了这个<code>case</code></li>
+<li>对于空的<code>select</code>语句，会引起死锁</li>
+<li>对于在<code>for</code>中的<code>select</code>语句，不能添加<code>default</code>，否则会引起<code>cpu</code>占用过高的问题</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			time.Sleep(time.Second * <span class="number">2</span>)</span><br><span class="line">			ch1 &lt;- <span class="string">&quot;hhhhhh&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> str := &lt;-ch1:</span><br><span class="line">			fmt.Println(<span class="string">&quot;receive str&quot;</span>, str)</span><br><span class="line">		<span class="keyword">case</span> &lt;-time.After(time.Second * <span class="number">5</span>): <span class="comment">//超时处理</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;timeout!!&quot;</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
