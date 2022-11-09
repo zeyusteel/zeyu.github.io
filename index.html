@@ -216,12 +216,14 @@
 </li>
 </ul>
 </li>
-<li><p>最终<code>runc init</code>将分离并作为容器内的<code>init</code>一直执行,容器的状态变为<code>created</code></p>
+<li><p>最终<code>runc init</code>进程将分离并作为容器内的<code>init</code>一直执行,容器的状态变为<code>created</code></p>
+</li>
+<li><p>容器的状态会保存在<code>/run/runc/$&#123;containerid&#125;/state.json</code></p>
 </li>
 </ul>
 <h2 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h2><p><code>runc start test</code></p>
 <ul>
-<li>基于<code>/run/runc/&#123;containerid&#125;/state.json</code>加载<code>container</code>结构</li>
+<li>基于<code>/run/runc/$&#123;containerid&#125;/state.json</code>加载<code>container</code>结构</li>
 <li><code>start</code>就是执行<code>container</code>的<code>exec</code>接口,将对应容器的<code>exec.fifo</code>以读方式打开,这样<code>init</code>就不会阻塞,去执行<code>exec</code>的命令,后面使用<code>select</code>读取<code>fifo</code>内容(字符<code>0</code>)</li>
 <li>读取到字符<code>0</code>后<code>handleFifoResult(result)</code>将删除<code>exec.fifo</code>文件</li>
 </ul>
