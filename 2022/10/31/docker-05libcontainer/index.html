@@ -16,7 +16,7 @@
 <meta property="og:description" content="libcontainer已经被docker捐给OCI,并包装成runc:runc 以下内容基于runc 1.0.3版本展开 OCI BundleOCI Bundle是指满足OCI标准的一系列文件，这些文件包含了运行容器所需要的所有数据，它们存放在一个共同的目录，该目录包含以下两项：  config.json文件包含容器运行的配置数据 root目录为container的root filesystem">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-10-31T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-11-07T08:19:29.929Z">
+<meta property="article:modified_time" content="2022-11-09T02:47:15.521Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -178,21 +178,26 @@
 <h2 id="整理流程"><a href="#整理流程" class="headerlink" title="整理流程"></a>整理流程</h2><p>在<code>runc</code>中所有二级命令都有单独的<code>go</code>文件，通过<code>packege cli</code>中的<code>App</code>命令模版统一调用</p>
 <h2 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h2><p><code>runc create -b /mycontainer test</code></p>
 <ul>
-<li><code>create.go</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Action: <span class="function"><span class="keyword">func</span><span class="params">(context *cli.Context)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">       <span class="comment">// 入参检查</span></span><br><span class="line"> <span class="keyword">if</span> err := checkArgs(context, <span class="number">1</span>, exactArgs); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//保存pid文件</span></span><br><span class="line"> <span class="keyword">if</span> err := revisePidFile(context); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//加载config.json到spec数据结构</span></span><br><span class="line"> spec, err := setupSpec(context)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//创建容器</span></span><br><span class="line"> status, err := startContainer(context, spec, CT_ACT_CREATE, <span class="literal">nil</span>)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">// exit with the container&#x27;s exit status so any external supervisor is</span></span><br><span class="line"> <span class="comment">// notified of the exit with the correct exit status.</span></span><br><span class="line"> os.Exit(status)</span><br><span class="line"> <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></li>
-<li><code>utils_linux.go/createContainer/CreateLibcontainerConfig</code>将<code>Spec</code>等相关配置信息转存到<code>Config</code>数据结构,为后续工厂执行操作提供入参</li>
-<li>加载<code>Factory</code>接口，其中<code>LinuxFactory</code>将作为一种实现<ul>
+<li><p><code>create.go</code></p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Action: <span class="function"><span class="keyword">func</span><span class="params">(context *cli.Context)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">       <span class="comment">// 入参检查</span></span><br><span class="line"> <span class="keyword">if</span> err := checkArgs(context, <span class="number">1</span>, exactArgs); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//保存pid文件</span></span><br><span class="line"> <span class="keyword">if</span> err := revisePidFile(context); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//加载config.json到spec数据结构</span></span><br><span class="line"> spec, err := setupSpec(context)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line">       <span class="comment">//创建容器</span></span><br><span class="line"> status, err := startContainer(context, spec, CT_ACT_CREATE, <span class="literal">nil</span>)</span><br><span class="line"> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">// exit with the container&#x27;s exit status so any external supervisor is</span></span><br><span class="line"> <span class="comment">// notified of the exit with the correct exit status.</span></span><br><span class="line"> os.Exit(status)</span><br><span class="line"> <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></li>
+<li><p><code>utils_linux.go/createContainer/CreateLibcontainerConfig</code>将<code>Spec</code>等相关配置信息转存到<code>Config</code>数据结构,为后续工厂执行操作提供入参</p>
+</li>
+<li><p>加载<code>Factory</code>接口，其中<code>LinuxFactory</code>将作为一种实现</p>
+<ul>
 <li>创建<code>root</code>目录 <code>root</code>用户执行是<code>/run/runc</code></li>
 <li>创建<code>LinuxFactory</code>数据结构</li>
 </ul>
 </li>
-<li>调用<code>Factory</code>的<code>Create()</code>方法，返回<code>Container</code>接口<strong>创建逻辑容器</strong>,其中<code>linuxContainer</code>将作为其中一种实现<ul>
+<li><p>调用<code>Factory</code>的<code>Create()</code>方法，返回<code>Container</code>接口<strong>创建逻辑容器</strong>,其中<code>linuxContainer</code>将作为其中一种实现</p>
+<ul>
 <li>验证容器<code>id</code>合法性</li>
 <li>验证<code>config</code>合法性</li>
 <li>通过<code>SecureJoinVFS</code>创建容器的<code>root</code>目录 <code>$&#123;root&#125;/containerid</code></li>
 <li>返回<code>Container</code>对象</li>
 </ul>
 </li>
-<li>创建<code>runner</code>在<code>r.run(spec.Process)</code>中执行<code>container.Start(process)</code><strong>创建物理容器</strong><code>Container</code>主要包含了容器配置、控制等信息，是对不同操作系统下容器实现的抽象,目前在<code>linux</code>平台相当于执行<code>func (c *linuxContainer) Start(process *Process) error</code><ul>
+<li><p>创建<code>runner</code>在<code>r.run(spec.Process)</code>中执行<code>container.Start(process)</code><strong>创建物理容器</strong><code>Container</code>主要包含了容器配置、控制等信息，是对不同操作系统下容器实现的抽象,目前在<code>linux</code>平台相当于执行<code>func (c *linuxContainer) Start(process *Process) error</code></p>
+<ul>
 <li>在容器<code>root</code>目录下创建<code>exec.fifo</code></li>
 <li>执行内置函数<code>func (c *linuxContainer) start(process *Process) (retErr error)</code><ul>
 <li>创建<code>parentProcess</code>,参与物理容器创建过程的<code>Process</code>一共有两个实例<ul>
@@ -204,15 +209,26 @@
 </li>
 <li>调用<code>parentProcess</code>的<code>forwardChildLogs</code>通过管道不断获取容器内的日志</li>
 <li>调用<code>parentProcess</code>的<code>start</code>，其实就是执行<code>func (p *initProcess) start() (retErr error)</code><ul>
-<li>这里会执行<code>runc init</code>,创建子进程完成容器的初始化工作,父子进程通过管道通信</li>
+<li>执行<code>err := p.cmd.Start()</code>会执行<code>runc init</code>命令,但是这个子进程会阻塞在<code>nsenter</code>的<code>func init()</code>，直到通过<code>nsenter</code>让父进程把需要用到相关<code>ns</code>的信息写入<code>socketpair</code>后才执行后面的函数  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, err := io.Copy(p.messageSockPair.parent, p.bootstrapData); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newSystemErrorWithCause(err, <span class="string">&quot;copying bootstrap data to pipe&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">err = &lt;-waitInit</span><br></pre></td></tr></table></figure></li>
+<li>向子进程发送<code>initConfig</code>,<code>init</code>进行容器初始化,创建网络、路由表、<code>rootfs</code>等</li>
+<li>通过<code>messageSockPair.parent</code>进行一系列消息交互,<code>init</code>向父进程发送<code>procReady</code>,等待父进程发送<code>procRun</code>,代表<code>init</code>可以进行<code>execv</code></li>
+<li>最后<code>init</code>会以只写方式打开<code>exec.fifo</code>,这里会阻塞直到另一个进程以读方式打开管道。然后写一个字符<code>0</code>,去执行后续的<code>execv</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fd, err := unix.Open(<span class="string">&quot;/proc/self/fd/&quot;</span>+strconv.Itoa(l.fifoFd), unix.O_WRONLY|unix.O_CLOEXEC, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newSystemErrorWithCause(err, <span class="string">&quot;open exec fifo&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := unix.Write(fd, []<span class="type">byte</span>(<span class="string">&quot;0&quot;</span>)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newSystemErrorWithCause(err, <span class="string">&quot;write 0 exec fifo&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
+<li><p>最终<code>runc init</code>将分离并作为容器内的<code>init</code>一直执行,容器的状态变为<code>created</code></p>
+</li>
 </ul>
-
+<h2 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h2><p><code>runc start test</code></p>
+<ul>
+<li>基于<code>/run/runc/&#123;containerid&#125;/state.json</code>加载<code>container</code>结构</li>
+<li><code>start</code>就是执行<code>container</code>的<code>exec</code>接口,将对应容器的<code>exec.fifo</code>以读方式打开,这样<code>init</code>就不会阻塞,去执行<code>exec</code>的命令,后面使用<code>select</code>读取<code>fifo</code>内容(字符<code>0</code>)</li>
+<li>读取到字符<code>0</code>后<code>handleFifoResult(result)</code>将删除<code>exec.fifo</code>文件</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *linuxContainer)</span></span> exec() <span class="type">error</span> &#123;</span><br><span class="line">	path := filepath.Join(c.root, execFifoFilename)</span><br><span class="line">	pid := c.initProcess.pid()</span><br><span class="line">	blockingFifoOpenCh := awaitFifoOpen(path)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> result := &lt;-blockingFifoOpenCh:</span><br><span class="line">			<span class="keyword">return</span> handleFifoResult(result)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> &lt;-time.After(time.Millisecond * <span class="number">100</span>):</span><br><span class="line">			stat, err := system.Stat(pid)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> || stat.State == system.Zombie &#123;</span><br><span class="line">				<span class="comment">// could be because process started, ran, and completed between our 100ms timeout and our system.Stat() check.</span></span><br><span class="line">				<span class="comment">// see if the fifo exists and has data (with a non-blocking open, which will succeed if the writing process is complete).</span></span><br><span class="line">				<span class="keyword">if</span> err := handleFifoResult(fifoOpen(path, <span class="literal">false</span>)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="keyword">return</span> errors.New(<span class="string">&quot;container process is already dead&quot;</span>)</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -435,11 +451,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
