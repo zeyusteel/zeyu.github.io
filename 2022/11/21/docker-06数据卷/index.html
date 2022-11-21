@@ -16,7 +16,7 @@
 <meta property="og:description" content="volume是存在于一个或多个容器中的特定文件或文件夹，这个目录以独立于联合文件系统的形式在宿主机中存在，并为数据的共享与持久化提供以下便利 12345type Daemon struct &amp;#123;    ...	volumes           *volumesservice.VolumesService    ...&amp;#125;   volume在容器创建时就会初始化，在容器运行时就可以">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-21T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-11-21T03:27:20.889Z">
+<meta property="article:modified_time" content="2022-11-21T06:51:27.523Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -194,6 +194,9 @@
 
 <p>还原</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name vol_bck -v /data ubuntu /bin/bash</span><br><span class="line">docker run --<span class="built_in">rm</span> --volumes-from vol_bck -v $(<span class="built_in">pwd</span>):/backup ubuntu tar xvf /backup/data.tar -C /​</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>数据卷都在<code>runc</code>基于<code>bind mount</code>实现,将需要绑定的原地址、目的地址写到<code>config.json</code>,<code>runc</code>在创建<code>rootfs</code>时会将对应地址绑定到新的<code>rootfs</code>然后支持<code>pivot_root</code></p>
+
       
 
       
