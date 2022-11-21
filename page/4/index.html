@@ -1434,112 +1434,6 @@
 
 
   
-    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
-  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>用<code>virtual</code>关键字说明的函数</li>
-<li>虚函数是实现运行时多态性基础</li>
-<li>C++中的虚函数是动态绑定的函数</li>
-<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
-</ul>
-<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
-<li>一般成员函数可以是虚函数</li>
-<li>构造函数不能是虚函数 </li>
-<li>析构函数可以是虚函数</li>
-</ul>
-<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
-<li><p>虚函数的声明</p>
-<p>  virtual 函数类型 函数名（形参表);</p>
-</li>
-<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
-</li>
-<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
-</li>
-<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
-</li>
-</ul>
-<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
-<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
-<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
-<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
-</ul>
-</li>
-<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
-<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
-<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
-</ul>
-<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-cpp-16模板和泛型编程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1868,6 +1762,112 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/08/20/cpp-16%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
+  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
+<li>用<code>virtual</code>关键字说明的函数</li>
+<li>虚函数是实现运行时多态性基础</li>
+<li>C++中的虚函数是动态绑定的函数</li>
+<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
+</ul>
+<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
+<li>一般成员函数可以是虚函数</li>
+<li>构造函数不能是虚函数 </li>
+<li>析构函数可以是虚函数</li>
+</ul>
+<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
+<li><p>虚函数的声明</p>
+<p>  virtual 函数类型 函数名（形参表);</p>
+</li>
+<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
+</li>
+<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
+</li>
+<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
+</li>
+</ul>
+<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
+<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
+<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
+<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
+</ul>
+</li>
+<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
+<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
+<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
+</ul>
+<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
         </p>
       
 

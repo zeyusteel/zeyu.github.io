@@ -16,7 +16,7 @@
 <meta property="og:description" content="Docker Daemon1dockerd [OPTIONS]  服务端的入口函数在cmd&#x2F;dockerd&#x2F;docker.go dockerd将根据options来初始化服务,服务端的命令和客户端一样也是采用cobra构建  装载cobra命令模版cmd&#x2F;dockerd&#x2F;docker.go&#x2F;newDaemonCommand  执行cmd&#x2F;dockerd&#x2F;docker_unix.go&#x2F;runDaem">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-01T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-23T03:03:52.106Z">
+<meta property="article:modified_time" content="2022-11-21T06:58:15.950Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -171,33 +171,33 @@
         <h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd [OPTIONS]</span><br></pre></td></tr></table></figure>
 
 <p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
-<p>dockerd将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
+<p><code>dockerd</code>将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
 <ul>
-<li><p>装载cobra命令模版<code>cmd/dockerd/docker.go/newDaemonCommand</code></p>
+<li><p>装载<code>cobra</code>命令模版<code>cmd/dockerd/docker.go/newDaemonCommand</code></p>
 </li>
 <li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
 </li>
-<li><p>初始化各项参数,TLS、日志等级……</p>
+<li><p>初始化各项参数,<code>TLS</code>、日志等级……</p>
 </li>
-<li><p>linux下检测<code>euid</code>是不是<code>root</code></p>
+<li><p><code>linux</code>下检测<code>euid</code>是不是<code>root</code></p>
 </li>
-<li><p>设置umask</p>
+<li><p>设置<code>umask</code></p>
 </li>
-<li><p>创建docker根目录,默认<code>/var/lib/docker</code>,以及<code>docker exec</code>目录,默认<code>/var/run/docker</code></p>
+<li><p>创建<code>docker</code>根目录,默认<code>/var/lib/docker</code>,以及<code>docker exec</code>目录,默认<code>/var/run/docker</code></p>
 </li>
-<li><p>检测pid文件</p>
+<li><p>检测<code>pid</code>文件</p>
 </li>
 <li><p>配置<code>API server</code>和监听端口</p>
 </li>
 <li><p>初始化<code>ContainerD</code>以及退出清理函数</p>
 </li>
-<li><p><code>NewDaemon</code>创建daemon对象</p>
+<li><p><code>NewDaemon</code>创建<code>daemon</code>对象</p>
   <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>将<code>api server</code>的应答接口与daemon对象绑定,<code>initRouter(routerOptions)</code></p>
+<li><p>将<code>api server</code>的应答接口与<code>daemon</code>对象绑定,<code>initRouter(routerOptions)</code></p>
 </li>
 <li><p>通过<code>goroutine</code>启动<code>api servier</code>监听 </p>
   <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
-<li><p>daemon结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
+<li><p><code>daemon</code>结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
 </li>
 </ul>
 <h3 id="NewDaemon"><a href="#NewDaemon" class="headerlink" title="NewDaemon"></a>NewDaemon</h3><p><code>NewDaemon</code>会进一步初始化<code>docker daemon</code>,并返回<code>Daemon</code>对象,Daemon对象将响应<code>api servier</code>执行具体的操作</p>
@@ -207,13 +207,13 @@
 <li>对配置参数进行校验,对一些产生冲突的参数一起使用时报错并退出</li>
 <li>检测内核版本和系统</li>
 <li>创建<code>/var/lib/docker/containers</code></li>
-<li>创建<code>/var/lib/docker/runtimes</code>, 初始化runtimes</li>
+<li>创建<code>/var/lib/docker/runtimes</code>, 初始化<code>runtimes</code></li>
 <li>设置<code>grpc</code>,创建<code>containerdCli</code></li>
 <li>创建插件管理器 </li>
 <li>创建<code>graphDrivers</code> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li>创建volumeService</li>
-<li>创建imageService</li>
-<li>创建容器客户端libcontainerd</li>
+<li>创建<code>volumeService</code></li>
+<li>创建<code>imageService</code></li>
+<li>创建容器客户端<code>libcontainerd</code></li>
 </ul>
 <h2 id="创建容器流程"><a href="#创建容器流程" class="headerlink" title="创建容器流程"></a>创建容器流程</h2><p><code>docker create</code></p>
 <ul>

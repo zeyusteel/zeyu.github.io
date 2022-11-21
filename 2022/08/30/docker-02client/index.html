@@ -16,7 +16,7 @@
 <meta property="og:description" content="写在前面自从20.10版本,原来Docker-CE的仓库就不再使用，而是分成了Docker CLI和Docker Engine,后续涉及源码的地方都将基于v20.10.12展开 Docker Client1​​docker [OPTIONS] COMMAND [arg...]​​  docker client入口函数在cmd&#x2F;docker&#x2F;docker.go 01 初始化DockerCli调用cl">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-30T01:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-11T03:18:05.410Z">
+<meta property="article:modified_time" content="2022-11-21T06:56:41.354Z">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
   
@@ -172,7 +172,7 @@
 <h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
 
 <p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
-<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个cli,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
+<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个<code>cli</code>,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
 <p><code>DockerCli</code>将作为客户端的上下文存在于整个生命周期</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DockerCli <span class="keyword">struct</span> &#123;</span><br><span class="line">	configFile         *configfile.ConfigFile</span><br><span class="line">	in                 *streams.In</span><br><span class="line">	out                *streams.Out</span><br><span class="line">	err                io.Writer</span><br><span class="line">	client             client.APIClient</span><br><span class="line">	serverInfo         ServerInfo</span><br><span class="line">	clientInfo         *ClientInfo</span><br><span class="line">	contentTrust       <span class="type">bool</span></span><br><span class="line">	contextStore       store.Store</span><br><span class="line">	currentContext     <span class="type">string</span></span><br><span class="line">	dockerEndpoint     docker.Endpoint</span><br><span class="line">	contextStoreConfig store.Config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -180,12 +180,12 @@
 <li>初始化命令模版: 在<code>newDockerCommand</code>中初始化命令行模版,命令模版:<code>vendor/github.com/spf13/cobra/command.go/command</code></li>
 <li>初始化<code>Flags</code>并关联<code>Options</code>: <code>cli/flags/common.go/InstallFlags</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CommonOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Debug      <span class="type">bool</span></span><br><span class="line">    Hosts      []<span class="type">string</span></span><br><span class="line">    LogLevel   <span class="type">string</span></span><br><span class="line">    TLS        <span class="type">bool</span></span><br><span class="line">    TLSVerify  <span class="type">bool</span></span><br><span class="line">    TLSOptions *tlsconfig.Options</span><br><span class="line">    Context    <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li>初始化命令: <code>cli/command/commands/commands.go/AddCommands</code>,<code>cli/command/container</code>下包含容器相关的命令,<code>cli/command/image</code>下包含镜像相关的命令,以此类推</li>
-<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将os.Args的<code>Options</code>切分后面就是<code>args</code></li>
-<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和daemon通信)</li>
-<li>解析<code>os.Args</code>后面的args,匹配相关命令</li>
+<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将<code>os.Args</code>的<code>Options</code>切分后面就是<code>args</code></li>
+<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和<code>daemon</code>通信)</li>
+<li>解析<code>os.Args</code>后面的<code>args</code>,匹配相关命令</li>
 <li>执行匹配到的命令</li>
 </ol>
-<h2 id="源码编译cli"><a href="#源码编译cli" class="headerlink" title="源码编译cli"></a>源码编译cli</h2><p>cli是在docker容器中编译的,但是通过dockerfile构建容器时可能会遇到网络问题导致部分依赖拉取失败</p>
+<h2 id="源码编译cli"><a href="#源码编译cli" class="headerlink" title="源码编译cli"></a>源码编译cli</h2><p><code>cli</code>是在<code>docker</code>容器中编译的,但是通过<code>dockerfile</code>构建容器时可能会遇到网络问题导致部分依赖拉取失败</p>
 <ol>
 <li><p>修改<code>dockerfiles/Dockerfile.binary-native</code>,换源</p>
  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">FROM</span>    golang:$&#123;GO_VERSION&#125;-alpine</span><br><span class="line"><span class="comment">#换源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g&#x27;</span> /etc/apk/repositories</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">     apk add -U git bash coreutils gcc musl-dev</span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
