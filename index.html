@@ -145,6 +145,156 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-linux-mount" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/11/26/linux-mount/">Linux mount</a>
+    </h1>
+  
+
+        
+        <a href="/2022/11/26/linux-mount/" class="archive-article-date">
+  	<time datetime="2022-11-26T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t <span class="built_in">type</span> device <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
+
+<p><code>mount</code>命令用于将某些设备上的文件系统附加到指定目录,<code>dir</code>即是对应文件系统的根目录,<code>mount</code>后原目录下的内容都将不可见</p>
+<p>多数情况下不用指定<code>-t</code>参数显式地说明文件系统的类型</p>
+<p>通过查看<code>/proc/filesystems</code>文件来查看当前系统具体都支持哪些文件系统,<code>nodev</code>表示不需要设备</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:/proc$ <span class="built_in">cat</span> filesystems </span><br><span class="line">nodev	sysfs</span><br><span class="line">nodev	tmpfs</span><br><span class="line">nodev	bdev</span><br><span class="line">nodev	proc</span><br><span class="line">nodev	cgroup</span><br><span class="line">nodev	cgroup2</span><br><span class="line">nodev	cpuset</span><br><span class="line">nodev	devtmpfs</span><br><span class="line">nodev	configfs</span><br><span class="line">nodev	debugfs</span><br><span class="line">nodev	tracefs</span><br><span class="line">nodev	securityfs</span><br><span class="line">nodev	sockfs</span><br><span class="line">nodev	bpf</span><br><span class="line">nodev	pipefs</span><br><span class="line">nodev	ramfs</span><br><span class="line">nodev	hugetlbfs</span><br><span class="line">nodev	devpts</span><br><span class="line">	ext3</span><br><span class="line">	ext2</span><br><span class="line">	ext4</span><br><span class="line">	squashfs</span><br><span class="line">	vfat</span><br><span class="line">nodev	ecryptfs</span><br><span class="line">	fuseblk</span><br><span class="line">nodev	fuse</span><br><span class="line">nodev	fusectl</span><br><span class="line">nodev	efivarfs</span><br><span class="line">nodev	mqueue</span><br><span class="line">nodev	pstore</span><br><span class="line">nodev	autofs</span><br><span class="line">nodev	binfmt_misc</span><br><span class="line">nodev	overlay</span><br><span class="line">nodev	prl_fs</span><br><span class="line">nodev	aufs</span><br></pre></td></tr></table></figure>
+
+<p>同一个文件系统可以被挂载多次,甚至可以在同一个挂载点被挂载多次,这些完全是由内核以及不同文件系统特性决定的</p>
+<h2 id="列表显示挂载信息"><a href="#列表显示挂载信息" class="headerlink" title="列表显示挂载信息"></a>列表显示挂载信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount [-l] [-t <span class="built_in">type</span>]</span><br></pre></td></tr></table></figure>
+<p>更推荐使用<code>findmnt</code></p>
+<h2 id="设备标识"><a href="#设备标识" class="headerlink" title="设备标识"></a>设备标识</h2><p>磁盘分区的设备名称不稳定；硬件重新配置、添加或删除设备可能会导致名称更改。强烈建议使用<code>UUID</code>或<code>LABEL</code>等标识符</p>
+<p>命令<code>lsblk --fs</code>提供了可用块设备上的文件系统、<code>LABEL</code>和<code>UUID</code>的概述</p>
+<p>命令<code>blkid -p ＜device＞</code>提供了有关指定设备上文件系统的详细信息</p>
+<p>无法保证<code>UUID</code>和标签真的是唯一的，尤其是当移动、共享或复制设备时。使用<code>lsblk -o +UUID,PARTUUID</code>以验证<code>UUID</code>在系统中是否真正唯一</p>
+<h2 id="x2F-etc-x2F-fstab-x2F-etc-x2F-mtab-and-x2F-proc-x2F-mounts"><a href="#x2F-etc-x2F-fstab-x2F-etc-x2F-mtab-and-x2F-proc-x2F-mounts" class="headerlink" title="&#x2F;etc&#x2F;fstab, &#x2F;etc&#x2F;mtab and &#x2F;proc&#x2F;mounts"></a>&#x2F;etc&#x2F;fstab, &#x2F;etc&#x2F;mtab and &#x2F;proc&#x2F;mounts</h2><p><code>/etc/mtab</code>和 <code>/proc/mounts</code>一样，都是指向<code>/proc/self/mounts</code>的链接文件,用于维护当前挂载的文件系统的列表同时支持命名空间，容器和其他高级Linux功能一起使用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mntent</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="type">char</span> *mnt_fsname;           <span class="comment">/* 文件系统对应的设备路径或者服务器地址  */</span></span><br><span class="line">    <span class="type">char</span> *mnt_dir;              <span class="comment">/* 文件系统挂载到的系统路径 */</span></span><br><span class="line">    <span class="type">char</span> *mnt_type;             <span class="comment">/* 文件系统类型: ufs, nfs, 等  */</span></span><br><span class="line">    <span class="type">char</span> *mnt_opts;             <span class="comment">/* 文件系统挂载参数，以逗号分隔  */</span></span><br><span class="line">    <span class="type">int</span> mnt_freq;               <span class="comment">/* 文件系统备份频率（以天为单位）  */</span></span><br><span class="line">    <span class="type">int</span> mnt_passno;             <span class="comment">/* 开机fsck的顺序，如果为0，不会进行check */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>挂载<code>fstab</code>或<code>mtab</code>中提到的文件系统时，只需在命令行上仅指定设备或仅指定挂载点即可</p>
+<p><code>mount /dir</code>会让<code>mount</code>去<code>/etc/fstab</code>下寻找定义的挂载点,<code>mount dev</code>也是同理,可以通过<code>--target</code>或者<code>--source</code>避免歧义</p>
+<p><code>mount -a</code> 会将<code>/etc/fstab</code>中定义的所有挂载点都挂上,一般是在系统启动时的脚本中调用</p>
+<p>如果要覆盖<code>/etc/fstab</code>中的安装选项，则必须使用<code>-o</code>选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount device|<span class="built_in">dir</span> -o options</span><br></pre></td></tr></table></figure>
+<p>如果同时指定了设备（或<code>LABEL</code>，<code>UUID</code>，<code>PARTUUID</code>或<code>PARTLABEL</code>）和目录，则挂载程序不会读取<code>/etc/fstab</code>文件</p>
+<p>可以通过命令行选项<code>–options-source-force</code>更改此默认行为，以始终从<code>fstab</code>读取配置。对于非<code>root</code>用户，<code>mount</code>始终读取<code>fstab</code>配置</p>
+<h2 id="非特权用户"><a href="#非特权用户" class="headerlink" title="非特权用户"></a>非特权用户</h2><p>通常只有超级用户才能挂载文件系统。但是，当<code>fstab</code>在一行上包含<code>user</code>选项时，任何人都可以挂载相应的文件系统</p>
+<p>挂载文件系统对应的用户才能卸载它。如果有任何用户应该能够卸载它，则在<code>fstab</code>行中使用<code>users</code>而不是<code>user</code></p>
+<p><code>owner</code>选项限制用户必须是挂载文件的所有者,<code>group</code>选项也是同理</p>
+<h2 id="挂载"><a href="#挂载" class="headerlink" title="挂载"></a>挂载</h2><h3 id="只读挂载"><a href="#只读挂载" class="headerlink" title="只读挂载"></a>只读挂载</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o ro /dev/sdb1 /mnt</span><br></pre></td></tr></table></figure>
+<h3 id="重新挂载"><a href="#重新挂载" class="headerlink" title="重新挂载"></a>重新挂载</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /mnt -o rw,remount</span><br></pre></td></tr></table></figure>
+<h3 id="挂载虚拟文件系统"><a href="#挂载虚拟文件系统" class="headerlink" title="挂载虚拟文件系统"></a>挂载虚拟文件系统</h3><p><code>proc</code>、<code>tmpfs</code>、<code>sysfs</code>、<code>devpts</code>等都是<code>Linux</code>内核映射到用户空间的虚拟文件系统，它们不和具体的物理设备关联，但它们具有普通文件系统的特征，应用层程序可以像访问普通文件系统一样来访问他们</p>
+<p>由于是内核虚拟的一个文件系统，并没有对应的设备，所以这里的<code>-t</code>参数不能省略。由于没有对应的源设备，这里的设备可以是任意字符串，取个有意义的名字就可以了，因为用<code>mount</code>命令查看挂载点信息时第一列显示的就是这个字符串</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t tmpfs -o size=512m tmpfs /mnt</span><br></pre></td></tr></table></figure>
+
+<h3 id="挂载loop设备"><a href="#挂载loop设备" class="headerlink" title="挂载loop设备"></a>挂载loop设备</h3><p><code>loop device</code>是虚拟的块设备，主要目的是让用户可以像访普通块设备那样访问一个文件。<code>loop device</code>设备的路径一般是<code>/dev/loop0、dev/loop1</code>等</p>
+<p>需要用到<code>loop device</code>的最常见的场景是挂载一个<code>ISO</code>文件。比如将<code>/tmp/test.iso</code>这个光盘镜像文件使用<code>loop</code>模式挂载到<code>/mnt</code>下，这样就不需要把<code>ISO</code>文件刻录到光盘上了，当然也不需要光驱了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkisofs -o test.iso projects/</span><br><span class="line">mount test.iso /mnt</span><br></pre></td></tr></table></figure>
+
+<p>创建虚拟硬盘</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero bs=1M count=512 of=./vdisk.img</span><br><span class="line">mkfs -t ext4 vdisk.img</span><br><span class="line">mount vdisk.img /mnt</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h2><p>可以将任何一个挂载点、普通目录或者文件挂载到其它的地方</p>
+<p>绑定挂载并不会处理子挂载点,需要使用<code>--rbind</code></p>
+<p>只读<code>bind</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o <span class="built_in">bind</span>,ro foo foo</span><br></pre></td></tr></table></figure>
+
+<p>但是内核并不支持直接只读<code>bind</code>,所以上述命令并不是一个原子操作,而是通过<code>remount</code>实现的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mount --<span class="built_in">bind</span> olddir newdir</span><br><span class="line">mount -o remount,<span class="built_in">bind</span>,ro olddir newdir</span><br></pre></td></tr></table></figure>
+
+<p>同样的<code>nosuid</code>, <code>nodev</code>, <code>noexec</code>, <code>noatime</code>, <code>nodiratime</code>, <code>relatime</code>等<code>vfs</code>标志也可以通过这个方式添加,但是像这样<code>-o rbind,ro</code>递归添加参数是不可以的</p>
+<h2 id="move"><a href="#move" class="headerlink" title="move"></a>move</h2><p>把旧的挂载点移动到新的目录去</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount --move olddir newdir</span><br></pre></td></tr></table></figure>
+
+<p>果挂载点的父挂载点为<code>shared</code>类型，就不能移动该挂载点,可以通过<code>findmnt -o TARGET,PROPAGATION</code>查看所有挂载点传播标志</p>
+<p>可以通过<code>mount --make-private /</code>修改父挂载点传播类型为<code>private</code>,然后再用<code>findmnt -o TARGET,PROPAGATION /</code>确认</p>
+<p><strong>请求–make-操作时，mount不会读取fstab,必须在命令行上指定所有必需的信息</strong></p>
+<h2 id="Shared-subtree"><a href="#Shared-subtree" class="headerlink" title="Shared subtree"></a>Shared subtree</h2><p><code>shared subtree</code>就是一种控制子挂载点能否在其他地方被看到的技术，它只会在<code>bind mount</code>和<code>mount namespace</code>中用到。</p>
+<p>移动挂载点时提到了挂载点的类型，其实叫<code>propagation type</code>(传播类型)。</p>
+<h3 id="propagation-type"><a href="#propagation-type" class="headerlink" title="propagation type"></a>propagation type</h3><p>每个挂载点都有一个<code>propagation type</code>标志，由它来决定当在一个挂载点的下面创建和移除挂载点的时候，是否会传播到属于相同<code>peer group</code>的其他挂载点下面，也即同一个<code>peer group</code>里的其他的挂载点下面是不是也会创建和移除相应的挂载点。当前一共有4种不同类型的 <code>propagation type</code></p>
+<ul>
+<li><strong>shared</strong>：从名字就可以看出，挂载信息会在同一个<code>peer group</code>的不同挂载点之间共享传播。当一个挂载点下面添加或者删除挂载点的时候，同一个<code>peer group</code>里的其他挂载点下面也会挂载和卸载同样的挂载点</li>
+<li><strong>private</strong>：跟上面的刚好相反，挂载信息根本就不共享，也即<code>private</code>的挂载点不会属于任何<code>peer group</code></li>
+<li><strong>slave</strong>：信息的传播是单向的，在同一个<code>peer group</code>里面，<code>master</code>的挂载点下面发生变化的时候，<code>slave</code>的挂载点下面也跟着变化。但反之则不然，<code>slave</code>下发生变化的时候不会通知<code>master</code>，<code>master</code>不会发生变化</li>
+<li><strong>unbindable</strong>：这个和<code>private</code>相同，只是这种类型的挂载点不能作为<code>bind mount</code>的源，主要用来防止递归嵌套情况的出现</li>
+</ul>
+<p><code>propagation type</code>是挂载点的属性，对每个挂载点来说都是独立的</p>
+<p>挂载点是有父子关系的，比如挂载点<code>/</code>和<code>/mnt</code>，<code>/mnt</code>是<code>/</code>的子挂载点，<code>/</code>是<code>/mnt</code>的父挂载点</p>
+<p>默认情况下，如果父挂载点是<code>shared</code>，那么子挂载点也是<code>shared</code>的</p>
+<h3 id="peer-group"><a href="#peer-group" class="headerlink" title="peer group"></a>peer group</h3><p><code>peer group</code>就是一个或多个挂载点的集合，他们之间可以共享挂载信息。在下面两种情况下会使两个挂载点属于同一个<code>peer group</code>(前提条件是<strong>挂载点</strong>的<code>propagation type</code>是<code>shared</code>)</p>
+<ul>
+<li>利用<code>mount --bind</code>命令，将会使源和目标挂载点属于同一个<code>peer group</code>，当然前提条件是源必须要是一个挂载点</li>
+<li>当创建新的<code>mount namespace</code>时，新<code>namespace</code>会拷贝一份老<code>namespace</code>的挂载点信息，于是新的和老的<code>namespace</code>里面的相同挂载点就会属于同一个<code>peer group</code></li>
+</ul>
+<p><code>propagation type</code>和<code>peer group</code>表现在<code>/proc/self/mountinfo</code>的<code>(7)</code>中,注意这个字段可能为空(当挂载方式为<code>--make-private</code>)</p>
+<p>(<code>master:1</code>表示当前挂载点是<code>peer group 1</code>的<code>slave</code>)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">See http://man7.org/linux/man-pages/man5/proc.5.html</span><br><span class="line"></span><br><span class="line">36 35 98:0 /mnt1 /mnt2 rw,noatime master:1 - ext3 /dev/root rw,errors=continue</span><br><span class="line">(1)(2)(3)   (4)   (5)      (6)      (7)   (8) (9)   (10)         (11)</span><br><span class="line"></span><br><span class="line">(1) mount ID:  unique identifier of the mount (may be reused after umount)</span><br><span class="line">(2) parent ID:  ID of parent (or of self for the top of the mount tree)</span><br><span class="line">(3) major:minor:  value of st_dev for files on filesystem</span><br><span class="line">(4) root:  root of the mount within the filesystem</span><br><span class="line">(5) mount point:  mount point relative to the process&#x27;s root</span><br><span class="line">(6) mount options:  per mount options</span><br><span class="line">(7) optional fields:  zero or more fields of the form &quot;tag[:value]&quot;</span><br><span class="line">(8) separator:  marks the end of the optional fields</span><br><span class="line">(9) filesystem type:  name of filesystem of the form &quot;type[.subtype]&quot;</span><br><span class="line">(10) mount source:  filesystem specific information or &quot;none&quot;</span><br><span class="line">(11) super options:  per super block options</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/11/26/linux-mount/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-07dockerfile" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1203,112 +1353,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/08/17/head-first-go-17openfile/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-head-first-go-16html模版" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/16/head-first-go-16html%E6%A8%A1%E7%89%88/">Head First Go - 16html模板</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/16/head-first-go-16html%E6%A8%A1%E7%89%88/" class="archive-article-date">
-  	<time datetime="2022-08-16T00:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="template"><a href="#template" class="headerlink" title="template"></a>template</h2><p>Go提供了一个html&#x2F;template包，它将从文件加载HTML，并为我们插入签名</p>
-<p>html&#x2F;template包基于text&#x2F;template包。使用这两个包的方法几乎完全相同，但是html&#x2F;template有一些额外的安全特性(自动转译模版中插入的html代码，避免恶意攻击)</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;text/template&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	在main中，我们调用text/template包的New函数，该函数返回一个指向新Template值的指针。</span></span><br><span class="line"><span class="comment">	然后我们调用Template上的Parse方法，并将字 符串&quot;Here&#x27;s my template!\n&quot;传递给它。</span></span><br><span class="line"><span class="comment">	Parse使用字符串参数作为模板的文本。Parse返回模板和一个error值。我们将模板存储在tmpl变量中</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	text := <span class="string">&quot;Here&#x27;s my template\n&quot;</span></span><br><span class="line">	tmpl, err := template.New(<span class="string">&quot;Text&quot;</span>).Parse(text)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = tmpl.Execute(os.Stdout, <span class="literal">nil</span>) <span class="comment">//将模版写入终端</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>Template.Execute()</code>第一个参数传入一个<code>io.Writer</code>,只要满足<code>Write</code>接口就可以,例如<code>http.ResponseWriter</code>和<code>os.Stdout</code>都有<code>Write</code>方法</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io <span class="comment">// import &quot;io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</span><br><span class="line">	Write(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><code>Template</code>值的<code>Execute</code>方法的第二个参数允许你传入要插入到模板中的数据。它的类型是空接口，这意味着你可以传入任何类型的值。</p>
-<h3 id="action插入"><a href="#action插入" class="headerlink" title="action插入"></a>action插入</h3><p>要在模板中插入数据，可以向模板文本添加action(操作)。action用双花括号<code>&#123;&#123;&#125;&#125;</code>表示。在双花括号中，指定要插入的数据或要模板执行的操作。每当模板遇到action时，它将计算其内容，并在action的位置将结果插入模板文本中。在一个操作中，你可以使用一个带有“dot”(点)的Execute方法来引用传递给它的数据值</p>
-<h3 id="if-action"><a href="#if-action" class="headerlink" title="if action"></a>if action</h3><p>模板中<code>&#123;&#123;if.&#125;&#125;</code>action与其对应的<code>&#123;&#123;end&#125;&#125;</code>标记之间的一段只有在条件为真时才会包含</p>
-<h3 id="range-action"><a href="#range-action" class="headerlink" title="range action"></a>range action</h3><p>在<code>&#123;&#123;range.&#125;&#125;</code>action与其对应的<code>&#123;&#123;end&#125;&#125;</code>标记之间的模板部分，将对数组、切片、映射或channel中收集的每个值进行重复。该部分中的任何操作也将被重复</p>
-<h3 id="struct-action"><a href="#struct-action" class="headerlink" title="struct action"></a>struct action</h3><p>在模版通过<code>&#123;&#123;.value&#125;&#125;</code>填充结构体的值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;text/template&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> mySt <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">execTemplate</span><span class="params">(text <span class="type">string</span>, data <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	tmpl, err := template.New(<span class="string">&quot;Text&quot;</span>).Parse(text)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = tmpl.Execute(os.Stdout, data) </span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	execTemplate(<span class="string">&quot;hhh &#123;&#123;.&#125;&#125;\n&quot;</span>, <span class="string">&quot;abc&quot;</span>)</span><br><span class="line">	execTemplate(<span class="string">&quot;hhh &#123;&#123;if.&#125;&#125; run &#123;&#123;end&#125;&#125; hhh\n&quot;</span>, <span class="literal">true</span>)</span><br><span class="line">	execTemplate(<span class="string">&quot;hhh &#123;&#123;if.&#125;&#125; run &#123;&#123;end&#125;&#125; hhh\n&quot;</span>, <span class="literal">false</span>)</span><br><span class="line">	execTemplate(<span class="string">&quot;hhh &#123;&#123;range.&#125;&#125; run&#123;&#123;.&#125;&#125; &#123;&#123;end&#125;&#125;\n&quot;</span>, []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;)</span><br><span class="line">	execTemplate(<span class="string">&quot;hhh &#123;&#123;.Name&#125;&#125;  &#123;&#123;.Age&#125;&#125;\n&quot;</span>, mySt&#123; Name:<span class="string">&quot;zeyu&quot;</span>, Age:<span class="number">18</span>&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="web程序响应html模版"><a href="#web程序响应html模版" class="headerlink" title="web程序响应html模版"></a>web程序响应html模版</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bufio&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;html/template&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Guestbook is a struct used in rendering view.html.</span></span><br><span class="line"><span class="keyword">type</span> Guestbook <span class="keyword">struct</span> &#123;</span><br><span class="line">	SignatureCount <span class="type">int</span> <span class="comment">//签名总数</span></span><br><span class="line">	Signatures     []<span class="type">string</span> <span class="comment">//签名内容</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// check calls log.Fatal on any non-nil error.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(err <span class="type">error</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// viewHandler reads guestbook signatures and displays them together</span></span><br><span class="line"><span class="comment">// with a count of all signatures.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewHandler</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	signatures := getStrings(<span class="string">&quot;signatures.txt&quot;</span>) <span class="comment">//逐行读文件，文件不存在返回空切片</span></span><br><span class="line">	html, err := template.ParseFiles(<span class="string">&quot;view.html&quot;</span>) <span class="comment">//创建html模版</span></span><br><span class="line">	check(err)</span><br><span class="line">	guestbook := Guestbook&#123;</span><br><span class="line">		SignatureCount: <span class="built_in">len</span>(signatures),</span><br><span class="line">		Signatures:     signatures,</span><br><span class="line">	&#125;</span><br><span class="line">	err = html.Execute(writer, guestbook) <span class="comment">//将数据插入模版，并写回http.ResponseWriter</span></span><br><span class="line">	check(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// newHandler displays a form to enter a signature.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newHandler</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	html, err := template.ParseFiles(<span class="string">&quot;new.html&quot;</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	err = html.Execute(writer, <span class="literal">nil</span>)</span><br><span class="line">	check(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// createHandler takes a POST request with a signature to add, and</span></span><br><span class="line"><span class="comment">// appends it to the signatures file.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createHandler</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	signature := request.FormValue(<span class="string">&quot;signature&quot;</span>) <span class="comment">//获取html signature表单字段的值</span></span><br><span class="line">	options := os.O_WRONLY | os.O_APPEND | os.O_CREATE</span><br><span class="line">	file, err := os.OpenFile(<span class="string">&quot;signatures.txt&quot;</span>, options, os.FileMode(<span class="number">0600</span>))</span><br><span class="line">	check(err)</span><br><span class="line">	_, err = fmt.Fprintln(file, signature) <span class="comment">//将值写入signatures.txt</span></span><br><span class="line">	check(err)</span><br><span class="line">	err = file.Close()</span><br><span class="line">	check(err)</span><br><span class="line">	http.Redirect(writer, request, <span class="string">&quot;/guestbook&quot;</span>, http.StatusFound) <span class="comment">//将浏览器重定向到 /guestbook</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// getStrings returns a slice of strings read from fileName, one</span></span><br><span class="line"><span class="comment">// string per line.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getStrings</span><span class="params">(fileName <span class="type">string</span>)</span></span> []<span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">var</span> lines []<span class="type">string</span></span><br><span class="line">	file, err := os.Open(fileName)</span><br><span class="line">	<span class="keyword">if</span> os.IsNotExist(err) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	check(err)</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">	scanner := bufio.NewScanner(file)</span><br><span class="line">	<span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">		lines = <span class="built_in">append</span>(lines, scanner.Text())</span><br><span class="line">	&#125;</span><br><span class="line">	check(scanner.Err())</span><br><span class="line">	<span class="keyword">return</span> lines</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">&quot;/guestbook&quot;</span>, viewHandler) <span class="comment">//查看签名列表的请求</span></span><br><span class="line">	http.HandleFunc(<span class="string">&quot;/guestbook/new&quot;</span>, newHandler) <span class="comment">//获取html表单的请求</span></span><br><span class="line">	http.HandleFunc(<span class="string">&quot;/guestbook/create&quot;</span>, createHandler) <span class="comment">//提交表单的请求</span></span><br><span class="line">	err := http.ListenAndServe(<span class="string">&quot;localhost:8080&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line">	log.Fatal(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://headfirstgo.com/source/head-first-go-ch16-code.zip">下载html链接</a></p>
-<h2 id="html模版"><a href="#html模版" class="headerlink" title="html模版"></a>html模版</h2><ul>
-<li><code>&lt;h1&gt;</code>  : 一级标题。通常以大的、粗体文本显示</li>
-<li><code>&lt;div&gt;</code> : division元素。它本身不直接可见，但用于将页面划分为多个部分</li>
-<li><code>&lt;p&gt;</code>   : 一段文字。我们将把每个签名作为一个单独的段落来处理</li>
-<li><code>&lt;a&gt;</code>   : 代表“anchor”(锚)。创建一个链接</li>
-</ul>
-<p>view.html</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Guestbook<span class="tag">&lt;/<span class="name">h1</span>&gt;</span> <span class="comment">&lt;!--页面顶部一级标题--&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	&#123;&#123;.SignatureCount&#125;&#125; total signatures - <span class="comment">&lt;!--这里插入签名数量--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/guestbook/new&quot;</span>&gt;</span>Add Your Signature<span class="tag">&lt;/<span class="name">a</span>&gt;</span> <span class="comment">&lt;!--指向html表单路径的链接--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	&#123;&#123;range .Signatures&#125;&#125;</span><br><span class="line">		<span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;&#123;.&#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span> <span class="comment">&lt;!--这里插入签名--&gt;</span></span><br><span class="line">	&#123;&#123;end&#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>&lt;form&gt;</code>:该元素包含表单的所有其他组件</li>
-<li>具有<code>type</code>属性为<code>&quot;text&quot;</code>的<code>&lt;input&gt;</code>:用户可以在其中输入字符串的文本字段。它的<code>name</code>属性将用于标记发送到服务器的数据中字段的值 (类似于映射键)</li>
-<li>具有<code>type</code>属性为<code>&quot;submit&quot;</code>的<code>&lt;input&gt;</code>:创建一个按钮，用户可以单击该按钮来提交表单的数据</li>
-<li><code>POST</code>:当浏览器需要向服务器添加一些数据时使用，通常是因为你提交了一个包含新数据的表单</li>
-<li><code>GET</code>:当浏览器需要从服务器获取某些内容时使用，通常是因为你输入了URL或单击了链接。这可能是一个HTML页面、图像或其他资源</li>
-</ul>
-<p>new.html</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Add a Signature<span class="tag">&lt;/<span class="name">h1</span>&gt;</span> <span class="comment">&lt;!--页面顶部一级标题--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--表单一般使用form标签包裹--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/guestbook/create&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span> <span class="comment">&lt;!--提交转到/guestbook/create--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;signature&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span> <span class="comment">&lt;!--文本字段，内容可以通过signature关键字访问--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span> <span class="comment">&lt;!--提交表单按钮--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/16/head-first-go-16html%E6%A8%A1%E7%89%88/">展开全文 >></a>
         </p>
       
 
