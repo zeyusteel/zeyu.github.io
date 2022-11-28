@@ -145,6 +145,81 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/05/11/hello-world/">Hello World</a>
+    </h1>
+  
+
+        
+        <a href="/2022/05/11/hello-world/" class="archive-article-date">
+  	<time datetime="2022-05-11T07:22:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/05/11/hello-world/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-effective" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2858,213 +2933,6 @@
 
 
   
-    <article id="post-cpp-13拷贝控制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/17/cpp-13%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6/">C++ 13拷贝控制</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/17/cpp-13%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6/" class="archive-article-date">
-  	<time datetime="2021-08-17T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-17</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>拷贝控制操作</strong>（copy control）</p>
-<ul>
-<li>拷贝构造函数（copy constructor）</li>
-<li>拷贝赋值运算符（copy-assignment operator）</li>
-<li>移动构造函数（move constructor）</li>
-<li>移动赋值函数（move-assignement operator）</li>
-<li>析构函数（destructor）</li>
-</ul>
-<h2 id="拷贝、赋值和销毁"><a href="#拷贝、赋值和销毁" class="headerlink" title="拷贝、赋值和销毁"></a>拷贝、赋值和销毁</h2><h3 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h3><ul>
-<li>如果一个构造函数的第一个参数是<strong>自身类类型的引用</strong>，且任何额外参数都有默认值，则此构造函数是<strong>拷贝构造函数</strong></li>
-<li><code>class Foo&#123; public: Foo(const Foo&amp;); &#125;</code></li>
-<li><strong>合成的拷贝构造函数</strong>（synthesized copy constructor）：会将参数的成员逐个拷贝到正在创建的对象中</li>
-<li><strong>拷贝初始化</strong><ul>
-<li>将右侧运算对象拷贝到正在创建的对象中，如果需要，还需进行类型转换</li>
-<li>通常使用拷贝构造函数完成</li>
-<li><code>string book = &quot;9-99&quot;;</code> (<strong>编译器可以绕过拷贝构造函数直接创建对象，但是拷贝构造函数必须存在</strong>)</li>
-<li>出现场景<ul>
-<li>用<code>=</code>定义变量时</li>
-<li>将一个对象作为实参传递给一个非引用类型的形参</li>
-<li>从一个返回类型为非引用类型的函数返回一个对象</li>
-<li>用花括号列表初始化一个数组中的元素或者一个聚合类中的成员</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="拷贝赋值运算符"><a href="#拷贝赋值运算符" class="headerlink" title="拷贝赋值运算符"></a>拷贝赋值运算符</h3><ul>
-<li><strong>重载赋值运算符</strong><ul>
-<li>重写一个名为<code>operator=</code>的函数</li>
-<li>通常返回一个指向其左侧运算对象的引用</li>
-<li><code>Foo&amp; operator=(const Foo&amp;);</code></li>
-</ul>
-</li>
-<li><strong>合成拷贝赋值运算符</strong><ul>
-<li>将右侧运算对象的每个非<code>static</code>成员赋予左侧运算对象的对应成员</li>
-</ul>
-</li>
-</ul>
-<h3 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h3><ul>
-<li>释放对象所使用的资源，并销毁对象的非<code>static</code>数据成员</li>
-<li>名字由波浪号接类名构成。没有返回值，也不接受参数</li>
-<li><code>~Foo();</code></li>
-<li>调用时机<ul>
-<li>变量在离开其作用域时</li>
-<li>当一个对象被销毁时，其成员被销毁</li>
-<li>容器被销毁时，其元素被销毁</li>
-<li>动态分配的对象，当对指向它的指针应用<code>delete</code>运算符时</li>
-<li>对于临时对象，当创建它的完整表达式结束时</li>
-</ul>
-</li>
-<li><strong>合成析构函数</strong><ul>
-<li>空函数体执行完后，<strong>成员会被自动销毁</strong></li>
-<li>注意：析构函数体本身并不直接销毁成员</li>
-</ul>
-</li>
-</ul>
-<h3 id="三-x2F-五法则"><a href="#三-x2F-五法则" class="headerlink" title="三&#x2F;五法则"></a>三&#x2F;五法则</h3><ul>
-<li>需要析构函数的类也需要拷贝和赋值操作</li>
-<li>需要拷贝操作的类也需要赋值操作，反之亦然</li>
-</ul>
-<h3 id="使用-x3D-default"><a href="#使用-x3D-default" class="headerlink" title="使用&#x3D;default"></a>使用&#x3D;default</h3><ul>
-<li>可以通过将拷贝控制成员定义为<code>=default</code>来显式地要求编译器生成合成的版本</li>
-<li>合成的函数将隐式地声明为内联的</li>
-</ul>
-<h3 id="阻止拷贝"><a href="#阻止拷贝" class="headerlink" title="阻止拷贝"></a>阻止拷贝</h3><ul>
-<li>大多数类应该定义默认构造函数、拷贝构造函数和拷贝赋值运算符，无论是隐式地还是显式地</li>
-<li>定义删除的函数：<code>=delete</code></li>
-<li>虽然声明了它们，但是不能以任何方式使用它们</li>
-<li>析构函数不能是删除的成员</li>
-<li>如果一个类有数据成员不能默认构造、拷贝、复制或者销毁，则对应的成员函数将被定义为删除的</li>
-<li>老版本使用<code>private</code>声明来阻止拷贝</li>
-</ul>
-<h2 id="拷贝控制和资源管理"><a href="#拷贝控制和资源管理" class="headerlink" title="拷贝控制和资源管理"></a>拷贝控制和资源管理</h2><ul>
-<li>类的行为可以像一个值，也可以像一个指针<ul>
-<li>行为像值：对象有自己的状态，副本和原对象是完全独立的</li>
-<li>行为像指针：共享状态，拷贝一个这种类的对象时，副本和原对象使用相同的底层数据</li>
-</ul>
-</li>
-</ul>
-<h2 id="交换操作"><a href="#交换操作" class="headerlink" title="交换操作"></a>交换操作</h2><ul>
-<li>管理资源的类通常还定义一个名为<code>swap</code>的函数</li>
-<li>经常用于重排元素顺序的算法</li>
-<li>用<code>swap</code>而不是<code>std::swap</code></li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HasPtr</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">HasPtr</span>(<span class="type">const</span> std::string &amp;s = std::<span class="built_in">string</span>()) : <span class="built_in">ps</span>(<span class="keyword">new</span> std::<span class="built_in">string</span>(s)), <span class="built_in">i</span>(<span class="number">0</span>) &#123; &#125;</span><br><span class="line">    <span class="built_in">HasPtr</span>(<span class="type">const</span> HasPtr &amp;hp) : <span class="built_in">ps</span>(<span class="keyword">new</span> std::<span class="built_in">string</span>(*hp.ps)), <span class="built_in">i</span>(hp.i) &#123; &#125;</span><br><span class="line">    HasPtr&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HasPtr &amp;hp) &#123;</span><br><span class="line">        <span class="keyword">auto</span> new_p = <span class="keyword">new</span> std::<span class="built_in">string</span>(*hp.ps);</span><br><span class="line">        <span class="keyword">delete</span> ps;</span><br><span class="line">        ps = new_p;</span><br><span class="line">        i = hp.i;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">HasPtr</span>() &#123;</span><br><span class="line">        <span class="keyword">delete</span> ps;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="type">void</span> <span class="title">swap</span><span class="params">(HasPtr &amp;ptr)</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">        <span class="keyword">using</span> std::swap;</span><br><span class="line">        <span class="built_in">swap</span>(ps, ptr.ps);</span><br><span class="line">        <span class="built_in">swap</span>(i, ptr.i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; *ps &lt;&lt; std::endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string *ps;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//类型特定版本的std::swap优先级高于标准std中的swap</span></span><br><span class="line"><span class="keyword">namespace</span> std &#123;</span><br><span class="line">    <span class="keyword">template</span>&lt;&gt;</span><br><span class="line">    <span class="type">void</span> <span class="built_in">swap</span>&lt;HasPtr&gt;(HasPtr &amp;ptrA, HasPtr &amp;ptrB) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;----std::swap----&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        ptrA.<span class="built_in">swap</span>(ptrB);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(HasPtr&amp; lhs, HasPtr&amp; rhs)</span> </span>&#123;</span><br><span class="line">    lhs.<span class="built_in">swap</span>(rhs);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;----test::swap----&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">HasPtr <span class="title">a</span><span class="params">(<span class="string">&quot;aaa&quot;</span>)</span></span>;</span><br><span class="line">    <span class="function">HasPtr <span class="title">b</span><span class="params">(<span class="string">&quot;bbb&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">using</span> std::swap;</span><br><span class="line">    std::<span class="built_in">swap</span>(a, b);</span><br><span class="line">    <span class="built_in">swap</span>(a, b); <span class="comment">//如果存在类型特定的swap版本，其匹配程度会优于std中定义的版本</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="对象移动"><a href="#对象移动" class="headerlink" title="对象移动"></a>对象移动</h2><ul>
-<li>很多拷贝操作后，原对象会被销毁，因此引入移动操作可以大幅度提升性能</li>
-<li>在新标准中，我们可以用容器保存不可拷贝的类型，只要它们可以被移动即可</li>
-<li>标准库容器、<code>string</code>和<code>shared_ptr</code>类既可以支持移动也支持拷贝。<code>IO</code>类和<code>unique_ptr</code>类可以移动但不能拷贝</li>
-</ul>
-<h3 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h3><ul>
-<li>新标准引入右值引用以支持移动操作</li>
-<li>通过<code>&amp;&amp;</code>获得右值引用</li>
-<li>只能绑定到一个将要销毁的对象</li>
-<li>常规引用可以称之为左值引用</li>
-<li>左值持久，右值短暂</li>
-</ul>
-<p><strong>move函数</strong>：</p>
-<ul>
-<li><code>int &amp;&amp;rr2 = std::move(rr1);</code></li>
-<li><code>move</code>告诉编译器，我们有一个左值，但我希望像右值一样处理它</li>
-<li>调用<code>move</code>意味着：除了对<code>rr1</code>赋值或者销毁它外，我们将不再使用它</li>
-</ul>
-<h3 id="移动构造函数和移动赋值运算符"><a href="#移动构造函数和移动赋值运算符" class="headerlink" title="移动构造函数和移动赋值运算符"></a>移动构造函数和移动赋值运算符</h3><ul>
-<li><strong>移动构造函数</strong><ul>
-<li>第一个参数是该类类型的一个引用，关键是，这个引用参数是一个<strong>右值引用</strong></li>
-<li><code>StrVec::StrVec(StrVec &amp;&amp;s) noexcept&#123;&#125;</code></li>
-<li>不分配任何新内存，只是接管给定的内存</li>
-</ul>
-</li>
-<li><strong>移动赋值运算符</strong><ul>
-<li><code>StrVec&amp; StrVec::operator=(StrVec &amp;&amp; rhs) noexcept&#123;&#125;</code></li>
-</ul>
-</li>
-<li>移动右值，拷贝左值</li>
-<li>如果没有移动构造函数，右值也被拷贝</li>
-<li>更新三&#x2F;五法则：如果一个类定义了任何一个拷贝操作，它就应该定义所有五个操作</li>
-<li>移动迭代器<ul>
-<li><code>make_move_iterator</code>函数讲一个普通迭代器转换为一个移动迭代器</li>
-</ul>
-</li>
-<li>建议：小心地使用移动操作，以获得性能提升</li>
-</ul>
-<h3 id="右值引用和成员函数"><a href="#右值引用和成员函数" class="headerlink" title="右值引用和成员函数"></a>右值引用和成员函数</h3><ul>
-<li>区分移动和拷贝的重载函数通常有一个版本接受一个<code>const T&amp;</code>，而另一个版本接受一个<code>T&amp;&amp;</code></li>
-<li>引用限定符<ul>
-<li>在参数列表后面放置一个<code>&amp;</code>，限定只能向可修改的左值赋值而不能向右值赋值</li>
-<li>引用限定符可以是<code>&amp;</code>或<code>&amp;&amp;</code>，分别指出<code>this</code>可以指向一个左值或右值</li>
-<li>引用限定符只能用于（非static）成员函数，且必须同时出现在函数的声明和定义中</li>
-<li>引用限定符必须跟随在<code>const</code>限定符之后</li>
-</ul>
-</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/17/cpp-13%E6%8B%B7%E8%B4%9D%E6%8E%A7%E5%88%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -3154,11 +3022,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -3179,6 +3047,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux Namespace</a>
               </li>
              
               <li class="article-tag-list-item">

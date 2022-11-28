@@ -6,13 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | zeyu的博客</title>
+  <title>Namespace | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zeyu的博客">
-<meta property="og:url" content="http://example.com/archives/page/4/index.html">
+  <meta name="description" content="概念Linux namespaces将全局系统资源以抽象的方式封装隔离，这使得命名空间中的进程似乎拥有独立的全局系统资源实例。改变一个namespace中的系统资源只会影响当前namespace里的进程，对其他namespace中的进程没有影响 命名空间类型   命名空间 标志 man文档 隔离内容    Cgroup CLONE_NEWCGROUP cgroup_namespaces(7) Cg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Namespace">
+<meta property="og:url" content="http://example.com/2022/11/28/linux-namespace/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="概念Linux namespaces将全局系统资源以抽象的方式封装隔离，这使得命名空间中的进程似乎拥有独立的全局系统资源实例。改变一个namespace中的系统资源只会影响当前namespace里的进程，对其他namespace中的进程没有影响 命名空间类型   命名空间 标志 man文档 隔离内容    Cgroup CLONE_NEWCGROUP cgroup_namespaces(7) Cg">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-28T00:49:11.000Z">
+<meta property="article:modified_time" content="2022-11-28T08:55:12.938Z">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Linux Namespace">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -143,404 +149,237 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-linux-namespace" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Namespace
+    </h1>
+  
+
+        
+        <a href="/2022/11/28/linux-namespace/" class="archive-article-date">
+  	<time datetime="2022-11-28T00:49:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-28</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><code>Linux namespaces</code>将全局系统资源以抽象的方式封装隔离，这使得命名空间中的进程似乎拥有独立的全局系统资源实例。改变一个<code>namespace</code>中的系统资源只会影响当前<code>namespace</code>里的进程，对其他<code>namespace</code>中的进程没有影响</p>
+<h2 id="命名空间类型"><a href="#命名空间类型" class="headerlink" title="命名空间类型"></a>命名空间类型</h2><table>
+<thead>
+<tr>
+<th>命名空间</th>
+<th>标志</th>
+<th>man文档</th>
+<th>隔离内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cgroup</td>
+<td>CLONE_NEWCGROUP</td>
+<td>cgroup_namespaces(7)</td>
+<td>Cgroup root directory (<code>cgroup</code>根目录）</td>
+</tr>
+<tr>
+<td>IPC</td>
+<td>CLONE_NEWIPC</td>
+<td>ipc_namespaces(7)</td>
+<td>System V IPC(信号量、消息队列、共享内存), POSIX message queues</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>CLONE_NEWNET</td>
+<td>network_namespaces(7)</td>
+<td>Network devices,stacks, ports, etc. (网络设备、网络栈、端口)</td>
+</tr>
+<tr>
+<td>Mount</td>
+<td>CLONE_NEWNS</td>
+<td>mount_namespaces(7)</td>
+<td>Mount points (挂载点)</td>
+</tr>
+<tr>
+<td>PID</td>
+<td>CLONE_NEWPID</td>
+<td>pid_namespaces(7)</td>
+<td>Process IDs (进程号)</td>
+</tr>
+<tr>
+<td>User</td>
+<td>CLONE_NEWUSER</td>
+<td>user_namespaces(7)</td>
+<td>User and group IDs (用户和组）</td>
+</tr>
+<tr>
+<td>UTS</td>
+<td>CLONE_NEWUTS</td>
+<td>uts_namespaces(7)</td>
+<td>Hostname and NIS domain name (主机名、<code>NIS</code>域名)</td>
+</tr>
+</tbody></table>
+<h2 id="命名空间相关API"><a href="#命名空间相关API" class="headerlink" title="命名空间相关API"></a>命名空间相关API</h2><ul>
+<li><strong>clone</strong> 可以创建一个子进程，可以同时通过<code>flags</code>参数创建对应命名空间</li>
+<li><strong>setns</strong> 可以让调用的进程通过打开<code>/proc/[pid]/ns</code>文件描述符加入一个已经存在的命名空间</li>
+<li><strong>unshare</strong> 不启动新的进程,直接让调用进程加入新的命名空间</li>
+<li><strong>ioctl&#x2F;ioctl_ns</strong> 获取命名空间信息</li>
+</ul>
+<p>一般情况下使用<code>clone</code>,或者<code>unshare</code>创建新命名空间都需要<code>CAP_SYS_ADMIN</code>能力,自从<code>linux 3.8</code>支持了非特权用户创建用户命名空间</p>
+<p>命名空间的创建者有能力去修改全局资源达到控制后续创建的进程以及<code>join</code>到这个命名空间的进程在这个命名空间资源访问</p>
+<h2 id="x2F-proc-x2F-pid-x2F-ns-x2F"><a href="#x2F-proc-x2F-pid-x2F-ns-x2F" class="headerlink" title="&#x2F;proc&#x2F;[pid]&#x2F;ns&#x2F;"></a>&#x2F;proc&#x2F;[pid]&#x2F;ns&#x2F;</h2><p>这个目录下包含进程对应的每一个命名空间</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:~$ <span class="built_in">ls</span> -l /proc/$$/ns</span><br><span class="line">total 0</span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 cgroup -&gt; <span class="string">&#x27;cgroup:[4026531835]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 ipc -&gt; <span class="string">&#x27;ipc:[4026531839]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 mnt -&gt; <span class="string">&#x27;mnt:[4026531840]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 net -&gt; <span class="string">&#x27;net:[4026531897]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 pid -&gt; <span class="string">&#x27;pid:[4026531836]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 pid_for_children -&gt; <span class="string">&#x27;pid:[4026531836]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 user -&gt; <span class="string">&#x27;user:[4026531837]&#x27;</span></span><br><span class="line">lrwxrwxrwx 1 zeyu zeyu 0 Nov 28 15:49 uts -&gt; <span class="string">&#x27;uts:[4026531838]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>将对应的文件保持打开或者将文件通过<code>bind</code>绑定到其他地方可以让对应命名空间一直存在,即使命名空间内的进程都已经退出</p>
+<p>如果两个进程在同一个命名空间,那么他们对应节点的设备<code>id</code>,和<code>inode</code>是相同的,可以通过<code>stat.st_dev</code>和<code>stat.st_ino</code>查看</p>
+<p>软连接指向内容是命名空间的类型和对应的<code>inode</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:/proc/self/ns$ <span class="built_in">readlink</span> /proc/self/ns/cgroup </span><br><span class="line">cgroup:[4026531835]</span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-proc-x2F-sys-x2F-user-linux-4-9"><a href="#x2F-proc-x2F-sys-x2F-user-linux-4-9" class="headerlink" title="&#x2F;proc&#x2F;sys&#x2F;user (linux 4.9)"></a>&#x2F;proc&#x2F;sys&#x2F;user (linux 4.9)</h2><p>包含每一个命名空间可以被创建的最大限制</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:/proc/self/ns$ ll /proc/sys/user/</span><br><span class="line">total 0</span><br><span class="line">dr-xr-xr-x 1 root root 0 Nov 28 16:12 ./</span><br><span class="line">dr-xr-xr-x 1 root root 0 Nov 28 11:03 ../</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_cgroup_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_inotify_instances</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_inotify_watches</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_ipc_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_mnt_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_net_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_pid_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_user_namespaces</span><br><span class="line">-rw-r--r-- 1 root root 0 Nov 28 16:12 max_uts_namespaces</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>只有特权用户能修改</li>
+<li>限制是围绕进程所在<strong>用户命名空间</strong>展开的</li>
+<li>限制是基于用户的,同一用户命名空间下的每一个用户都可以创建其他命名空间直到上限</li>
+<li>限制将针对所有用户, 包括<code>uid=0</code> </li>
+<li><code>clone</code>,<code>unshare</code>因达到上限失败返回<code>ENOSPC</code></li>
+<li>当一个<code>uid</code>创建子<strong>用户命名空间</strong>, 子用户命名空间下创建命名空间时, 也会根据<code>uid</code>累计到所有祖先命名空间。确保创建新的用户命名空间不会做为逃避限制的手段</li>
+</ul>
+<h2 id="命名空间生命周期"><a href="#命名空间生命周期" class="headerlink" title="命名空间生命周期"></a>命名空间生命周期</h2><p>如果没有任何其他因素，当命名空间中的最后一个进程终止或离开命名空间时，命名空间将被自动删除。然而即使命名空间没有成员进程，也有许多其他因素可能会导致命名空间存在</p>
+<ul>
+<li>对应的<code>/proc/[pid]/ns/*</code>文件存在打开的文件描述符或<code>bind</code></li>
+<li>命名空间是分层的（即<code>pid</code>或<code>user</code>名空间）,并且具有子命名空间</li>
+<li><code>user namespace</code>,拥有一个或多个其他非用户命名空间</li>
+<li><code>PID namespace</code>,有一个进程通过<code>/proc/[PID]/ns/PID_for_children</code>符号链接引用该名称空间</li>
+<li><code>ipc namespace</code>,<code>mqueue</code>文件系统的<code>mount</code>引用了这个命名空间</li>
+<li><code>pid namespace</code>, <code>proc</code>文件系统的<code>mount</code>引用了这个命名空间</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/05/11/hello-world/" class="archive-article-date">
-  	<time datetime="2022-05-11T07:22:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-11</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/05/11/hello-world/">Hello World</a>
-    </h1>
-  
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux Namespace</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
+
       
+
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/24/cpp-effective/" class="archive-article-date">
-  	<time datetime="2021-08-24T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/24/cpp-effective/">C++ Effective C++</a>
-    </h1>
-  
+      </div>
+    </span>
+  </div>
+</div>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/11/28/linux-namespace/" alt="微信分享二维码">
+    </div>
+</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/23/cpp-19%E7%89%B9%E6%AE%8A%E5%B7%A5%E5%85%B7%E4%B8%8E%E6%8A%80%E6%9C%AF/" class="archive-article-date">
-  	<time datetime="2021-08-23T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-23</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2022/11/26/linux-mount/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Linux mount</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/23/cpp-19%E7%89%B9%E6%AE%8A%E5%B7%A5%E5%85%B7%E4%B8%8E%E6%8A%80%E6%9C%AF/">C++ 19特殊工具与技术</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/22/cpp-18%E7%94%A8%E4%BA%8E%E5%A4%A7%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  	<time datetime="2021-08-22T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/22/cpp-18%E7%94%A8%E4%BA%8E%E5%A4%A7%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B7%A5%E5%85%B7/">C++ 18用于大型程序的工具</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/21/cpp-17%E6%A0%87%E5%87%86%E5%BA%93%E7%89%B9%E6%AE%8A%E8%AE%BE%E6%96%BD/" class="archive-article-date">
-  	<time datetime="2021-08-21T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/21/cpp-17%E6%A0%87%E5%87%86%E5%BA%93%E7%89%B9%E6%AE%8A%E8%AE%BE%E6%96%BD/">C++ 17标准库特殊设施</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/20/cpp-16%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/20/cpp-16%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/">C++ 16模版和泛型编程</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
-  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" class="archive-article-date">
-  	<time datetime="2021-08-19T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/19/cpp-15%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">C++ 15面向对象程序设计</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
-  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">C++ 14重载运算符与类型转换</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" class="archive-article-date">
-  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/">C++ 左值、右值</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/archives/page/5/">5</a><a class="page-number" href="/archives/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/8/">8</a><a class="extend next" rel="next" href="/archives/page/5/">Next &amp;raquo;</a>
-    </nav>
   
 
 
@@ -564,8 +403,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
