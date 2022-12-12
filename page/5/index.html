@@ -145,6 +145,192 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-左值右值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/">C++ 左值、右值</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" class="archive-article-date">
+  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>C语言中的表达式被分为左值和其它(函数和非对象值)，其中左值被定义为标识一个对象的表达式。在C语言中<code>lvalue</code>是<code>locator value</code>的简写，因此<code>lvalue</code>对应了一块内存地址。</p>
+<p>C++11之前，左值遵循了C语言的分类法，但与C不同的是，其将非左值表达式统称为右值，函数为左值，并添加了引用能绑定到左值但<strong>唯有<code>const</code>的引用能绑定到右值</strong>的规则。几种非左值的C表达式在C++中成为了左值表达式。</p>
+<p>自C++11开始，对值类别又进行了详细分类，在原有左值的基础上增加了纯右值和消亡值，并对以上三种类型通过是否具名(identity)和可移动(moveable)，又增加了<code>glvalue</code>和<code>rvalue</code>两种组合类型。</p>
+<ul>
+<li><strong>具名</strong>(identity):可以确定表达式是否与另一表达式指代同一实体，例如通过比较它们所标识的对象或函数的（直接或间接获得的）地址</li>
+<li><strong>可被移动</strong>(moveable)：移动构造函数、移动赋值运算符或实现了移动语义的其他函数重载能够绑定于这个表达式</li>
+</ul>
+<p><strong>表达式是可求值的，对表达式求值可得到一个结果，这个结果有两个属性</strong></p>
+<ul>
+<li>类型，比如<code>int</code>、<code>string</code>、引用或者我们自定义的类</li>
+<li>值类别<ul>
+<li>在C++11之前，表达式的值分为左值和右值两种，其中右值就是我们理解中的字面值<code>1</code>、<code>true</code>、<code>nullptr</code>等</li>
+<li>自C++11开始，表达式的值分为<strong>左值</strong>(<code>lvalue</code>, left value)、<strong>将亡值</strong>(<code>xvalue</code>, expiring value)、<strong>纯右值</strong>(<code>pvalue</code>, pure ravlue)以及两种混合类别<strong>泛左值</strong>(<code>glvalue</code>, generalized lvalue)和<strong>右值</strong>(<code>rvalue</code>, right value)五种</li>
+</ul>
+</li>
+</ul>
+<h2 id="值类别"><a href="#值类别" class="headerlink" title="值类别"></a>值类别</h2><ul>
+<li>左值(lvalue):具名且不可被移动</li>
+<li>将亡值(xvaue):具名且可被移动</li>
+<li>纯右值(prvalue):不具名且可被移动</li>
+<li>泛左值(glvalue):具名，lvalue和xvalue都属于glvalue</li>
+<li>右值(rvalue):可被移动的表达式，prvalue和xvalue都属于rvalue</li>
+</ul>
+<h2 id="左值-lvalue-left-value"><a href="#左值-lvalue-left-value" class="headerlink" title="左值 (lvalue,left value)"></a>左值 (lvalue,left value)</h2><p>顾名思义就是赋值符号左边的值。准确来说，左值是表达式结束（不一定是赋值表达式）后依然存在的对象。</p>
+<p>可以将左值看作是一个关联了名称的内存位置，允许程序的其他部分来访问它。在这里，我们将 “名称” 解释为任何可用于访问内存位置的表达式。所以，如果<code>arr</code>是一个数组，那么<code>arr[1]</code>和<code>*(arr+1)</code>都将被视为相同内存位置的“名称”。</p>
+<h3 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>可通过取地址运算符获取其地址</li>
+<li>可修改的左值可用作内建赋值和内建符合赋值运算符的左操作数</li>
+<li>可以用来初始化左值引用</li>
+</ul>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><ul>
+<li>变量名、函数名以及数据成员名 <code>int a = 5</code></li>
+<li>返回左值引用的函数调用 <code>T&amp; f(); f();</code></li>
+<li>由赋值运算符或复合赋值运算符连接的表达式，<code>a=b;</code></li>
+<li>解引用表达式 <code>int *ptr = &amp;a;</code></li>
+<li>前置自增和自减表达式 <code>++a;</code></li>
+<li>成员访问<code>.</code>运算符的结果 <code>obj.m</code></li>
+<li>由指针访问成员<code>-&gt;</code>运算符的结果 <code>p-&gt;m</code></li>
+<li>下标运算符的结果<code>[]</code> <code>arr[0] = 10</code></li>
+<li>字符串字面值<code>&quot;abc&quot;</code></li>
+</ul>
+<p><strong>对于一个表达式，凡是对其取地址（&amp;）操作可以成功的都是左值</strong></p>
+<h2 id="纯右值-pvalue-pure-ravlue"><a href="#纯右值-pvalue-pure-ravlue" class="headerlink" title="纯右值 (pvalue, pure ravlue)"></a>纯右值 (pvalue, pure ravlue)</h2><p>自C++11开始，纯右值(pvalue, pure ravlue)相当于之前的右值,字面值或者函数返回的非引用都是纯右值。</p>
+<h3 id="特征-1"><a href="#特征-1" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>等同于C++11之前的右值</li>
+<li>不会是多态</li>
+<li>不会是抽象类型或数组</li>
+<li>不会是不完全类型</li>
+</ul>
+<h3 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h3><ul>
+<li>字面值(字符串字面值除外) <code>1; &#39;a&#39;; true;</code></li>
+<li>返回值为非引用的函数调用或操作符重载<code>int f(); f(); str1 + str2; it++;</code></li>
+<li>后置自增和自减表达式 <code>a++;</code></li>
+<li>算术表达式 <code>a+b;</code></li>
+<li>逻辑表达式 <code>a &amp;&amp; b;</code></li>
+<li>比较表达式 <code>a &gt; b;</code></li>
+<li>取地址表达式 <code>&amp;a;</code></li>
+<li><code>lambda</code>表达式 <code>[]&#123;&#125;;</code></li>
+</ul>
+<h2 id="将亡值-xvalue-expiring-value"><a href="#将亡值-xvalue-expiring-value" class="headerlink" title="将亡值(xvalue, expiring value)"></a>将亡值(xvalue, expiring value)</h2><p>顾名思义即将消亡的值，是<code>C++11</code>新增的跟右值引用相关的表达式，通常是将要被移动的对象（移为他用），比如返回右值引用<code>T&amp;&amp;</code>的函数返回值、<code>std::move</code>的返回值，或者转换为<code>T&amp;&amp;</code>的类型转换函数的返回值。</p>
+<p>将亡值可以理解为通过“盗取”其他变量内存空间的方式获取到的值。在确保其他变量不再被使用、或即将被销毁时，通过“盗取”的方式可以避免内存空间的释放和分配，能够延长变量值的生命期。（通过右值引用来续命）。</p>
+<p><strong>xvalue 只能通过两种方式来获得，这两种方式都涉及到将一个左值赋给(转化为)一个右值引用</strong></p>
+<ul>
+<li>返回右值引用的函数的调用表达式,如<code>T&amp;&amp; f(); f();</code>该表达式得到一个<code>xvalue</code></li>
+<li>转换为右值引用的转换函数的调用表达式，如：<code>std::move(t)、satic_cast&lt;T&amp;&amp;&gt;(t)</code></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">fun</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  std::string str;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">return</span> str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::string s = <span class="built_in">fun</span>();</span><br></pre></td></tr></table></figure>
+<p>在函数<code>fun()</code>中，<code>str</code>是一个局部变量，并在函数结束时候被返回。</p>
+<p>在C++11之前，<code>s = fun();</code>会调用拷贝构造函数，会将整个<code>str</code>复制一份，然后把<code>str</code>销毁。如果<code>str</code>特别大的话，会造成大量额外开销。在这一行中，<code>s</code>是左值，<code>fun()</code>是右值(纯右值)，<code>fun()</code>产生的那个返回值作为一个临时值，一旦<code>str</code>被<code>s</code>复制后，将被销毁，无法获取、也不能修改。</p>
+<p>自C++11开始，引入了<code>move</code>语义，编译器会将这部分优化成<code>move</code>操作，即不再是之前的复制操作，而是<code>move</code>。此时，<code>str</code>会被进行隐式右值转换，等价于<code>static_cast&lt;std::string&amp;&amp;&gt;(str)</code>，进而此处的<code>s</code>会将<code>fun</code>局部返回的值进行移动。</p>
+<p>无论是C++11之前的拷贝，还是C++11的<code>move</code>，<code>str</code>在填充(拷贝或者<code>move</code>)给<code>s</code>之后，将被销毁，而被销毁的这个值，就成为将亡值。</p>
+<p>将亡值就定义了这样一种行为：具名的临时值、同时又能够被<code>move</code>。</p>
+<h2 id="泛左值（glvalue-generalized-lvalue）"><a href="#泛左值（glvalue-generalized-lvalue）" class="headerlink" title="泛左值（glvalue, generalized lvalue）"></a>泛左值（glvalue, generalized lvalue）</h2><p>又称为广义左值，是具名表达式，对应了一块内存。<code>glvalue</code>有<code>lvalue</code>和<code>xvalue</code>两种形式。</p>
+<h3 id="特征-2"><a href="#特征-2" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>可以自动转换成<code>prvalue</code></li>
+<li>可以是多态的</li>
+<li>可以是不完整类型，如前置声明但未定义的类类型</li>
+</ul>
+<h2 id="右值-rvalue-right-value"><a href="#右值-rvalue-right-value" class="headerlink" title="右值(rvalue, right value)"></a>右值(rvalue, right value)</h2><p>是指可以移动的表达式,<code>prvalue</code>和<code>xvalue</code>都是<code>rvalue</code>。</p>
+<h3 id="特征-3"><a href="#特征-3" class="headerlink" title="特征"></a>特征</h3><ul>
+<li>无法对<code>rvalue</code>进行取地址操作。例如：<code>&amp;1; &amp;(a + b);</code>，这些表达式没有意义，也编译不过</li>
+<li><code>rvalue</code>不能放在赋值或者组合赋值符号的左边。例如：<code>3 = 5; 3 += 5;</code> 这些表达式没有意义，也编译不过</li>
+<li><code>rvalue</code>可以用来初始化<code>const</code>左值引用。例如：<code>const int&amp; a = 1;</code></li>
+<li><code>rvalue</code>可以用来初始化右值引用</li>
+<li><code>rvalue</code>可以影响函数重载：当被用作函数实参且该函数有两种重载可用，其中之一接受右值引用的形参而另一个接受<code>const</code>的左值引用的形参时，右值将被绑定到右值引用的重载之上</li>
+</ul>
+<h2 id="例"><a href="#例" class="headerlink" title="例"></a>例</h2><h3 id="前置自增-减-是左值，后置自增-减-是纯右值"><a href="#前置自增-减-是左值，后置自增-减-是纯右值" class="headerlink" title="前置自增(减)是左值，后置自增(减)是纯右值"></a>前置自增(减)是左值，后置自增(减)是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">++i;</span><br><span class="line">--i;</span><br><span class="line">i++;</span><br><span class="line">i--;</span><br></pre></td></tr></table></figure>
+
+<p>在上面代码中，我们定义了一个int类型的变量i，并初始化为0。</p>
+<ul>
+<li>++i的操作是对i加1后再赋值给i，所以++i的结果是具名的，名称就是i，所以++i是左值</li>
+<li>对于i++而言，先将i的值进行拷贝(此处假设拷贝到临时变量ii)，然后再对i加1，最后返回ii(其实不存在的，为了在此表述方便)。所以i++是不具名的，因此不是glvaue，所以i++是右值，又因为不具名，且是右值，所以i++是纯右值</li>
+<li>同理，–i是左值，i–是纯右值</li>
+</ul>
+<h3 id="算术表达式是纯右值"><a href="#算术表达式是纯右值" class="headerlink" title="算术表达式是纯右值"></a>算术表达式是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> y = <span class="number">0</span>;</span><br><span class="line">x + y;</span><br><span class="line">x &amp;&amp; y;</span><br><span class="line">x == y;</span><br></pre></td></tr></table></figure>
+
+<p>在上述代码中,<code>x + y</code>得到的是一个不具名的临时对象，所以<code>x+y</code>是纯右值；而<code>x &amp;&amp; y</code>和<code>x == y</code>得到的是一个<code>bool</code>常量值，要么是<code>true</code>要么是<code>false</code>，所以是纯右值。</p>
+<h3 id="解引用是左值，取地址是纯右值"><a href="#解引用是左值，取地址是纯右值" class="headerlink" title="解引用是左值，取地址是纯右值"></a>解引用是左值，取地址是纯右值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> *y = &amp;x;</span><br><span class="line">*y = <span class="number">1</span>;</span><br><span class="line">&amp;y;</span><br></pre></td></tr></table></figure>
+
+<p><code>*y</code>得到的是<code>y</code>指向地址的实际值，所以<code>&amp;(*y)</code>是合法的，因此<code>*y</code>是左值;对<code>&amp;y</code>操作得到的是一个地址，即一个<code>long</code>值，所以是一个字面值，因此<code>&amp;y</code>是纯右值。</p>
+<h3 id="字符串字面值是左值"><a href="#字符串字面值是左值" class="headerlink" title="字符串字面值是左值"></a>字符串字面值是左值</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; &amp;<span class="string">&quot;abc&quot;</span> &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+
+<p>字符串字面值为左值，这个比较特殊。在前面提到过字面值都是纯右值(字符串字面值除外)，一个很重要的原因，就是可以字符串字面值可以获取地址，</p>
+<p>这是因为C++将字符串字面值实现为<code>char</code>型数组，实实在在地为每个字符都分配了空间并且允许程序员对其进行操作。如果从存储区的概念来理解，那就是字符串字面值存储在常量区。</p>
+<h2 id="左值引用"><a href="#左值引用" class="headerlink" title="左值引用"></a>左值引用</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> &amp;ref = a; <span class="comment">//左值引用</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> &amp;f1 = <span class="number">5</span>; <span class="comment">//错误</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;f2 = <span class="number">5</span>; <span class="comment">//只有常量左值引用能绑定到常量</span></span><br></pre></td></tr></table></figure>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>右值引用的引入，使得可以延长右值的生命周期。在<code>C++</code>中规定，右值引用是<code>&amp;&amp;</code>即由2个<code>&amp;</code>表示，而左值引用是一个<code>&amp;</code>表示。右值引用的作用是为了绑定右值</p>
+<p><strong>右值引用虽然是引用右值，但是其本身是左值</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> &amp;&amp;a = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，<code>a</code>是一个右值引用，但是其本身是左值</p>
+<ul>
+<li><code>a</code>出现在等号<code>=</code>的左边</li>
+<li>可以对<code>a</code>取地址</li>
+</ul>
+<h3 id="判断是否是左值引用和右值引用"><a href="#判断是否是左值引用和右值引用" class="headerlink" title="判断是否是左值引用和右值引用"></a>判断是否是左值引用和右值引用</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> &amp;lref = a;</span><br><span class="line"><span class="type">int</span> &amp;&amp;rref = <span class="number">7</span>;</span><br><span class="line">std::cout &lt;&lt; std::is_lvalue_reference&lt;<span class="keyword">decltype</span>(lref)&gt;::value &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; std::is_rvalue_reference&lt;<span class="keyword">decltype</span>(rref)&gt;::value &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/18/cpp-%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-13拷贝控制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -3393,150 +3579,6 @@ public:
 
 
   
-    <article id="post-cpp-05语句" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/">C++ 05语句</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/" class="archive-article-date">
-  	<time datetime="2021-08-09T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="简单语句"><a href="#简单语句" class="headerlink" title="简单语句"></a>简单语句</h2><ul>
-<li><strong>表达式语句</strong>：一个表达式末尾加上分号，就变成了表达式语句</li>
-<li><strong>空语句</strong>：只有一个单独的分号</li>
-<li><strong>复合语句（块）</strong>：用花括号 <code>&#123;&#125;</code>包裹起来的语句和声明的序列。一个块就是一个作用域</li>
-</ul>
-<h2 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h2><ul>
-<li><strong>悬垂else</strong>（dangling else）：用来描述在嵌套的<code>if else</code>语句中，如果<code>if</code>比<code>else</code>多时如何处理的问题。C++使用的方法是<code>else</code>匹配最近没有配对的<code>if</code></li>
-</ul>
-<h2 id="迭代语句"><a href="#迭代语句" class="headerlink" title="迭代语句"></a>迭代语句</h2><ul>
-<li><strong>while</strong>：当不确定到底要迭代多少次时，使用 <code>while</code>循环比较合适，比如读取输入的内容</li>
-<li><strong>for</strong>： <code>for</code>语句可以省略掉 <code>init-statement</code>， <code>condition</code>和 <code>expression</code>的任何一个；<strong>甚至全部</strong></li>
-<li><strong>范围for</strong>： <code>for (declaration: expression) statement</code></li>
-</ul>
-<h2 id="跳转语句"><a href="#跳转语句" class="headerlink" title="跳转语句"></a>跳转语句</h2><ul>
-<li><strong>break</strong>：<code>break</code>语句负责终止离它最近的<code>while</code>、<code>do while</code>、<code>for</code>或者<code>switch</code>语句，并从这些语句之后的第一条语句开始继续执行</li>
-<li><strong>continue</strong>：终止最近的循环中的当前迭代并立即开始下一次迭代。只能在<code>while</code>、<code>do while</code>、<code>for</code>循环的内部</li>
-</ul>
-<h2 id="try语句块和异常处理"><a href="#try语句块和异常处理" class="headerlink" title="try语句块和异常处理"></a>try语句块和异常处理</h2><ul>
-<li><strong>throw表达式</strong>：异常检测部分使用 <code>throw</code>表达式来表示它遇到了无法处理的问题。我们说 <code>throw</code>引发 <code>raise</code>了异常</li>
-<li><strong>try语句块</strong>：以 <code>try</code>关键词开始，以一个或多个 <code>catch</code>字句结束。 <code>try</code>语句块中的代码抛出的异常通常会被某个 <code>catch</code>捕获并处理。 <code>catch</code>子句也被称为<strong>异常处理代码</strong></li>
-<li><strong>异常类</strong>：用于在 <code>throw</code>表达式和相关的 <code>catch</code>子句之间传递异常的具体信息</li>
-<li>只<code>throw</code>,而不进行异常捕捉,系统会调用<code>terminate</code>函数并终止当前程序的执行</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>异常类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>exception</td>
-<td>最常见的问题</td>
-</tr>
-<tr>
-<td>runtime_error</td>
-<td>只有在运行时才能检测出的问题</td>
-</tr>
-<tr>
-<td>range_error</td>
-<td>运行时错误：生成的结果超出了有意义的值域范围</td>
-</tr>
-<tr>
-<td>overflow_error</td>
-<td>运行时错误：计算上溢</td>
-</tr>
-<tr>
-<td>underflow_error</td>
-<td>运行时错误：计算下溢</td>
-</tr>
-<tr>
-<td>logic_error</td>
-<td>程序逻辑错误</td>
-</tr>
-<tr>
-<td>domain_error</td>
-<td>逻辑错误：参数对应的结果值不存在</td>
-</tr>
-<tr>
-<td>invalid_argument</td>
-<td>逻辑错误：无效参数</td>
-</tr>
-<tr>
-<td>length_error</td>
-<td>逻辑错误：试图创建一个超出该类型最大长度的对象</td>
-</tr>
-<tr>
-<td>out_of_range</td>
-<td>逻辑错误：使用一个超出有效范围的值</td>
-</tr>
-</tbody></table>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> <span class="type">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (std::runtime_error err) &#123;</span><br><span class="line">        std:: cout &lt;&lt; err.<span class="built_in">what</span>() &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/09/cpp-05%E8%AF%AD%E5%8F%A5/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
@@ -3626,11 +3668,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -3646,19 +3688,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">markdown</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux Namespace</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">markdown</a>
               </li>
             
             <div class="clearfix"></div>

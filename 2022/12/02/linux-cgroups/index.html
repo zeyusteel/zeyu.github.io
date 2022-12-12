@@ -6,13 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2020/8 | zeyu的博客</title>
+  <title>Linux Cgroups | zeyu的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zeyu的博客">
-<meta property="og:url" content="http://example.com/archives/2020/08/page/2/index.html">
+  <meta name="description" content="概念cgroups是Linux内核提供的一种机制，这种机制可以根据需求把一系列系统任务及其子任务整合（或分隔）到按资源划分等级的不同组内，从而为系统资源管理提供一个统一的框架。 本质上来说，cgroups是内核附加在程序上的一系列钩子（hook），通过程序运行时对资源的调度触发相应的钩子以达到资源追踪和限制的目的。 特性 cgroups的API以一个伪文件系统(cgroupfs)的方式实现，用户态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Cgroups">
+<meta property="og:url" content="http://example.com/2022/12/02/linux-cgroups/index.html">
 <meta property="og:site_name" content="zeyu的博客">
+<meta property="og:description" content="概念cgroups是Linux内核提供的一种机制，这种机制可以根据需求把一系列系统任务及其子任务整合（或分隔）到按资源划分等级的不同组内，从而为系统资源管理提供一个统一的框架。 本质上来说，cgroups是内核附加在程序上的一系列钩子（hook），通过程序运行时对资源的调度触发相应的钩子以达到资源追踪和限制的目的。 特性 cgroups的API以一个伪文件系统(cgroupfs)的方式实现，用户态">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-02T02:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-12T02:37:25.416Z">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zeyu的博客" type="application/atom+xml">
@@ -143,63 +148,199 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-linux-cgroups" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/02/c-01%E6%95%B0%E5%88%B6%E5%BA%94%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-08-02T00:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/02/c-01%E6%95%B0%E5%88%B6%E5%BA%94%E7%94%A8/">C-01数制应用</a>
+    <h1 class="article-title" itemprop="name">
+      Linux Cgroups
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2022/12/02/linux-cgroups/" class="archive-article-date">
+  	<time datetime="2022-12-02T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><code>cgroups</code>是<code>Linux</code>内核提供的一种机制，这种机制可以根据需求把一系列系统任务及其子任务整合（或分隔）到按资源划分等级的不同组内，从而为系统资源管理提供一个统一的框架。</p>
+<p>本质上来说，<code>cgroups</code>是内核附加在程序上的一系列钩子（hook），通过程序运行时对资源的调度触发相应的钩子以达到资源追踪和限制的目的。</p>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li><code>cgroups</code>的<code>API</code>以一个伪文件系统(cgroupfs)的方式实现，用户态的程序可以通过文件操作实现<code>cgroups</code>的组织管理</li>
+<li><code>cgroups</code>的组织管理操作单元可以细粒度到线程级别，另外用户可以创建和销毁<code>cgroup</code>，从而实现资源再分配和管理</li>
+<li>所有资源管理的功能都以子系统的方式实现，接口统一</li>
+<li>子任务创建之初与其父任务处于同一个<code>cgroups</code>的控制组</li>
+</ul>
+<h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><ul>
+<li><strong>资源限制</strong>：<code>cgroups</code>可以对任务使用的资源总额进行限制</li>
+<li><strong>优先级分配</strong>：通过分配的<code>CPU</code>时间片数量及磁盘<code>IO</code>带宽大小，实际上就相当于控制了任务运行的优先级</li>
+<li><strong>资源统计</strong>：<code>cgroups</code>可以统计系统的资源使用量，如<code>CPU</code>使用时长、内存用量等，这个功能非常适用于计费</li>
+<li><strong>任务控制</strong>：<code>cgroups</code>可以对任务执行挂起、恢复等操作</li>
+</ul>
+<h3 id="名词"><a href="#名词" class="headerlink" title="名词"></a>名词</h3><ul>
+<li><strong>Task</strong>(任务)：在<code>linux</code>系统中，内核本身的调度和管理并不对进程和线程进行区分，只是根据<code>clone</code>时传入的参数的不同来从概念上区分进程和线程。这里使用<code>task</code>来表示系统的一个进程或线程</li>
+<li><strong>Cgroup</strong>(控制组)：<code>cgroups</code>中的资源控制以<code>cgroup</code>为单位实现。<code>Cgroup</code>表示按某种资源控制标准划分而成的任务组，包含一个或多个子系统。一个任务可以加入某个<code>cgroup</code>，也可以从某个<code>cgroup</code>迁移到另一个<code>cgroup</code></li>
+<li><strong>Subsystem</strong>(子系统)：<code>cgroups</code>中的子系统就是一个资源调度控制器(又叫<code>controllers</code>)。比如<code>CPU</code>子系统可以控制<code>CPU</code>的时间分配，内存子系统可以限制内存的使用量  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:~$ <span class="built_in">cat</span> /proc/cgroups </span><br><span class="line"><span class="comment">#subsys_name	hierarchy	num_cgroups	enabled</span></span><br><span class="line">cpuset	9	1	1                   <span class="comment"># 给cgroup中的任务分配独立的CPU(多处理器系统) 和内存节点</span></span><br><span class="line">cpu	8	102	1                       <span class="comment"># 限制CPU时间片的分配，与cpuacct挂载在同一目录</span></span><br><span class="line">cpuacct	8	102	1                   <span class="comment"># 生成cgroup中的任务占用CPU资源的报告，与cpu挂载在同一目录 </span></span><br><span class="line">blkio	11	102	1                   <span class="comment"># 对块设备的IO进行限制</span></span><br><span class="line">memory	7	166	1                   <span class="comment"># 对cgroup中的任务的可用内存进行限制，并自动生成资源占用报告</span></span><br><span class="line">devices	12	102	1                   <span class="comment"># 允许或禁止cgroup中的任务访问设备</span></span><br><span class="line">freezer	4	2	1                   <span class="comment"># 暂停/恢复cgroup中的任务</span></span><br><span class="line">net_cls	2	1	1                   <span class="comment"># 使用等级识别符（classid）标记网络数据包，这让Linux流量控制器(Traffic Controller,TC)可以识别来自特定cgroup任务的数据包，并进行网络限制</span></span><br><span class="line">perf_event	3	1	1               <span class="comment"># 允许使用perf工具来监控 cgroup</span></span><br><span class="line">net_prio	2	1	1               <span class="comment"># 允许基于cgroup设置网络流量(netowork traffic)的优先级</span></span><br><span class="line">hugetlb	5	1	1                   <span class="comment"># 限制使用的内存页数量</span></span><br><span class="line">pids	10	105	1                   <span class="comment"># 限制任务的数量</span></span><br><span class="line">rdma	6	1	1                   <span class="comment"># 限制RDMA/IB-specific的使用数量</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>Hierarchy</strong>(层级)：层级由一系列<code>cgroup</code>以一个树状结构排列而成，每个层级通过绑定对应的子系统进行资源控制。层级中的<code>cgroup </code>节点可以包含零个或多个子节点，子节点继承父节点挂载的子系统。一个操作系统中可以有多个层级。系统中的多个<code>cgroup</code>构成的层级并非单根结构，可以允许存在多个,如果只有一个层级，那么所有的任务都将被迫绑定其上的所有子系统，这会给某些任务造成不必要的限制</li>
+</ul>
+<h3 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h3><ul>
+<li>同一个层级可以附加一个或多个子系统</li>
+<li>一个子系统可以附加到多个层级，当且仅当目标层级只有唯一一个子系统时(一个已经附加在某个层级上的子系统不能附加到其他含有别的子系统的层级上)</li>
+<li>系统每次新建一个层级时，该系统上的所有任务默认加入这个新建层级的初始化<code>cgroup</code>，这个<code>cgroup</code>也被称为<code>root cgroup</code></li>
+<li>对于创建的每个层级，任务只能存在于其中一个<code>cgroup</code>中，即一个任务不能存在于同一个层级的不同<code>cgroup</code>中，但一个任务可以存在于不同层级中的多个<code>cgroup</code>中。如果操作时把一个任务添加到同一个层级中的另一个<code>cgroup</code>中，则会将它从第一个<code>cgroup</code>中移除</li>
+<li>任务在<code>fork/clone</code>自身时创建的子任务默认与原任务在同一个<code>cgroup</code>中，但是子任务允许被移动到不同的<code>cgroup</code>中 </li>
+<li>如果新建的层级结构要绑定的子系统与目前已经存在的层级结构完全相同，那么新的挂载会重用原来已经存在的那一套</li>
+<li>目前无法将一个新的子系统绑定到激活的层级上，或者从一个激活的层级中解除某个子系统的绑定</li>
+<li>创建的层级中创建文件夹，就类似于<code>fork</code>了一个后代<code>cgroup</code>，后代<code>cgroup</code>中默认继承原有<code>cgroup</code>中的配置属性，但是可以根据需求对配置参数进行调整</li>
+<li>一个顶层的<code>cgroup</code>文件系统被卸载（unmount）时，如果其中创建过深层次的后代<code>cgroup</code>目录，那么就算上层的<code>cgroup</code>被卸载了，层级也是激活状态，其后代<code>cgroup</code>中的配置依旧有效。只有递归式地卸载层级中的所有<code>cgroup</code>，那个层级才会被真正删除</li>
+</ul>
+<h3 id="cgroup中文件"><a href="#cgroup中文件" class="headerlink" title="cgroup中文件"></a>cgroup中文件</h3><ul>
+<li><strong>tasks</strong>：这个文件中罗列了所有在该<code>cgroup</code>中任务的<code>TID</code>，即线程<code>ID</code>(gettid)</li>
+<li><strong>cgroup.procs</strong>：这个文件罗列所有在该<code>cgroup</code>中的<code>TGID</code>（线程组ID），即线程组中第一个进程的<code>PID</code></li>
+<li><strong>notify_on_release</strong>：填0或1，表示是否在<code>cgroup</code>中最后一个任务退出时通知运行<code>release agent</code>，默认情况下是0，表示不运行</li>
+<li><strong>release_agent</strong>：指定<code>release agent</code>执行脚本的文件路径（该文件在最顶层<code>cgroup</code>目录中存在），这个脚本通常用于自动化卸载无用的<code>cgroup</code></li>
+</ul>
+<h3 id="x2F-proc-x2F-pid-x2F-cgroup"><a href="#x2F-proc-x2F-pid-x2F-cgroup" class="headerlink" title="&#x2F;proc&#x2F;[pid]&#x2F;cgroup"></a>&#x2F;proc&#x2F;[pid]&#x2F;cgroup</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">zeyu@zeyu-desktop:~/work$ <span class="built_in">cat</span> /proc/self/cgroup </span><br><span class="line">12:devices:/user.slice</span><br><span class="line">11:blkio:/user.slice</span><br><span class="line">10:pids:/user.slice/user-1001.slice/user@1001.service</span><br><span class="line">9:cpuset:/</span><br><span class="line">8:cpu,cpuacct:/user.slice</span><br><span class="line">7:memory:/user.slice/user-1001.slice/user@1001.service</span><br><span class="line">6:rdma:/</span><br><span class="line">5:hugetlb:/</span><br><span class="line">4:freezer:/</span><br><span class="line">3:perf_event:/</span><br><span class="line">2:net_cls,net_prio:/</span><br><span class="line">1:name=systemd:/user.slice/user-1001.slice/user@1001.service/apps.slice/apps-org.gnome.Terminal.slice/vte-spawn-b3ed7abd-c7b2-4837-a6b7-9bbdce65c6bc.scope</span><br><span class="line">0::/user.slice/user-1001.slice/user@1001.service/apps.slice/apps-org.gnome.Terminal.slice/vte-spawn-b3ed7abd-c7b2-4837-a6b7-9bbdce65c6bc.scope</span><br></pre></td></tr></table></figure>
+
+<p>每一行包含用冒号隔开的三列，他们的含义分别是：</p>
+<ul>
+<li><code>cgroup</code>树的<code>ID</code>， 和<code>/proc/cgroups</code>文件中的<code>ID</code>一一对应</li>
+<li>和<code>cgroup</code>树绑定的所有<code>subsystem</code>，多个<code>subsystem</code>之间用逗号隔开。这里<code>name=systemd</code>表示没有和任何<code>subsystem</code>绑定，只是给他起了个名字叫<code>systemd</code></li>
+<li>进程在<code>cgroup</code>树中的路径，即进程所属的<code>cgroup</code>，这个路径是相对于挂载点的相对路径</li>
+</ul>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
+<li>创建层级  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t cgroup -o cpuset cgroup /cgroup </span><br></pre></td></tr></table></figure></li>
+<li>相关工具  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装cgroup工具</span></span><br><span class="line">apt install cgroup-tools</span><br><span class="line"><span class="comment"># 创建子控制组群 (mkdir)</span></span><br><span class="line">sudo cgcreate -g cpuset:<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 设置cpu子系统参数 (echo &gt;)</span></span><br><span class="line">sudo cgset -r cpuset.cpus=1 <span class="built_in">test</span>/</span><br><span class="line"><span class="comment"># 在cgroup中执行命令</span></span><br><span class="line">sudo cgexec -g memory:<span class="built_in">test</span> <span class="built_in">ls</span></span><br><span class="line"><span class="comment"># 将进程加入cpu子控制群组 (echo &gt;&gt;)</span></span><br><span class="line">sudo cgclassify -g memory:<span class="built_in">test</span> 133719</span><br><span class="line"><span class="comment"># 删除cpu子控制组 (rmdir)</span></span><br><span class="line">sudo cgdelete memory:<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 查看所有的cgroup</span></span><br><span class="line">lscgroup</span><br><span class="line"><span class="comment"># 查看所有支持的子系统</span></span><br><span class="line">lssubsys -a</span><br><span class="line"><span class="comment"># 查看所有子系统挂载的位置</span></span><br><span class="line">lssubsys -m</span><br><span class="line"><span class="comment"># 查看单个子系统（如memory）的挂载位置</span></span><br><span class="line">lssubsys -m memory</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="cgroups-v1-amp-cgroups-v2"><a href="#cgroups-v1-amp-cgroups-v2" class="headerlink" title="cgroups v1 &amp; cgroups v2"></a>cgroups v1 &amp; cgroups v2</h2><p>尽管<code>cgroups v2</code>(Linux 4.5)旨在取代<code>cgroups v1</code>(Linux 2.6.24)，但出于兼容性原因，不太可能完全取代。目前，<code>cgroups v2</code>只实现<code>cgroups v1</code>中可用的控制器的子集</p>
+<p><code>cgroups v1</code>和<code>cgroups v2</code>可以互补使用,但是一个子系统不能同时用于<code>cgroups v1</code>层次结构和<code>cgroups v2</code>层次结构</p>
+<h2 id="cgroups-v1"><a href="#cgroups-v1" class="headerlink" title="cgroups v1"></a>cgroups v1</h2><p>在<code>cgroups v1</code>下，每个控制器可以安装在一个单独的<code>cgroup</code>文件系统上，该文件系统为系统上的进程提供了自己的层次结构,也可以多个控制器一起安装在同一个<code>cgroup</code>文件系统。在已经挂载的层次结构中,每一个目录为一个控制组,子目录为子控制组。</p>
+<p>在<code>cgroups v1</code>中可以区分进程和线程,但对于内存控制器来说毫无意义，因为进程的所有线程共享一个地址空间，对于控制进程中线程这一问题在<code>cgroup v2</code>中被调整</p>
+<p><code>cgroups</code>使用需要开启内核编译选项<code>CONFIG_CGROUP</code>,此外，每个<code>v1</code>控制器都有一个相关的配置选项，必须设置该选项才能使用该控制器</p>
+<p>为了使用<code>v1</code>控制器，它必须安装在<code>cgroup</code>文件系统上。此类安装的通常位置在<code>tmpfs</code>文件系统(&#x2F;sys&#x2F;fs&#x2F;cgroup)<br>    <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t cgroup -o cpu none /sys/fs/cgroup/cpu</span><br></pre></td></tr></table></figure><br>可以针对同一层次结构同时安装多个控制器<br>    <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mount -t cgroup -o cpu,cpuacct none /sys/fs/cgroup/cpu,cpuacct</span><br><span class="line">mount -t cgroup -o all cgroup /sys/fs/cgroup</span><br></pre></td></tr></table></figure><br>安装没有附加控制器的<code>cgroup</code>层次结构,这种层次结构的唯一目的是跟踪进程<br>    <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t cgroup -o none,name=somename none /some/mount/point</span><br></pre></td></tr></table></figure><br>通过写入<code>cgroup.procs</code>将对应进程以及其线程加入一个<code>cgroup</code>，一次只能将一个<code>PID</code>写入此文件，写入<code>0</code>将导致写入的进程加入对应<code>cgroup</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://zeyusteel.github.io/022/12/02/linux-cgroups/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2022/11/28/linux-namespace/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Namespace</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2020/08/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2020/08/">1</a><span class="page-number current">2</span>
-    </nav>
+  
+
+  
+
   
 
 
@@ -223,8 +364,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
