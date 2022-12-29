@@ -928,6 +928,12 @@
 <li>读取到字符<code>0</code>后<code>handleFifoResult(result)</code>将删除<code>exec.fifo</code>文件</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *linuxContainer)</span></span> exec() <span class="type">error</span> &#123;</span><br><span class="line">	path := filepath.Join(c.root, execFifoFilename)</span><br><span class="line">	pid := c.initProcess.pid()</span><br><span class="line">	blockingFifoOpenCh := awaitFifoOpen(path)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> result := &lt;-blockingFifoOpenCh:</span><br><span class="line">			<span class="keyword">return</span> handleFifoResult(result)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> &lt;-time.After(time.Millisecond * <span class="number">100</span>):</span><br><span class="line">			stat, err := system.Stat(pid)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> || stat.State == system.Zombie &#123;</span><br><span class="line">				<span class="comment">// could be because process started, ran, and completed between our 100ms timeout and our system.Stat() check.</span></span><br><span class="line">				<span class="comment">// see if the fifo exists and has data (with a non-blocking open, which will succeed if the writing process is complete).</span></span><br><span class="line">				<span class="keyword">if</span> err := handleFifoResult(fifoOpen(path, <span class="literal">false</span>)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="keyword">return</span> errors.New(<span class="string">&quot;container process is already dead&quot;</span>)</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>runc exec</code></p>
+<p><code>exec</code>时创建的<code>parentProcess</code>对应实例就不是<code>initProcess</code>而是<code>setnsProcess</code>,并且在执行<code>data, err := c.bootstrapData(0, state.NamespacePaths)</code>时不需要任何<code>cloneFlags</code>,只需要<code>setns</code>相关进程对应<code>ns</code>路径</p>
+<p>然后执行<code>setnsProcess</code>的<code>start()</code>,去执行<code>/proc/self/exe init</code>, 将在<code>main</code>之前调用<code>nsexec.c</code>的<code>nsexec</code>去<code>setns</code></p>
+<p>执行完<code>main</code>之前命名空间切换操作将来到<code>setns_init_linux.go</code>中的<code>Init</code>，根据父进程传入的<code>initConfig</code>执行容器<code>tty</code>、能力、<code>Seccomp</code>等配置	,最后执行<code>execv</code></p>
+
       
 
       
@@ -1583,11 +1589,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">C</a>
+                <a href="javascript:void(0)" class="js-tag color3">日常</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日常</a>
+                <a href="javascript:void(0)" class="js-tag color2">C</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1603,11 +1609,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
