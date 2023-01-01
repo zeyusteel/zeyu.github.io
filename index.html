@@ -145,6 +145,82 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-2023" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/01/01/2023/">2023</a>
+    </h1>
+  
+
+        
+        <a href="/2023/01/01/2023/" class="archive-article-date">
+  	<time datetime="2023-01-01T08:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一晃又一年，2022年过得实在太快了，今年一整年的时间都被工作和疫情填满了，跨年夜突然打算买一个富士相机，在新的一年出去走走，拍拍照记录一下旅行和生活，好不容易看上一个<code>xt5</code>还没货，只能再观望一下了，可能老天都不想让我冲动消费吧，先找时间学一学摄影吧</p>
+<p>展望一下2023，是找一个新的工作还是换一个新的住所、是开启一段旅行还是换个地方出差、是主动追求幸福还是继续静静等待。不得不说这两年半的大部分精力都投入在个人技术成长和工作上了，是时候思考一下工作以外的事情了，毕竟说好的热爱技术但更热爱生活，希望2023的我有勇气做出抉择,拭目以待吧</p>
+<p><img src="/../photos/src/daily/2023.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">日常</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/01/01/2023/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-cgroups" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1414,92 +1490,6 @@
 
 
   
-    <article id="post-docker-01docker架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/">Docker - 01Docker架构</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/" class="archive-article-date">
-  	<time datetime="2022-08-22T06:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>根据官方的定义，<code>Docker</code>是以<code>Docker</code>容器为资源分割和调度的基本单位，封装整个软件运行时环境，为开发者和系统管理员设计的，用于构建、发布和运行分布式应用的平台。它是一个跨平台、可移植并且简单易用的容器解决方案</p>
-<h2 id="docker命令"><a href="#docker命令" class="headerlink" title="docker命令"></a>docker命令</h2><p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4.png"></p>
-<p><img src="/../photos/src/docker/01-docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84.jpeg"></p>
-<p><code>Docker</code>的设计理念是希望用户能够保证一个容器只运行一个进程，即只提供一种服务。然而，对于用户而言，单一容器是无法满足需求的。通常用户需要利用多个容器，分别提供不同的服务，并在不同容器间互连通信，最后形成一个<code>Docker</code>集群。<code>Docker</code>基于轻量级虚拟化技术，其易用、跨平台、可移植的特性使其在集群系统的搭建方面有着得天独厚的优势,因此<code>Docker</code>可以实现分布式应用集群的快速、准确、自动化部署</p>
-<h2 id="docker架构"><a href="#docker架构" class="headerlink" title="docker架构"></a>docker架构</h2><h3 id="docker-client"><a href="#docker-client" class="headerlink" title="docker client"></a>docker client</h3><p>任何遵循了<code>Docker API</code>的客户端都可以被称为<code>docker client</code></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/docker/docker/api/types&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/docker/docker/client&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getContainerList</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	cli, err := client.NewClientWithOpts(client.FromEnv)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	opts := types.ContainerListOptions&#123;&#125;</span><br><span class="line">	opts.All = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">	containers, err := cli.ContainerList(context.Background(), opts)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, container := <span class="keyword">range</span> containers &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%s %s\n&quot;</span>, container.ID[:<span class="number">10</span>], container.Image)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getImageList</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	cli, err := client.NewClientWithOpts(client.FromEnv)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	images, err := cli.ImageList(context.Background(), types.ImageListOptions&#123;&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, image := <span class="keyword">range</span> images &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%s &quot;</span>, image.ID)</span><br><span class="line">		<span class="keyword">for</span> _, val := <span class="keyword">range</span> image.RepoTags &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;%s \n&quot;</span>, val)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	getContainerList()</span><br><span class="line">	getImageList()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="docker-daemon"><a href="#docker-daemon" class="headerlink" title="docker daemon"></a>docker daemon</h3><p>是一个<code>API Server</code>,负责接收由<code>Docker client</code>发送的请求,统一分发调度</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Daemon <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID                <span class="type">string</span></span><br><span class="line">	repository        <span class="type">string</span></span><br><span class="line">	containers        container.Store</span><br><span class="line">	containersReplica container.ViewDB</span><br><span class="line">	execCommands      *exec.Store</span><br><span class="line">	imageService      *images.ImageService</span><br><span class="line">	idIndex           *truncindex.TruncIndex</span><br><span class="line">	configStore       *config.Config</span><br><span class="line">	statsCollector    *stats.Collector</span><br><span class="line">	defaultLogConfig  containertypes.LogConfig</span><br><span class="line">	RegistryService   registry.Service</span><br><span class="line">	EventsService     *events.Events</span><br><span class="line">	netController     libnetwork.NetworkController</span><br><span class="line">	volumes           *volumesservice.VolumesService</span><br><span class="line">	discoveryWatcher  discovery.Reloader</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="volume"><a href="#volume" class="headerlink" title="volume"></a>volume</h3><p><code>VolumesService</code>实现<code>Docker</code>数据卷管理</p>
-<p><code>volumedriver</code>是<code>volume</code>数据卷存储操作的最终执行者，负责<code>volume</code>的增删改查,<code>docker</code>默认策略是将卷都存在本地的<code>Docker</code>根目录下的<code>volumes</code></p>
-<h3 id="image"><a href="#image" class="headerlink" title="image"></a>image</h3><p><code>ImageService</code>实现了<code>Docker</code>镜像的管理</p>
-<p><code>graphdriver</code>是所有与容器镜像相关操作的最终执行者。<code>graphdriver</code>会在<code>Docker</code>工作目录下维护一组与镜像层对应的目录，并记下镜像层之间的关系以及与具体的<code>graphdriver</code>实现相关的元数据,这样，用户对镜像的操作最终会被映射成对这些目录文件以及元数据的增删改查，从而屏蔽掉不同文件存储实现对于上层调用者的影响,在<code>Linux</code>环境下，目前<code>Docker</code>已经支持的<code>graphdriver</code>包括<code>btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs</code></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/22/docker-01docker%E6%9E%B6%E6%9E%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1514,7 +1504,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2022 zeyu的博客
+    		&copy; 2023 zeyu的博客
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1609,11 +1599,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1672,7 +1662,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">二线城市码农，方向偏OS多一点，热爱技术但更热爱生活&lt;br&gt;&lt;br&gt;喜欢撸铁，爱玩HIFI但囊中羞涩，梦想开一家属于自己的照相馆，虽然我现在还不会拍照(=_=)</div>
   	  	
     	</section>
     

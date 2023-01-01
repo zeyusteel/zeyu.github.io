@@ -145,6 +145,197 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-linux-capabilities" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/06/11/linux-capabilities/">Linux Capabilities</a>
+    </h1>
+  
+
+        
+        <a href="/2022/06/11/linux-capabilities/" class="archive-article-date">
+  	<time datetime="2022-06-11T15:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-06-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>为了执行权限检查，传统的UNIX实现区分了两类进程：特权进程(<code>euid=0</code>，称为超级用户或<code>root</code>)和非特权进程(<code>euid!=0</code>),特权进程绕过所有内核权限检查，而非特权进程则根据进程身份认证进行权限检查(通常为:<code>euid,egid,group list</code>)。从内核2.2开始，Linux将传统上与超级用户相关的权限划分为不同的单元——称为能力。能力可以单独启用和禁用,是每个线程的属性 </p>
+<h2 id="能力的要求"><a href="#能力的要求" class="headerlink" title="能力的要求"></a>能力的要求</h2><ol>
+<li>对于所有特权操作，内核必须检查对应线程<code>effective set</code>是否有该能力</li>
+<li>内核必须提供允许更改和检索线程能力集的系统调用 </li>
+<li>文件系统必须支持将能力附加到可执行文件,以便进程在文件被执行时获得这些能力</li>
+</ol>
+<h2 id="针对内核开发者"><a href="#针对内核开发者" class="headerlink" title="针对内核开发者"></a>针对内核开发者</h2><p>当为内核开发新功能时，这个功能需要被能力管控</p>
+<ol>
+<li>能力目标是将超级用户的能力分成几部分，这样，如果一个程序具有一个或多个能力,它对系统造成破坏的能力将小于使用root权限运行的同一程序</li>
+<li>您可以选择为新功能创建新能力，或将该功能与现有能力关联,为了将能力集保持在一个可管理的规模，除非有令人信服的选择前者的原因。(还有一个技术限制：能力集的大小目前限制为64位)</li>
+<li>要确定哪个现有功能最适合与您的新功能相关联，请查看上面的功能列表，以便找到最适合您的新功能的能力。一种方法是确定是否有其他功能需要能力并且将始终与新功能一起使用的可能性。</li>
+<li>尽可能不要为新功能使用<code>CAP_SYS_ADMIN</code>能力,这个能力权限太高(被称为 the new root)</li>
+<li>如果您确定确实有必要为您的功能创建新能力，请不要将其命名为“一次性使用”,要让这个能力的名称可以适用于更多其他的功能</li>
+</ol>
+<h2 id="线程能力"><a href="#线程能力" class="headerlink" title="线程能力"></a>线程能力</h2><p>每个线程都有以下能力集，其中包含零个或多个上述能力</p>
+<ul>
+<li><p>Permitted<br>用于限制<code>Effective set</code>的超集,同时也可以限制想添加能力到<code>Inheritable set</code>但是 <code>Effective set</code>没有<code>CAP_SETPCAP</code>能力的情况<br>如果一个线程从<code>Permitted set</code>丢掉一个能力，那么它就无法再获取这个能力(除非它<code>execve</code>一个suid&#x3D;0程序或者一个程序的相关可执行文件有对应的能力)</p>
+</li>
+<li><p>Inheritable<br>这个集合声明<code>execve</code>继承的能力,当程序运行时，要执行的文件的<code>file inheritable set</code>和当前程序 <code>Inheritable set</code>相符合时，就会被添加到新的程序<code>Permitted set</code></p>
+</li>
+<li><p>Effective<br>这是内核用来对线程执行权限检查的一组能力</p>
+</li>
+<li><p>Bounding (2.6.25后变成线程级)<br>可用于限制在执行<code>execve</code>时新进程获得的能力</p>
+</li>
+<li><p>Ambient (4.3后内核)<br>该能力主要针对非特权用户(<code>prctl</code>可直接修改能力),非特权程序<code>A</code>调用<code>execv</code>系列函数执行新的程序<code>B</code>时，程序<code>A</code>的<code>ambient</code>权限集就会被进程<code>B</code>所继承</p>
+<ol>
+<li>如果<code>Permitted</code>或者<code>Inheritable</code>中的某个能力<code>P</code>被清空，在<code>Ambient</code>中该能力<code>P</code>也自动被清空</li>
+<li>当程序调用<code>setuid</code>改变<code>UID</code>或者<code>setgid</code>改变<code>GID</code>时，<code>Ambient</code>中的所有能力会被清空</li>
+<li>调用<code>execve</code>函数执行一个程序时，如果该文件曾经被设置了任何的文件<code>capabilities</code>，<code>Ambient</code>中的所有能力会被清空；</li>
+<li>当调用<code>execve</code>函数执行一个程序时，如果该文件没有设置过任何的文件<code>capabilities</code>，<code>Ambient</code>中的所有能力就会被赋予给新程序的<code>Permited</code>和<code>Effective</code>能力集。</li>
+</ol>
+</li>
+</ul>
+<h2 id="文件能力"><a href="#文件能力" class="headerlink" title="文件能力"></a>文件能力</h2><p>可执行文件的能力会被存储在文件扩展属性中(<code>security.capability</code>),可以通过<code>setcap</code>, <code>cap_set_file</code>,<code>cap_set_fd</code>,设置文件的能力。对文件写入扩展属性这一过程需要<code>CAP_SETFCAP</code>能力。文件的能力将与线程的能力一起决定<code>execve</code>后新进程的能力</p>
+<ul>
+<li><p>Permitted<br>无论线程的<code>Inheritable</code>能力集如何，文件<code>Permitted</code>的能力都会与线程的<code>Bounding</code>集合与运算，添加到新线程的<code>Permitted</code></p>
+</li>
+<li><p>Inheritable<br>文件的<code>Inheritable</code>会和线程的<code>Inheritable</code>做与运算,添加到<code>execv</code>后新进程的<code>Permitted</code></p>
+</li>
+<li><p>Effective<br>这不是一个集合，仅仅是一个标志位。如果设置开启，那么在执行完<code>execve</code>后，线程<code>Permitted</code>集合中的<code>capabilities</code>会自动添加到它的<code>Effective</code>集合中。对于一些旧的可执行文件，由于其不会调用 <code>capabilities</code>相关函数设置自身的<code>Effective</code>集合，所以可以将可执行文件的<code>Effective bit</code>开启，从而可以将<code>Permitted</code>集合中的 <code>capabilities</code>自动添加到<code>Effective</code>集合中</p>
+</li>
+</ul>
+<h3 id="文件扩展属性"><a href="#文件扩展属性" class="headerlink" title="文件扩展属性"></a>文件扩展属性</h3><p><code>VFS_CAP_REVISION_3</code>和命名空间有关，当线程处于一个子命名空间中，并且这个线程在该命名空间有<code>CAP_SETFCAP</code>能力，那么这个线程为文件添加能力时文件security.capability就是<code>VFS_CAP_REVISION_3</code>版本，与<code>VFS_CAP_REVISION_2</code>的区别体现在扩展属性会将当前命名空间的root user id一起编码加到扩展属性中</p>
+<h2 id="能力继承"><a href="#能力继承" class="headerlink" title="能力继承"></a>能力继承</h2><h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p>通过<code>fork</code>创建的子进程继承其父进程的全部能力集</p>
+<h3 id="execve"><a href="#execve" class="headerlink" title="execve"></a>execve</h3><p>P’ : 新进程<br>P  : 旧进程<br>F  : 文件</p>
+<ul>
+<li>P’(ambient) &#x3D; (file is privileged) ? 0 : P(ambient)</li>
+<li>P’(permitted) &#x3D; (P(inheritable) &amp; F(inheritable)) | (F(permitted) &amp; P(bounding)) | P’(ambient)</li>
+<li>P’(effective) &#x3D; F(effective) ? P’(permitted) : P’(ambient)</li>
+<li>P’(inheritable) &#x3D; P(inheritable)</li>
+<li>P’(bounding) &#x3D; P(bounding)</li>
+</ul>
+<p>普通用户执行<code>execve</code>时<code>permitted</code>和<code>effective</code>都会被清空<br>root用户执行<code>execve</code>时<code>ambient</code>会被清空</p>
+<h3 id="old-bin"><a href="#old-bin" class="headerlink" title="old bin"></a>old bin</h3><p>对于老的二进制文件，没有使用libcap的api去获得能力，而是使用文件的能力，这就需要将文件的<code>effective set</code>开启，这样执行时会自动将文件的<code>permitted</code>添加到对应进程的<code>effective</code></p>
+<h3 id="root"><a href="#root" class="headerlink" title="root"></a>root</h3><ol>
+<li>如果进程的real uid或euid &#x3D; 0,那么<code>execve</code>文件的<code>inheritalbe</code>和<code>permitted</code>就会被忽略(通常意味着新进程所有权限都有,有一种特殊情况：一个普通进程<code>execve</code>一个<code>setuid root</code>的可执行文件,并且这个文件添加了额外的能力,这时新进程只会获得旧进程的能力，不会获取来自文件的能力,通过这种方式我们可以实现让一个进程切换到euid&#x3D;0但是却没能力的状态)</li>
+<li>如果进程euid&#x3D;0,那么<code>execve</code>文件的<code>effective bit</code>就会默认为开启状态</li>
+</ol>
+<p>所以当一个普通程序execve一个setuid root的可执行文件（这个文件没添加额外的能力），或者一个real uid | euid &#x3D; root程序执行execve时：</p>
+<ul>
+<li>P’(permitted) &#x3D; P(inheritable) | P(bounding)</li>
+<li>P’(effective) &#x3D; P’(permitted)</li>
+</ul>
+<h2 id="bounding-set"><a href="#bounding-set" class="headerlink" title="bounding set"></a>bounding set</h2><p><code>bounding set</code>用于限制<code>execve</code>时新进程能力的一组能力集</p>
+<ul>
+<li><code>bounding set</code>会和文件的<code>permitted set</code>做与运算后添加到新进程的<code>permitted set</code></li>
+<li>如果一个能力不在<code>bounding set</code>，那么也无法将这个能力添加到<code>inheritable set</code>,即使这个能力在<code>permitted set</code></li>
+</ul>
+<p>在计算<code>execve</code>新进程的<code>permitted set</code>时，<code>bounding set</code>只会和文件的<code>permitted set</code>与运算，不会与<code>inheritalbe set</code>与运算,如果一个能力在进程的<code>inheritable set</code>而不在<code>bounding set</code>时，只要文件的<code>inheritable set</code>有该能力，还是可以将这个能力添加到新进程<code>permitted set</code>；当一个进程在<code>bounding set</code>去除了一个能力，但是进程要<code>exec</code>的文件在<code>ep</code>有对应能力时,<code>exec</code>将无权限执行,除非将当前进程的<code>inheritable set</code>和文件<code>inheritable set</code>都设置上对应能力</p>
+<h3 id="2-6-25后的内核"><a href="#2-6-25后的内核" class="headerlink" title="2.6.25后的内核"></a>2.6.25后的内核</h3><p><code>bounding set</code>不再是系统范围的能力集，而是作用到每个线程</p>
+<p><code>bounding set</code>本身在<code>fork</code>和<code>execve</code>都是直接继承的</p>
+<p>线程可以通过使用<code>prctl</code>的<code>PR_CAPBSET_DROP</code>去除一个<code>bounding set</code>能力，能力一旦被去除就不能恢复,可以使用<code>prctl</code>的<code>PR_CAPBSET_READ</code>去读取能力是否在<code>bounding set</code></p>
+<p>从<code>bounding set</code>中删除一个能力不会让<code>inheritable set</code>对应的能力删除，但是却能阻止向<code>inheritable set</code>添加对应能力</p>
+<h2 id="EUID-改变时的能力"><a href="#EUID-改变时的能力" class="headerlink" title="EUID 改变时的能力"></a>EUID 改变时的能力</h2><ol>
+<li>如果<code>real</code>,<code>effective</code>或者<code>saved set user IDs</code>原先是0，通过<code>setuid</code>导致这些值变为非0，那么<code>permitted</code>,<code>effective</code>,和<code>ambient</code>集中所有能力都会被清除</li>
+<li>如果<code>euid</code>从0变为非0，那么<code>effective set</code>中所有能力都会清除</li>
+<li>如果<code>euid</code>从非0变为0，那么<code>permitted set</code>中所有能力都将拷贝到<code>effective set</code></li>
+<li>如果<code>fsuid</code>从0变为非0，那么<code>effective set</code>中的<code>CAP_CHOWN, CAP_DAC_OVERRIDE, CAP_DAC_READ_SEARCH, CAP_FOWNER, CAP_FSETID, CAP_LINUX_IMMUTABLE (since Linux  2.6.30),  CAP_MAC_OVERRIDE, and CAP_MKNOD(since Linux 2.6.30)</code>会被清除,相反如果<code>fsuid</code>从非0变为0，那么任何一个上述能力只要在<code>permitted set</code>中都会被添加到<code>effective set</code></li>
+</ol>
+<p>如果一个uid&#x3D;0 euid&#x3D;0的线程在setuid到普通用户时想要保存之前的能力，可以使用<code>SECBIT_KEEP_CAPS</code>标志位</p>
+<h2 id="以编程的方式调整能力集"><a href="#以编程的方式调整能力集" class="headerlink" title="以编程的方式调整能力集"></a>以编程的方式调整能力集</h2><p>一个线程可以使用capget,capset系统调用去改变permitted, effective,和inheritable能力集</p>
+<p>但是更推荐使用cap_get_proc,cap_set_proc去完成上述功能</p>
+<ol>
+<li>如果一个线程没有<code>CAP_SETPCAP</code>能力,那么新的<code>inheritable set</code>一定是现有<code>inheritable set ＋ permitted set</code>的子集</li>
+<li>新的<code>inheritable set</code>一定是现有<code>inheritable set + bounding set</code>的子集</li>
+<li>新的<code>permitted set</code>一定是现有<code>permitted set</code>的子集</li>
+<li>新的<code>effective set</code>一定是新的<code>permitted set</code>的子集</li>
+</ol>
+<h2 id="安全参数"><a href="#安全参数" class="headerlink" title="安全参数"></a>安全参数</h2><p>自2.6.26，内核启用文件能力,linux声明了一系列线程级的安全位参数去禁用一些uid&#x3D;0的线程对应的能力</p>
+<ul>
+<li><p>SECBIT_KEEP_CAPS  </p>
+<ol>
+<li>设置了这个标志位可以在线程从UIDs&#x3D;0 切换到非0时保存<code>permitted set</code>的能力，否则<code>permitted set</code>的能力都将清空  </li>
+<li>这个标志位本身在execve时会被清空  </li>
+<li>请注意，即使设置了<code>SECBIT_KEEP_CAPS</code>,<code>effective set</code>在从euid&#x3D;0切换到非0时也会被清空,但是如果线程设置了这个标志位但是它的euid不等于0，那么他再切换到其他UIDs不等于0的线程就不会清空<code>effective set</code>  </li>
+<li>如果设置了<code>SECBIT_NO_SETUID_FIXUP</code>,那么<code>SECBIT_KEEP_CAPS</code>就会被屏蔽  </li>
+<li>这个标志位和旧版的prctl<code>PR_SET_KEEPCAPS</code>功能相同</li>
+</ol>
+</li>
+<li><p>SECBIT_NO_SETUID_FIXUP<br>这个设置将在线程的euid fsuid从0和非0切换时阻止内核调整线程的permitted,effective,ambient集</p>
+</li>
+<li><p>SECBIT_NOROOT<br>如果设置了这个标志位，那么suid的可执行文件被执行或者euid ruid &#x3D; 0执行一个程序时新程序不会获得root对应的能力</p>
+</li>
+<li><p>SECBIT_NO_CAP_AMBIENT_RAISE<br>设置这个标志位将不允许提升ambient set的能力通过prctl PR_CAP_AMBIENT_RAISE 选项</p>
+</li>
+</ul>
+<p>每一个标志都有一个<code>lock</code>标志,任何<code>lock</code>标志都是不可逆的，一旦设置锁定标志位，原来的基础标志位就不可更改,锁定标志位包含：SECBIT_KEEP_CAPS_LOCKED, SECBIT_NO_SETUID_FIXUP_LOCKED,<br>SECBIT_NOROOT_LOCKED,SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED.</p>
+<p>安全参数可以通过prctl的PR_SET_SECUREBITS 和 PR_GET_SECUREBITS去获取和更改, <code>CAP_SETPCAP</code>能力具有修改安全参数的功能,注意：只有包含&lt;linux&#x2F;securebits.h&gt;才可以使用SECBIT*相关内容</p>
+<p>安全标志位除了SECBIT_KEEP_CAPS始终会被清除,其余都会被子进程继承</p>
+<p>使用以下标志位可以锁定自身以及子进程的能力，除非对应执行的文件有能力</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">prctl(PR_SET_SECUREBITS,</span><br><span class="line">            <span class="comment">/* SECBIT_KEEP_CAPS off */</span></span><br><span class="line">            SECBIT_KEEP_CAPS_LOCKED |</span><br><span class="line">            SECBIT_NO_SETUID_FIXUP |</span><br><span class="line">            SECBIT_NO_SETUID_FIXUP_LOCKED |</span><br><span class="line">            SECBIT_NOROOT |</span><br><span class="line">            SECBIT_NOROOT_LOCKED);</span><br><span class="line">            <span class="comment">/* Setting/locking SECBIT_NO_CAP_AMBIENT_RAISE</span></span><br><span class="line"><span class="comment">               is not required */</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="namespace"><a href="#namespace" class="headerlink" title="namespace"></a>namespace</h2><h3 id="suid-root"><a href="#suid-root" class="headerlink" title="suid root"></a>suid root</h3><p>当一个suid程序的uid匹配上了一个创建新namespace的uid时，当这个程序在命名空间内被任意程序执行时,就会被授予进程的permitted和effective集的能力,这里执行suid程序新进程获得的能力与上文执行suid程序获取能力的策略一致，只不过这里root程序是创建namespace对应的那个uid</p>
+<h3 id="file-cap"><a href="#file-cap" class="headerlink" title="file cap"></a>file cap</h3><p>传统的文件能力只是与二进制文件的一系列能力集有关，并不关心namespace,后来引入<code>VFS_CAP_REVISION_3</code>,在传统文件能力后又添加了namespace的root uid,在命名空间执行一个程序时，只有当文件setuid的 uid与扩展属性的uid匹配上时才会授予相关权限 </p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>内核选项<code>CONFIG_SECURITY_CAPABILITIES</code>去开启,关闭能力</p>
+<p>&#x2F;proc&#x2F;[pid]&#x2F;task&#x2F;TID&#x2F;status 去看线程的能力</p>
+<p>&#x2F;proc&#x2F;[pid]&#x2F;status 去看进程的能力</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/06/11/linux-capabilities/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-begin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2524,305 +2715,6 @@
 
 
   
-    <article id="post-cpp-14重载运算符与类型转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">C++ 14重载运算符与类型转换</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
-  	<time datetime="2021-08-18T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
-<li>重载运算符是具有特殊名字的函数：由关键字<code>operator</code>和其后要定义的运算符号共同组成</li>
-<li>当一个重载的运算符是成员函数时，<code>this</code>绑定到左侧运算对象。动态运算符符函数的参数数量比运算对象的数量<strong>少一个</strong></li>
-<li>只能重载大多数的运算符，而不能发明新的运算符号</li>
-<li>重载运算符的优先级和结合律跟对应的内置运算符保持一致</li>
-<li>调用方式<ul>
-<li><code>data1 + data2;</code></li>
-<li><code>operator+(data1, data2);</code></li>
-</ul>
-</li>
-<li>是否是成员函数<ul>
-<li>赋值（<code>=</code>）、下标（<code>[]</code>）、调用（<code>()</code>）和成员访问箭头（<code>-&gt;</code>）运算符必须是成员<ul>
-<li>要保证这几个符号都是被对象调用,使用友元会出现语义问题,<code>friend int operator=(int a, int b); 2 = a;</code></li>
-</ul>
-</li>
-<li>复合赋值运算符一般来说是成员</li>
-<li>改变对象状态的运算符或者和给定类型密切相关的运算符通常是成员，如递增、解引用</li>
-<li>具有对称性的运算符如算术、相等性、关系和位运算符等，通常是非成员函数</li>
-</ul>
-</li>
-</ul>
-<p><strong>运算符</strong></p>
-<table>
-<thead>
-<tr>
-<th>可以被重载</th>
-<th>不可以被重载</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>^</code></td>
-<td><code>::</code>, <code>.*</code>, <code>.</code>, <code>? :</code>,</td>
-</tr>
-<tr>
-<td><code>&amp;</code>, <code>|</code>, <code>~</code>, <code>!</code>, <code>,</code>, <code>=</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>++</code>, <code>--</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>==</code>, <code>!=</code>, <code>&amp;&amp;</code>, &#96;</td>
-<td></td>
-</tr>
-<tr>
-<td><code>+=</code>, <code>-=</code>, <code>/=</code>, <code>%=</code>, <code>^=</code>, <code>&amp;=</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>|=</code>, <code>*=</code>, <code>&lt;&lt;=</code>, <code>&gt;&gt;=</code>, <code>[]</code>, <code>()</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>-&gt;</code>, <code>-&gt;*</code>, <code>new</code>, <code>new[]</code>, <code>delete</code>, <code>delete[]</code></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>通常情况下，不应该重载逗号、取地址、逻辑与和逻辑或运算符</p>
-<h2 id="输入和输出运算符"><a href="#输入和输出运算符" class="headerlink" title="输入和输出运算符"></a>输入和输出运算符</h2><h3 id="重载输出运算符-lt-lt"><a href="#重载输出运算符-lt-lt" class="headerlink" title="重载输出运算符&lt;&lt;"></a>重载输出运算符&lt;&lt;</h3><ul>
-<li>第一个形参通常是一个非常量的<code>ostream</code>对象的引用。非常量是因为向流中写入会改变其状态；而引用是因为我们无法复制一个<code>ostream</code>对象</li>
-<li>输入输出运算符必须是非成员函数(运算符左侧对象必须是是iostream,不能是this)</li>
-</ul>
-<h3 id="重载输入运算符-gt-gt"><a href="#重载输入运算符-gt-gt" class="headerlink" title="重载输入运算符&gt;&gt;"></a>重载输入运算符&gt;&gt;</h3><ul>
-<li>第一个形参通常是运算符将要读取的流的引用，第二个形参是将要读取到的（非常量）对象的引用</li>
-<li>输入运算符必须处理输入可能失败的情况，而输出运算符不需要</li>
-</ul>
-<h2 id="算数和关系运算符（-、-、-、-x2F-）"><a href="#算数和关系运算符（-、-、-、-x2F-）" class="headerlink" title="算数和关系运算符（+、-、*、&#x2F;）"></a>算数和关系运算符（+、-、*、&#x2F;）</h2><ul>
-<li>如果类同时定义了算数运算符和相关的复合赋值运算符，则通常情况下应该使用复合赋值来实现算数运算符</li>
-</ul>
-<h3 id="相等运算符-x3D-x3D"><a href="#相等运算符-x3D-x3D" class="headerlink" title="相等运算符&#x3D;&#x3D;"></a>相等运算符&#x3D;&#x3D;</h3><ul>
-<li>如果定义了<code>operator==</code>，则这个类也应该定义<code>operator!=</code></li>
-<li>相等运算符和不等运算符的一个应该把工作委托给另一个</li>
-<li>相等运算符应该具有传递性</li>
-<li>如果某个类在逻辑上有相等性的含义，则该类应该定义<code>operator==</code>，这样做可以使用户更容易使用标准库算法来处理这个类</li>
-</ul>
-<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><ul>
-<li>如果存在唯一一种逻辑可靠的<code>&lt;</code>定义，则应该考虑为这个类定义<code>&lt;</code>运算符。如果同时还包含<code>==</code>，则当且仅当<code>&lt;</code>的定义和<code>==</code>产生的结果一直时才定义<code>&lt;</code>运算符</li>
-</ul>
-<h2 id="赋值运算符-x3D"><a href="#赋值运算符-x3D" class="headerlink" title="赋值运算符&#x3D;"></a>赋值运算符&#x3D;</h2><ul>
-<li>我们可以重载赋值运算符。不论形参的类型是什么，赋值运算符都必须定义为成员函数</li>
-<li>赋值运算符必须定义成类的成员，复合赋值运算符通常情况下也应该这么做。这两类运算符都应该返回左侧运算对象的引用</li>
-</ul>
-<h2 id="下标运算符"><a href="#下标运算符" class="headerlink" title="下标运算符[]"></a>下标运算符[]</h2><ul>
-<li>下标运算符必须是成员函数</li>
-<li>一般会定义两个版本<ul>
-<li>返回普通引用</li>
-<li>类的常量成员，并返回常量引用</li>
-</ul>
-</li>
-</ul>
-<h2 id="递增和递减运算符（-、–）"><a href="#递增和递减运算符（-、–）" class="headerlink" title="递增和递减运算符（++、–）"></a>递增和递减运算符（++、–）</h2><ul>
-<li>定义递增和递减运算符的类应该同时定义前置版本和后置版本</li>
-<li>通常应该被定义成类的成员</li>
-<li>为了和内置版本保持一致，前置运算符应该返回递增或递减后对象的引用</li>
-<li>同样为了和内置版本保持一致，后置运算符应该返回递增或递减前对象的值，而不是引用</li>
-<li>后置版本接受一个额外的，不被使用的<code>int</code>类型的形参。因为不会用到，所以无需命名</li>
-</ul>
-<h2 id="成员访问运算符（-、-gt-）"><a href="#成员访问运算符（-、-gt-）" class="headerlink" title="成员访问运算符（*、-&gt;）"></a>成员访问运算符（*、-&gt;）</h2><ul>
-<li>箭头运算符必须是类的成员。解引用运算符通常也是类的成员，尽管并非必须如此</li>
-<li>对于形如<code>point-&gt;mem</code>的表达式来说，<code>point</code>必须是指向类对象的指针或者是一个重载了<code>operator-&gt;</code>的类的对象<ul>
-<li><code>(*point).mem</code> <code>point</code>是指针 </li>
-<li><code>point.operator()-&gt;mem</code> <code>point</code>是对象</li>
-</ul>
-</li>
-<li>解引用和乘法的区别是一个是一元运算符，一个是二元运算符</li>
-</ul>
-<h2 id="函数调用运算符"><a href="#函数调用运算符" class="headerlink" title="函数调用运算符"></a>函数调用运算符</h2><ul>
-<li>可以像使用函数一样，调用该类的对象。因为这样对待类同时也能存储状态，所以与普通函数相比更加灵活</li>
-<li>函数调用运算符必须是成员函数</li>
-<li>一个类可以定义多个不同版本的调用运算符，相互之间应该在参数数量或类型上有所区别</li>
-<li>如果累定义了调用运算符，则该类的对象称作<strong>函数对象</strong></li>
-</ul>
-<h3 id="lambda是函数对象"><a href="#lambda是函数对象" class="headerlink" title="lambda是函数对象"></a><code>lambda</code>是函数对象</h3><ul>
-<li><code>lambda</code>捕获变量：<code>lambda</code>产生的类必须为每个值捕获的变量建立对应的数据成员，同时创建构造函数</li>
-</ul>
-<h3 id="标准库定义的函数对象"><a href="#标准库定义的函数对象" class="headerlink" title="标准库定义的函数对象"></a>标准库定义的函数对象</h3><p><strong>标准库函数对象</strong></p>
-<table>
-<thead>
-<tr>
-<th>算术</th>
-<th>关系</th>
-<th>逻辑</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>plus&lt;Type&gt;</code></td>
-<td><code>equal_to&lt;Type&gt;</code></td>
-<td><code>logical_and&lt;Type&gt;</code></td>
-</tr>
-<tr>
-<td><code>minus&lt;Type&gt;</code></td>
-<td><code>not_equal_to&lt;Type&gt;</code></td>
-<td><code>logical_or&lt;Type&gt;</code></td>
-</tr>
-<tr>
-<td><code>multiplies&lt;Type&gt;</code></td>
-<td><code>greater&lt;Type&gt;</code></td>
-<td><code>logical_not&lt;Type&gt;</code></td>
-</tr>
-<tr>
-<td><code>divides&lt;Type&gt;</code></td>
-<td><code>greater_equal&lt;Type&gt;</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>modulus&lt;Type&gt;</code></td>
-<td><code>less&lt;Type&gt;</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>negate&lt;Type&gt;</code></td>
-<td><code>less_equal&lt;Type&gt;</code></td>
-<td></td>
-</tr>
-</tbody></table>
-<ul>
-<li>可以在算法中使用标准库函数对象</li>
-</ul>
-<h3 id="可调用对象与function"><a href="#可调用对象与function" class="headerlink" title="可调用对象与function"></a>可调用对象与function</h3><p><strong>标准库function类型</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>function&lt;T&gt; f;</code></td>
-<td><code>f</code>是一个用来存储可调用对象的空<code>function</code>，这些可调用对象的调用形式应该与类型<code>T</code>相同</td>
-</tr>
-<tr>
-<td><code>function&lt;T&gt; f(nullptr);</code></td>
-<td>显式地构造一个空<code>function</code></td>
-</tr>
-<tr>
-<td><code>function&lt;T&gt; f(obj)</code></td>
-<td>在<code>f</code>中存储可调用对象<code>obj</code>的副本</td>
-</tr>
-<tr>
-<td><code>f</code></td>
-<td>将<code>f</code>作为条件：当<code>f</code>含有一个可调用对象时为真；否则为假</td>
-</tr>
-<tr>
-<td>定义为<code>function&lt;T&gt;</code>的成员的类型</td>
-<td></td>
-</tr>
-<tr>
-<td><code>result_type</code></td>
-<td>该<code>function</code>类型的可调用对象返回的类型</td>
-</tr>
-<tr>
-<td><code>argument_type</code></td>
-<td>当<code>T</code>有一个或两个实参时定义的类型。如果<code>T</code>只有一个实参，则<code>argument_type</code></td>
-</tr>
-<tr>
-<td><code>first_argument_type</code></td>
-<td>第一个实参的类型</td>
-</tr>
-<tr>
-<td><code>second_argument_type</code></td>
-<td>第二个实参的类型</td>
-</tr>
-</tbody></table>
-<ul>
-<li>例如：声明一个<code>function</code>类型，它可以表示接受两个<code>int</code>，返回一个<code>int</code>的可调用对象。<code>function&lt;int(int, int)&gt;</code></li>
-</ul>
-<h2 id="重载、类型转换、运算符"><a href="#重载、类型转换、运算符" class="headerlink" title="重载、类型转换、运算符"></a>重载、类型转换、运算符</h2><h3 id="类型转换运算符"><a href="#类型转换运算符" class="headerlink" title="类型转换运算符"></a>类型转换运算符</h3><ul>
-<li>类型转换运算符是类的一种特殊成员函数，它负责将一个类类型的值转换成其他类型。类型转换函数的一般形式如下：<code>operator type() const;</code></li>
-<li>一个类型转换函数必须是类的成员函数；它不能声明返回类型，形参列表也必须为空。类型转换函数通常应该是<code>const</code></li>
-<li>避免过度使用类型转换函数</li>
-<li>C++11引入了显式的类型转换运算符</li>
-<li>向<code>bool</code>的类型转换通常用在条件部分，因此<code>operator bool</code>一般定义成<code>explicit</code>的</li>
-</ul>
-<h3 id="避免有二义性的类型转换"><a href="#避免有二义性的类型转换" class="headerlink" title="避免有二义性的类型转换"></a>避免有二义性的类型转换</h3><ul>
-<li>通常，不要为类定义相同的类型转换，也不要在类中定义两个及以上转换源或转换目标是算术类型的转换</li>
-<li>在调用重载函数时，如果需要额外的标准类型转换，则该转换的级别只有当所有可行函数都请求同一个用户定义的类型转换时才有用。如果所需的用户定义的类型转换不止一个，则该调用具有二义性</li>
-</ul>
-<h3 id="函数匹配与重载运算符"><a href="#函数匹配与重载运算符" class="headerlink" title="函数匹配与重载运算符"></a>函数匹配与重载运算符</h3><ul>
-<li>如果<code>a</code>是一种类型，则表达式<code>a sym b</code>可能是<ul>
-<li><code>a.operatorsym(b);</code></li>
-<li><code>operatorsym(a,b);</code></li>
-</ul>
-</li>
-<li>如果我们对同一个类既提供了转换目标是算术类型的类型转换，也提供了重载的运算符，则将会遇到重载运算符与内置运算符的二义性问题</li>
-</ul>
-<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CDemo</span></span><br><span class="line">&#123;    </span><br><span class="line">    <span class="keyword">friend</span> std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp;, <span class="type">const</span> CDemo&amp;); </span><br><span class="line">    <span class="keyword">friend</span> std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp;, CDemo&amp;);</span><br><span class="line">    <span class="keyword">friend</span> CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp;, <span class="type">const</span> CDemo&amp;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CDemo</span><span class="params">(<span class="type">int</span> num = <span class="number">0</span>)</span>: m(num) &#123;</span>&#125; </span><br><span class="line">    ~<span class="built_in">CDemo</span>() &#123;&#125;</span><br><span class="line">    <span class="built_in">CDemo</span>(<span class="type">const</span> CDemo &amp;d): <span class="built_in">m</span>(d.m) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>=(<span class="type">const</span> CDemo &amp;d) &#123;</span><br><span class="line">        m = d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo <span class="keyword">operator</span>++(<span class="type">int</span>) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="function">CDemo <span class="title">tmp</span><span class="params">(*<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        ++*<span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CDemo&amp; <span class="keyword">operator</span>++() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;++d&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        ++m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	CDemo&amp; <span class="keyword">operator</span>+=(<span class="type">const</span> CDemo&amp; d) &#123;</span><br><span class="line">        m += d.m;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;d()&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="keyword">operator</span>[](<span class="type">size_t</span> n) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;[]&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string&amp; <span class="keyword">operator</span>*() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;*&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::string* <span class="keyword">operator</span>-&gt;() &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;-&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> &amp; <span class="keyword">this</span>-&gt;<span class="keyword">operator</span>*();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m;</span><br><span class="line">    std::string str = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; stream, <span class="type">const</span> CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> stream &lt;&lt; d.m;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::istream&amp; <span class="keyword">operator</span>&gt;&gt;(std::istream&amp; stream, CDemo&amp; d)</span><br><span class="line">&#123;</span><br><span class="line">    stream &gt;&gt; d.m;</span><br><span class="line">    <span class="keyword">if</span> (!stream) &#123;</span><br><span class="line">        d = <span class="built_in">CDemo</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stream;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CDemo <span class="keyword">operator</span>+(<span class="type">const</span> CDemo&amp; d1, <span class="type">const</span> CDemo&amp; d2)</span><br><span class="line">&#123;</span><br><span class="line">    CDemo d = d1;</span><br><span class="line">    d += d2;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/18/cpp-14%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -2837,7 +2729,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2022 zeyu的博客
+    		&copy; 2023 zeyu的博客
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -2932,11 +2824,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">json</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">json</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2995,7 +2887,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">二线城市码农，方向偏OS多一点，热爱技术但更热爱生活&lt;br&gt;&lt;br&gt;喜欢撸铁，爱玩HIFI但囊中羞涩，梦想开一家属于自己的照相馆，虽然我现在还不会拍照(=_=)</div>
   	  	
     	</section>
     
