@@ -145,6 +145,107 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-02client" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/08/30/docker-02client/">Docker - 02Client</a>
+    </h1>
+  
+
+        
+        <a href="/2022/08/30/docker-02client/" class="archive-article-date">
+  	<time datetime="2022-08-30T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>自从<code>20.10</code>版本,原来<code>Docker-CE</code>的仓库就不再使用，而是分成了<a target="_blank" rel="noopener" href="https://github.com/docker/cli"><code>Docker CLI</code></a>和<a target="_blank" rel="noopener" href="https://github.com/moby/moby">Docker Engine</a>,后续涉及源码的地方都将基于<code>v20.10.12</code>展开</p>
+<h2 id="Docker-Client"><a href="#Docker-Client" class="headerlink" title="Docker Client"></a>Docker Client</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">​​docker [OPTIONS] COMMAND [arg...]​​</span><br></pre></td></tr></table></figure>
+
+<p><code>docker client</code>入口函数在<code>cmd/docker/docker.go</code></p>
+<h3 id="01-初始化DockerCli"><a href="#01-初始化DockerCli" class="headerlink" title="01 初始化DockerCli"></a>01 初始化DockerCli</h3><p>调用<code>cli/command/cli.go/NewDockerCli</code>实例化一个<code>cli</code>,这里会去获取环境变量、设置默认的<code>store.Config</code>、配置默认的标准输入输出及错误输出</p>
+<p><code>DockerCli</code>将作为客户端的上下文存在于整个生命周期</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DockerCli <span class="keyword">struct</span> &#123;</span><br><span class="line">	configFile         *configfile.ConfigFile</span><br><span class="line">	in                 *streams.In</span><br><span class="line">	out                *streams.Out</span><br><span class="line">	err                io.Writer</span><br><span class="line">	client             client.APIClient</span><br><span class="line">	serverInfo         ServerInfo</span><br><span class="line">	clientInfo         *ClientInfo</span><br><span class="line">	contentTrust       <span class="type">bool</span></span><br><span class="line">	contextStore       store.Store</span><br><span class="line">	currentContext     <span class="type">string</span></span><br><span class="line">	dockerEndpoint     docker.Endpoint</span><br><span class="line">	contextStoreConfig store.Config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="02-runDocker"><a href="#02-runDocker" class="headerlink" title="02 runDocker"></a>02 runDocker</h3><ol>
+<li>初始化命令模版: 在<code>newDockerCommand</code>中初始化命令行模版,命令模版:<code>vendor/github.com/spf13/cobra/command.go/command</code></li>
+<li>初始化<code>Flags</code>并关联<code>Options</code>: <code>cli/flags/common.go/InstallFlags</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CommonOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Debug      <span class="type">bool</span></span><br><span class="line">    Hosts      []<span class="type">string</span></span><br><span class="line">    LogLevel   <span class="type">string</span></span><br><span class="line">    TLS        <span class="type">bool</span></span><br><span class="line">    TLSVerify  <span class="type">bool</span></span><br><span class="line">    TLSOptions *tlsconfig.Options</span><br><span class="line">    Context    <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>初始化命令: <code>cli/command/commands/commands.go/AddCommands</code>,<code>cli/command/container</code>下包含容器相关的命令,<code>cli/command/image</code>下包含镜像相关的命令,以此类推</li>
+<li>解析传入的<code>Options</code> <code>cli/cobra.go/HandleGlobalFlags</code>,将<code>os.Args</code>的<code>Options</code>切分后面就是<code>args</code></li>
+<li>初始化<code>Options</code> <code>cli/cobra.go/Initialize</code>, 初始化<code>APIClient</code>(用于和<code>daemon</code>通信)</li>
+<li>解析<code>os.Args</code>后面的<code>args</code>,匹配相关命令</li>
+<li>执行匹配到的命令</li>
+</ol>
+<h2 id="源码编译cli"><a href="#源码编译cli" class="headerlink" title="源码编译cli"></a>源码编译cli</h2><p><code>cli</code>是在<code>docker</code>容器中编译的,但是通过<code>dockerfile</code>构建容器时可能会遇到网络问题导致部分依赖拉取失败</p>
+<ol>
+<li><p>修改<code>dockerfiles/Dockerfile.binary-native</code>,换源</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">FROM</span>    golang:$&#123;GO_VERSION&#125;-alpine</span><br><span class="line"><span class="comment">#换源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g&#x27;</span> /etc/apk/repositories</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">     apk add -U git bash coreutils gcc musl-dev</span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改<code>dockerfiles/Dockerfile.dev</code>,添加代理, <code>GOPROXY=https://goproxy.cn,direct</code></p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">FROM</span> golang AS esc</span><br><span class="line"><span class="keyword">ARG</span> ESC_VERSION=v0.<span class="number">2.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/mjibson/esc@<span class="variable">$&#123;ESC_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS gotestsum</span><br><span class="line"><span class="keyword">ARG</span> GOTESTSUM_VERSION=v0.<span class="number">4.0</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install gotest.tools/gotestsum@<span class="variable">$&#123;GOTESTSUM_VERSION&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> golang AS vndr</span><br><span class="line"><span class="keyword">ARG</span> VNDR_VERSION=v0.<span class="number">1.2</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> --mount=<span class="built_in">type</span>=cache,target=/root/.cache/go-build \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=cache,target=/go/pkg/mod \</span></span><br><span class="line"><span class="language-bash">    --mount=<span class="built_in">type</span>=tmpfs,target=/go/src/ \</span></span><br><span class="line"><span class="language-bash">    GO111MODULE=on GOPROXY=https://goproxy.cn,direct go install github.com/LK4D4/vndr@<span class="variable">$&#123;VNDR_VERSION&#125;</span></span></span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>sudo make -f docker.Makefile binary</code>, 最后二进制文件在工作目录下的<code>build</code></p>
+</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/08/30/docker-02client/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-01docker架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -951,92 +1052,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-head-first-go-10封装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">Head First Go - 10封装</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/" class="archive-article-date">
-  	<time datetime="2022-08-07T02:20:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>Go通过限制struct中成员是否能导出配合该strcut类型定义相关的方法实现封装</p>
-<h3 id="setter"><a href="#setter" class="headerlink" title="setter"></a>setter</h3><p>setter方法是用来设置封装字段值的方法</p>
-<p>setter方法需要指针接收器</p>
-<p>setter方法通常被命名为setX, X为被设置字段的名称</p>
-<h3 id="getter"><a href="#getter" class="headerlink" title="getter"></a>getter</h3><p>getter方法是用于获取封装字段的方法</p>
-<p>getter方法通常被命名为X, X为被设置字段的名称 (一般习惯前面不加get)</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> abc</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;errors&quot;</span></span><br><span class="line">	<span class="string">&quot;unicode/utf8&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Abc <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> SetName(name <span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> utf8.RuneCountInString(name) &gt; <span class="number">20</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">&quot;out of len&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	a.name = name</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Abc)</span></span> Name() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> a.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="嵌入-struct"><a href="#嵌入-struct" class="headerlink" title="嵌入 struct"></a>嵌入 struct</h2><p>当子struct嵌入到父strcut,子struct未导出的字段不会被提升</p>
-<p>当子struct嵌入到父strcut,子struct导出的方法会被提升</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line">	st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line">	<span class="comment">//通过类型名访问也可以</span></span><br><span class="line">	fmt.Println(st.Abc.Name())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>注意当struct嵌入了多个子struct时，导出方法可能会有重名的情况,这时直接调用导出方法会无法编译通过,需要加上类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//abc包中的Abc和def包中的Def都定义了setName()和Name()</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;abc&quot;</span></span><br><span class="line">	<span class="string">&quot;def&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="keyword">struct</span> &#123;</span><br><span class="line">	abc.Abc</span><br><span class="line">	def.Def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> st myType</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc未导出的字段无法提升</span></span><br><span class="line">	<span class="comment">//fmt.Println(st.name) </span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//Abc导出的方法可以提升</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	err := st.SetName(<span class="string">&quot;zeyu&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//重名</span></span><br><span class="line">	fmt.Println(st.Name())</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    正确使用</span></span><br><span class="line"><span class="comment">    err := st.Abc.SetName(&quot;zeyu&quot;)</span></span><br><span class="line"><span class="comment">	if err != nil &#123;</span></span><br><span class="line"><span class="comment">		log.Fatal(err)</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">	fmt.Println(st.Abc.Name())</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//./test.go:22:11: ambiguous selector st.SetName</span></span><br><span class="line"><span class="comment">//./test.go:27:16: ambiguous selector st.Name</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/07/head-first-go-10%E5%B0%81%E8%A3%85/">展开全文 >></a>
         </p>
       
 

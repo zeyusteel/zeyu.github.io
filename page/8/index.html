@@ -145,6 +145,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-c-07预编译" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/">C-07预编译</a>
+    </h1>
+  
+
+        
+        <a href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/" class="archive-article-date">
+  	<time datetime="2020-08-07T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="宏"><a href="#宏" class="headerlink" title="宏"></a>宏</h2><p>格式</p>
+<p><code>#define   宏名    宏内容</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span>    PI      3.141592</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span>   s(x,y)    x*y+2   </span></span><br><span class="line"><span class="comment">//（先替换，再计算，不要乱加括号，按优先级计算）</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>宏名：符号常量</li>
+<li>无语法检查</li>
+<li>无类型</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;syslog.h&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NAME(n) int_##n</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_MACRO_HELPER(x) #x </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_MACRO(x) PRINT_MACRO_HELPER(x)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINTF_PCARH_VAR(var) printf(#var <span class="string">&quot;=%s\n&quot;</span>, var)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOG_PRINT(str) do &#123;                                  \</span></span><br><span class="line"><span class="meta">    syslog(LOG_INFO, <span class="string">&quot;%s, %s, %d, %s&quot;</span>,  __FILE__, __func__, __LINE__, str); \</span></span><br><span class="line"><span class="meta">&#125; while (0)                                                  \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> maxint(a,b) \</span></span><br><span class="line"><span class="meta">  (&#123;int _a = (a), _b = (b); _a &gt; _b ? _a : _b; &#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> <span class="title function_">NAME</span><span class="params">(a)</span>;</span><br><span class="line">    <span class="type">int</span> <span class="title function_">NAME</span><span class="params">(b)</span>;</span><br><span class="line"> </span><br><span class="line">    NAME(a) = <span class="number">520</span>;</span><br><span class="line">    NAME(b) = <span class="number">111</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;MACRO_NAME,  VAR_NAME, VALUE\n&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%10s,%10s,%6d\n&quot;</span>, PRINT_MACRO_HELPER(NAME(a)),PRINT_MACRO(NAME(a)), NAME(a));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%10s,%10s,%6d\n&quot;</span>, PRINT_MACRO_HELPER(NAME(b)),PRINT_MACRO(NAME(b)), NAME(b));</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="comment">//将实参代入宏文本中</span></span><br><span class="line">    <span class="comment">//如果实参也是宏，则展开实参</span></span><br><span class="line">    <span class="comment">//宏展开后遇到#或者##将不在继续展开</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -&gt; #NAME(i) NAME(i)还是一个宏,但是遇到#无法继续展开</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, PRINT_MACRO_HELPER(NAME(i))); <span class="comment">// </span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -&gt; PRINT_MACRO_HELPER(NAME(i))  NAME(i)还是一个宏，继续展开</span></span><br><span class="line">    <span class="comment">// -&gt; PRINT_MACRO_HELPER(int_i)</span></span><br><span class="line">    <span class="comment">// -&gt; #int_i</span></span><br><span class="line">    <span class="comment">// -&gt; &quot;int_i&quot;</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, PRINT_MACRO(NAME(i)));  </span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *p = <span class="string">&quot;hhhhh&quot;</span>;</span><br><span class="line">    PRINTF_PCARH_VAR(p);</span><br><span class="line"></span><br><span class="line">    LOG_PRINT(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/08/07/c-07%E9%A2%84%E7%BC%96%E8%AF%91/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-c-06函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     

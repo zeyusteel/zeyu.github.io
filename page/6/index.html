@@ -145,6 +145,244 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cpp-06函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/">C++ 06函数</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/" class="archive-article-date">
+  	<time datetime="2021-08-10T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="函数基础"><a href="#函数基础" class="headerlink" title="函数基础"></a>函数基础</h2><ul>
+<li><strong>函数定义</strong>：包括返回类型、函数名字和0个或者多个<strong>形参</strong>（parameter）组成的列表和函数体</li>
+<li><strong>调用运算符</strong>：调用运算符的形式是一对圆括号 <code>()</code>，作用于一个表达式，该表达式是函数或者指向函数的指针</li>
+<li>圆括号内是用逗号隔开的<strong>实参</strong>（argument）列表</li>
+<li>函数调用过程：<ul>
+<li>1.主调函数（calling function）的执行被中断</li>
+<li>2.被调函数（called function）开始执行</li>
+</ul>
+</li>
+<li><strong>形参和实参</strong>：形参和实参的<strong>个数</strong>和<strong>类型</strong>必须匹配上</li>
+<li><strong>返回类型</strong>： <code>void</code>表示函数不返回任何值。函数的返回类型不能是数组类型或者函数类型，但可以是指向数组或者函数的指针</li>
+<li><strong>名字</strong>：名字的作用于是程序文本的一部分，名字在其中可见</li>
+</ul>
+<h3 id="局部对象"><a href="#局部对象" class="headerlink" title="局部对象"></a>局部对象</h3><ul>
+<li><strong>生命周期</strong>：对象的生命周期是程序执行过程中该对象存在的一段时间</li>
+<li><strong>局部变量</strong>（local variable）：形参和函数体内部定义的变量统称为局部变量。它对函数而言是局部的，对函数外部而言是<strong>隐藏</strong>的</li>
+<li><strong>自动对象</strong>：只存在于块执行期间的对象。当块的执行结束后，它的值就变成<strong>未定义</strong>的了</li>
+<li><strong>局部静态对象</strong>： <code>static</code>类型的局部变量，生命周期贯穿函数调用前后</li>
+</ul>
+<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><ul>
+<li><strong>函数声明</strong>：函数的声明和定义唯一的区别是声明无需函数体，用一个分号替代。函数声明主要用于描述函数的接口，也称<strong>函数原型</strong></li>
+<li><strong>在头文件中进行函数声明</strong>：建议变量在头文件中声明；在源文件中定义</li>
+<li><strong>分离编译</strong>： <code>CC a.cc b.cc</code>直接编译生成可执行文件；<code>CC -c a.cc b.cc</code>编译生成对象代码<code>a.o b.o</code>； <code>CC a.o b.o</code>编译生成可执行文件</li>
+</ul>
+<h2 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h2><ul>
+<li>形参初始化的机理和变量初始化一样</li>
+<li><strong>引用传递</strong>（passed by reference）：又称传引用调用（called by reference），指<strong>形参是引用类型</strong>，引用形参是它对应的实参的别名</li>
+<li><strong>值传递</strong>（passed by value）：又称传值调用（called by value），指实参的值是通过<strong>拷贝</strong>传递给形参</li>
+</ul>
+<h3 id="传值参数"><a href="#传值参数" class="headerlink" title="传值参数"></a>传值参数</h3><ul>
+<li>当初始化一个非引用类型的变量时，初始值被拷贝给变量</li>
+<li>函数对形参做的所有操作都不会影响实参</li>
+<li><strong>指针形参</strong>：常用在C中，<code>C++</code>建议使用引用类型的形参代替指针</li>
+</ul>
+<h3 id="传引用参数"><a href="#传引用参数" class="headerlink" title="传引用参数"></a>传引用参数</h3><ul>
+<li>通过使用引用形参，允许函数改变一个或多个实参的值</li>
+<li>引用形参直接关联到绑定的对象，而非对象的副本</li>
+<li>使用引用形参可以用于<strong>返回额外的信息</strong></li>
+<li>经常用引用形参来避免不必要的复制</li>
+<li><code>void swap(int &amp;v1, int &amp;v2)</code></li>
+<li>如果无需改变引用形参的值，最好将其声明为常量引用</li>
+</ul>
+<h3 id="const形参和实参"><a href="#const形参和实参" class="headerlink" title="const形参和实参"></a>const形参和实参</h3><ul>
+<li>形参的顶层<code>const</code>被忽略。<code>void func(const int i);</code>调用时既可以传入<code>const int</code>也可以传入<code>int</code></li>
+<li>我们可以使用非常量初始化一个底层<code>const</code>对象，但是反过来不行</li>
+<li>在函数中，不能改变实参的<strong>局部副本</strong></li>
+<li>尽量使用常量引用</li>
+</ul>
+<h3 id="数组形参"><a href="#数组形参" class="headerlink" title="数组形参"></a>数组形参</h3><ul>
+<li>当我们为函数传递一个数组时，实际上传递的是指向数组首元素的指针</li>
+<li>要注意数组的实际长度，不能越界</li>
+</ul>
+<h3 id="main处理命令行选项"><a href="#main处理命令行选项" class="headerlink" title="main处理命令行选项"></a>main处理命令行选项</h3><ul>
+<li><code>int main(int argc, char *argv[])&#123;...&#125;</code></li>
+<li>第一个形参代表参数的个数；第二个形参是参数C风格字符串数组</li>
+</ul>
+<h3 id="可变形参"><a href="#可变形参" class="headerlink" title="可变形参"></a>可变形参</h3><p><code>initializer_list</code>提供的操作（<code>C++11</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>initializer_list&lt;T&gt; lst;</code></td>
+<td>默认初始化；<code>T</code>类型元素的空列表</td>
+</tr>
+<tr>
+<td><code>initializer_list&lt;T&gt; lst&#123;a,b,c...&#125;;</code></td>
+<td><code>lst</code>的元素数量和初始值一样多；<code>lst</code>的元素是对应初始值的副本；列表中的元素是<code>const</code>。</td>
+</tr>
+<tr>
+<td><code>lst2(lst)</code></td>
+<td>拷贝或赋值一个<code>initializer_list</code>对象不会拷贝列表中的元素；拷贝后，原始列表和副本共享元素。</td>
+</tr>
+<tr>
+<td><code>lst2 = lst</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>lst.size()</code></td>
+<td>列表中的元素数量</td>
+</tr>
+<tr>
+<td><code>lst.begin()</code></td>
+<td>返回指向<code>lst</code>中首元素的指针</td>
+</tr>
+<tr>
+<td><code>lst.end()</code></td>
+<td>返回指向<code>lst</code>中微元素下一位置的指针</td>
+</tr>
+</tbody></table>
+<p><code>initializer_list</code>使用demo：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">err_msg</span><span class="params">(ErrCode e, initializer_list&lt;string&gt; il)</span></span>&#123;</span><br><span class="line">    cout &lt;&lt; e.msg &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> bed = il.<span class="built_in">begin</span>(); beg != il.<span class="built_in">end</span>(); ++ beg)</span><br><span class="line">        cout &lt;&lt; *beg &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">err_msg</span>(<span class="built_in">ErrCode</span>(<span class="number">0</span>), &#123;<span class="string">&quot;functionX&quot;</span>, <span class="string">&quot;okay&#125;);</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>所有实参类型相同，可以使用 <code>initializer_list</code>的标准库类型</li>
+<li>实参类型不同，可以使用<code>可变参数模板</code></li>
+<li>省略形参符： <code>...</code>，便于<code>C++</code>访问某些C代码，这些C代码使用了 <code>varargs</code>的C标准功能</li>
+</ul>
+<h2 id="返回类型和return语句"><a href="#返回类型和return语句" class="headerlink" title="返回类型和return语句"></a>返回类型和return语句</h2><h3 id="无返回值函数"><a href="#无返回值函数" class="headerlink" title="无返回值函数"></a>无返回值函数</h3><p>没有返回值的 <code>return</code>语句只能用在返回类型是 <code>void</code>的函数中，返回 <code>void</code>的函数不要求非得有 <code>return</code>语句</p>
+<h3 id="有返回值函数"><a href="#有返回值函数" class="headerlink" title="有返回值函数"></a>有返回值函数</h3><ul>
+<li><code>return</code>语句的返回值的类型必须和函数的返回类型相同，或者能够<strong>隐式地</strong>转换成函数的返回类型</li>
+<li>值的返回：返回的值用于初始化调用点的一个<strong>临时量</strong>，该临时量就是函数调用的结果</li>
+<li><strong>不要返回局部对象的引用或指针</strong></li>
+<li><strong>引用返回左值</strong>：函数的返回类型决定函数调用是否是左值。调用一个返回引用的函数得到左值；其他返回类型得到右值</li>
+<li><strong>列表初始化返回值</strong>：函数可以返回花括号包围的值的列表。（<code>C++11</code>）</li>
+<li><strong>主函数main的返回值</strong>：如果结尾没有<code>return</code>，编译器将隐式地插入一条返回0的<code>return</code>语句。返回0代表执行成功</li>
+</ul>
+<h3 id="返回数组指针"><a href="#返回数组指针" class="headerlink" title="返回数组指针"></a>返回数组指针</h3><ul>
+<li><code>Type (*function (parameter_list))[dimension]</code></li>
+<li><code>int (*func(int i))[10];</code> 括号必须存在</li>
+<li>使用类型别名： <code>typedef int arrT[10];</code> 或者 <code>using arrT = int[10];</code>，然后 <code>arrT* func() &#123;...&#125;</code></li>
+<li>使用 <code>decltype</code>： <code>decltype(odd) *arrPtr(int i) &#123;...&#125;</code></li>
+<li><strong>尾置返回类型</strong>： 在形参列表后面以一个<code>-&gt;</code>开始：<code>auto func(int i) -&gt; int(*)[10]</code>（<code>C++11</code>）</li>
+</ul>
+<h2 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h2><ul>
+<li><strong>重载</strong>：如果同一作用域内几个函数名字相同但形参列表不同，我们称之为重载（overload）函数</li>
+<li><code>main</code>函数不能重载</li>
+<li><strong>重载和const形参</strong>：<ul>
+<li>一个有顶层const的形参和没有它的函数无法区分。 <code>Record lookup(Phone* const)</code>和 <code>Record lookup(Phone*)</code>无法区分</li>
+<li>相反，是否有某个底层const形参可以区分。 <code>Record lookup(Account*)</code>和 <code>Record lookup(const Account*)</code>可以区分</li>
+</ul>
+</li>
+<li><strong>重载和作用域</strong>：若在内层作用域中声明名字，它将隐藏外层作用域中声明的同名实体，在不同的作用域中无法重载函数名</li>
+</ul>
+<h2 id="特殊用途语言特性"><a href="#特殊用途语言特性" class="headerlink" title="特殊用途语言特性"></a>特殊用途语言特性</h2><h3 id="默认实参"><a href="#默认实参" class="headerlink" title="默认实参"></a>默认实参</h3><ul>
+<li><code>string screen(sz ht = 24, sz wid = 80, char backgrnd = &#39; &#39;);</code></li>
+<li>一旦某个形参被赋予了默认值，那么它之后的形参都必须要有默认值</li>
+</ul>
+<h3 id="内联（inline）函数"><a href="#内联（inline）函数" class="headerlink" title="内联（inline）函数"></a>内联（inline）函数</h3><ul>
+<li>普通函数的缺点：调用函数比求解等价表达式要慢得多</li>
+<li><code>inline</code>函数可以避免函数调用的开销，可以让编译器在编译时<strong>内联地展开</strong>该函数</li>
+<li><code>inline</code>函数应该在头文件中定义</li>
+</ul>
+<h3 id="constexpr函数"><a href="#constexpr函数" class="headerlink" title="constexpr函数"></a>constexpr函数</h3><ul>
+<li>指能用于常量表达式的函数</li>
+<li><code>constexpr int new_sz() &#123;return 42;&#125;</code></li>
+<li>函数的返回类型及所有形参类型都要是字面值类型</li>
+<li><code>constexpr</code>函数应该在头文件中定义</li>
+</ul>
+<h3 id="调试帮助"><a href="#调试帮助" class="headerlink" title="调试帮助"></a>调试帮助</h3><ul>
+<li><code>assert</code>预处理宏（preprocessor macro）：<code>assert(expr);</code></li>
+</ul>
+<p>开关调试状态：</p>
+<p><code>CC -D NDEBUG main.c</code>可以定义这个变量<code>NDEBUG</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="keyword">ifndef</span> NDEBUG</span></span><br><span class="line">        cerr &lt;&lt; __func__ &lt;&lt; <span class="string">&quot;...&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数匹配"><a href="#函数匹配" class="headerlink" title="函数匹配"></a>函数匹配</h2><ul>
+<li>重载函数匹配的<strong>三个步骤</strong>：1.候选函数；2.可行函数；3.寻找最佳匹配</li>
+<li><strong>候选函数</strong>：选定本次调用对应的重载函数集，集合中的函数称为候选函数（candidate function）</li>
+<li><strong>可行函数</strong>：考察本次调用提供的实参，选出可以被这组实参调用的函数，新选出的函数称为可行函数（viable function）</li>
+<li><strong>寻找最佳匹配</strong>：基本思想：实参类型和形参类型越接近，它们匹配地越好</li>
+</ul>
+<h2 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h2><ul>
+<li><strong>函数指针</strong>：是指向函数的指针</li>
+<li><code>bool (*pf)(const string &amp;, const string &amp;);</code> 注：两端的括号不可少</li>
+<li><strong>函数指针形参</strong>：<ul>
+<li>形参中使用函数定义或者函数指针定义效果一样</li>
+<li>使用类型别名或者<code>decltype</code></li>
+</ul>
+</li>
+<li><strong>返回指向函数的指针</strong>：1.类型别名；2.尾置返回类型</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/10/cpp-06%E5%87%BD%E6%95%B0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-cpp-继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2851,266 +3089,6 @@ cmd: F_DUPFD
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/05/12/linux-io/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-linux-gcc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/05/10/linux-gcc/">Linux gcc</a>
-    </h1>
-  
-
-        
-        <a href="/2021/05/10/linux-gcc/" class="archive-article-date">
-  	<time datetime="2021-05-10T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>gcc编译：</p>
-<pre><code>4步骤： 预处理、编译、汇编、连接。
-
--I：	指定头文件所在目录位置。
-
--c：	只做预处理、编译、汇编。得到 二进制 文件！！！
-
--g：	编译时添加调试语句。 主要支持 gdb 调试。
-
--Wall： 显示所有警告信息。
-
--D：	向程序中“动态”注册宏定义。   #define NAME VALUE
-</code></pre>
-<p><img src="/../photos/src/linux/gcc01.png"><br><img src="/../photos/src/linux/gcc02.png"></p>
-<p>生成静态库： </p>
-<pre><code>    ar  rcs libtest.a test.o 
-
-    nm libtest.a   查看信息
-</code></pre>
-<p><img src="/../photos/src/linux/gcc03.png"></p>
-<p>生成动态库：</p>
-<p>   (生成与位置无关的代码 -fPIC） 使用 gcc -shared 制作动态库</p>
-<pre><code>gcc -fPIC -c test.c  -o test.o   	
-gcc  -shared -o libtest.so test.o 
-</code></pre>
-<p>解决动态库无法加载的问题：</p>
-<ul>
-<li>放到lib目录中</li>
-<li>临时 export LD_LIBRARY_PATH &#x3D; 动态库路径</li>
-<li>永久  .bashrc 添加 2(动态库路径要用绝对路径)   更新： source .bashrc</li>
-<li>&#x2F;etc&#x2F;ld.so.conf 添加动态库路径   更新：sudo  ldconfig</li>
-</ul>
-<p>运行可以执行程序 .&#x2F;a.out 出错！！！！ — ldd a.out –&gt; “not found”</p>
-<pre><code>error while loading shared libraries: libxxx.so: cannot open shared object file: No such file or directory
-
-原因：
-    链接器：	工作于链接阶段， 工作时需要 -l 和 -L
-
-    动态链接器：	工作于程序运行阶段，工作时需要提供动态库所在目录位置。
-
-解决方式：				
-
-    【1】 通过环境变量：  export LD_LIBRARY_PATH=动态库路径
-
-        ./a.out 成功！！！  （临时生效， 终端重启环境变量失效）
-
-    【2】 永久生效： 写入 终端配置文件。  .bashrc  建议使用绝对路径。
-
-        1) vi ~/.bashrc
-
-        2) 写入 export LD_LIBRARY_PATH=动态库路径  保存
-
-        3）. .bashrc/  source .bashrc / 重启 终端  ---&gt; 让修改后的.bashrc生效
-
-        4）./a.out 成功！！！ 
-
-    【3】 拷贝自定义动态库 到 /lib (标准C库所在目录位置)
-
-    【4】 配置文件法
-
-        1）sudo vi /etc/ld.so.conf
-
-        2) 写入 动态库绝对路径  保存
-
-        3）sudo ldconfig -v  使配置文件生效。
-
-        4）./a.out 成功！！！--- 使用 ldd  a.out 查看
-</code></pre>
-<p>gdb</p>
-<p>基础指令：<br>    -g：使用该参数编译可以执行文件，得到调试表。</p>
-<pre><code>gdb ./a.out
-
-list： list 1  列出源码。根据源码指定 行号设置断点。
-
-b：	b 20	在20行位置设置断点。
-
-run/r:	运行程序
-
-n/next: 下一条指令（会越过函数）
-
-s/step: 下一条指令（会进入函数）
-
-p/print：p i  查看变量的值。
-
-continue：继续执行断点后续指令。
-
-finish：结束当前函数调用。 
-
-quit：退出gdb当前调试。
-</code></pre>
-<p>其他指令：</p>
-<pre><code>run：使用run查找段错误出现位置。
-
-set args： 设置main函数命令行参数 （在 start、run 之前）
-
-run 字串1 字串2 ...: 设置main函数命令行参数
-
-info b: 查看断点信息表
-
-b 20 if i = 5：	设置条件断点。
-
-ptype：查看变量类型。
-
-bt：列出当前程序正存活着的栈帧。
-
-frame： 根据栈帧编号，切换栈帧。
-
-display：设置跟踪变量
-
-undisplay：取消设置跟踪变量。 使用跟踪变量的编号。
-</code></pre>
-<p>Makefile</p>
-<pre><code>命名：makefile	 Makefile  --- make 命令
-
-1 个规则：
-
-    目标：依赖条件
-    （一个tab缩进）命令
-
-    1. 目标的时间必须晚于依赖条件的时间，否则，更新目标
-
-    2. 依赖条件如果不存在，找寻新的规则去产生依赖条件。
-
-ALL：指定 makefile 的终极目标。
-
-
-2 个函数：
-
-    src = $(wildcard ./*.c): 匹配当前工作目录下的所有.c 文件。将文件名组成列表，赋值给变量 src。  src = add.c sub.c div1.c 
-
-    obj = $(patsubst %.c, %.o, $(src)): 将参数3中，包含参数1的部分，替换为参数2。 obj = add.o sub.o div1.o
-
-clean:	(没有依赖)
-
-    -rm -rf $(obj) a.out	“-”：作用是，删除不存在文件时，不报错。顺序执行结束。
-
-3 个自动变量：
-
-    $@: 在规则的命令中，表示规则中的目标。
-
-    $^: 在规则的命令中，表示所有依赖条件。
-
-    $&lt;: 在规则的命令中，表示第一个依赖条件。如果将该变量应用在模式规则中，它可将依赖条件列表中的依赖依次取出，套用模式规则。
-
-模式规则：
-
-    %.o:%.c
-       gcc -c $&lt; -o %@
-
-静态模式规则：
-
-    $(obj):%.o:%.c
-       gcc -c $&lt; -o %@	
-
-伪目标：
-
-    .PHONY: clean ALL
-
-参数：
-    -n：模拟执行make、make clean 命令。
-
-    -f：指定文件执行 make 命令。				xxxx.mk
-</code></pre>
-<p><img src="/../photos/src/linux/gcc04.png"><br><img src="/../photos/src/linux/gcc05.png"></p>
-<p>automake</p>
-<ul>
-<li><p>autoscan</p>
-</li>
-<li><p>mv configure.scan configure.ac</p>
-<ul>
-<li>AM_INIT_AUTOMAKE</li>
-<li>AC_CONFIG_FILES(Makefile)</li>
-</ul>
-</li>
-<li><p>aclocal</p>
-</li>
-<li><p>创建.in</p>
-<ul>
-<li>autoheader</li>
-<li>touch Makefile.am</li>
-<li>automake –add-missing</li>
-</ul>
-</li>
-<li><p>autoconf</p>
-</li>
-</ul>
-<p><img src="/../photos/src/linux/gcc06.png"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/05/10/linux-gcc/">展开全文 >></a>
         </p>
       
 
