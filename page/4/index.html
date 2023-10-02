@@ -145,6 +145,120 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-head-first-go-01语法基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/">Head First Go - 01语法基础</a>
+    </h1>
+  
+
+        
+        <a href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/" class="archive-article-date">
+  	<time datetime="2022-07-19T15:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-07-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>开了一个新坑 <strong>Ready ~~~ Go!</strong> ( ^ @ ^ )</p>
+<hr>
+<h2 id="认识Go"><a href="#认识Go" class="headerlink" title="认识Go"></a>认识Go</h2><p>一般Go文件都是由以下三部分组成</p>
+<ol>
+<li>package子句</li>
+<li>import语句</li>
+<li>代码片段</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">//表示文件所有的代码都属于main包</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span> <span class="comment">//包含了fmt包</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123; <span class="comment">//首先运行main函数</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello, Go&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://go.dev/play/">代码测试网站</a></p>
+<h2 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h2><p>包名.函数名(参数)</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>和C区别不大诶</p>
+<h2 id="符文-rune"><a href="#符文-rune" class="headerlink" title="符文(rune)"></a>符文(rune)</h2><p>就是单个字符，Go中用Unicode存储符文</p>
+<h2 id="布尔"><a href="#布尔" class="headerlink" title="布尔"></a>布尔</h2><p>true false</p>
+<h2 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h2><p>字面意思</p>
+<h2 id="数学运算比较"><a href="#数学运算比较" class="headerlink" title="数学运算比较"></a>数学运算比较</h2><p>和C差不多，比较结果返回bool</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>Go也是静态类型，在运行之前类型就要确定,如果使用了错误类型Go会编译失败</p>
+<p><code>reflect</code>包中的<code>TypeOf</code>可以输出类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="number">123.456</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&quot;zeyu&quot;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="string">&#x27;z&#x27;</span>))</span><br><span class="line">	fmt.Println(reflect.TypeOf(<span class="literal">false</span>))</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h2><p><code>var</code> 变量名称 类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> test <span class="type">int</span> <span class="comment">//单个变量声明</span></span><br><span class="line">	test = <span class="number">4</span>     <span class="comment">//单个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testa, testb <span class="type">string</span>     <span class="comment">//多个变量声明</span></span><br><span class="line">	testa, testb = <span class="string">&quot;hhh&quot;</span>, <span class="string">&quot;xxx&quot;</span> <span class="comment">//多个变量赋值</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> testc, testd <span class="type">float64</span> = <span class="number">1.1</span>, <span class="number">1.2</span> <span class="comment">//声明同时赋值</span></span><br><span class="line">	<span class="keyword">var</span> teste, testf = <span class="number">5</span>, <span class="string">&quot;www&quot;</span>         <span class="comment">//声明同时赋值 省略类型</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">	fmt.Println(testa)</span><br><span class="line">	fmt.Println(testb)</span><br><span class="line">	fmt.Println(testc)</span><br><span class="line">	fmt.Println(testd)</span><br><span class="line">	fmt.Println(teste)</span><br><span class="line">	fmt.Println(testf)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="零值"><a href="#零值" class="headerlink" title="零值"></a>零值</h2><p>对于没有赋值的变量默认是零值<br>字符串变量的零值是空字符串，bool变量的零值是false,int,float64的零值是0</p>
+<h2 id="短变量声明"><a href="#短变量声明" class="headerlink" title="短变量声明"></a>短变量声明</h2><p>如果声明的时候就知道变量的初值，可以使用短变量声明，省略<code>val</code>和类型 赋值符号变为<code>:=</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test := <span class="number">5</span> <span class="comment">//短变量声明</span></span><br><span class="line">	fmt.Println(test)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量声明规范"><a href="#变量声明规范" class="headerlink" title="变量声明规范"></a>变量声明规范</h2><ol>
+<li>一个变量只能声明一次</li>
+<li>不能给未声明的变量赋值</li>
+<li>只能给变量赋相同类型的值</li>
+<li>声明同时赋值要求变量数量和值一一对应</li>
+<li>所有声明的变量都必须在程序中使用,否则因该删除声明</li>
+</ol>
+<h2 id="命名规则"><a href="#命名规则" class="headerlink" title="命名规则"></a>命名规则</h2><p>名称必须以字母开头，可以有任意数量的额外字母和数字<br>变量、函数、类型的名称如果以大写字母开头，则认为它是导出的,可以通过其他包访问，否则认为是未导出的，只能在当前包使用<br>名称一般用驼峰式  </p>
+<h2 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h2><p>使用不同类型的值直接比较会报错<br>赋值的类型和变量类型不匹配也会报错  </p>
+<p>解决办法是使用转换  <code>类型(变量)</code></p>
+<h2 id="运行Go"><a href="#运行Go" class="headerlink" title="运行Go"></a>运行Go</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">fmt</span> hello.go //重新格式化 </span><br><span class="line">go build hello.go //编译为二进制</span><br><span class="line">./hello</span><br></pre></td></tr></table></figure>
+
+<p>go run hello.go &#x2F;&#x2F;编译并运行，不保存可执行文件</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/07/19/head-first-go-01%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-user-namespace" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2600,112 +2714,6 @@
 
 
   
-    <article id="post-cpp-多态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">C++ 多态</a>
-    </h1>
-  
-
-        
-        <a href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/" class="archive-article-date">
-  	<time datetime="2021-08-20T02:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>用<code>virtual</code>关键字说明的函数</li>
-<li>虚函数是实现运行时多态性基础</li>
-<li>C++中的虚函数是动态绑定的函数</li>
-<li>虚函数必须是非静态的成员函数，虚函数经过派生之后，就可以实现运行过程中的多态</li>
-</ul>
-<h2 id="什么函数可以是虚函数"><a href="#什么函数可以是虚函数" class="headerlink" title="什么函数可以是虚函数"></a>什么函数可以是虚函数</h2><ul>
-<li>一般成员函数可以是虚函数</li>
-<li>构造函数不能是虚函数 </li>
-<li>析构函数可以是虚函数</li>
-</ul>
-<h2 id="一般虚函数成员"><a href="#一般虚函数成员" class="headerlink" title="一般虚函数成员"></a>一般虚函数成员</h2><ul>
-<li><p>虚函数的声明</p>
-<p>  virtual 函数类型 函数名（形参表);</p>
-</li>
-<li><p>虚函数声明只能出现在类定义中的函数原型声明中,而不能在成员函数实现的时候</p>
-</li>
-<li><p>在派生类中可以对基类中的成员函数进行覆盖 </p>
-</li>
-<li><p>虚函数一般不声明为内联函数，因为对虚函数的调用需要动态绑定,而对内联函数的处理是静态的</p>
-</li>
-</ul>
-<h2 id="virtual-关键字"><a href="#virtual-关键字" class="headerlink" title="virtual 关键字"></a>virtual 关键字</h2><ul>
-<li>派生类可以不显式地用<code>virtual</code>声明虚函数,这时系统就会用以下规则来判断派生类的一个成员函数是不是虚函数:<ul>
-<li>该函数是否与基类的虚函数有相同的名称、参数个数以及对应参数类型</li>
-<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针、引用型的返回值</li>
-</ul>
-</li>
-<li>如果从名称、参数以及返回值三个方面检查后，派生类的函数满足了上述条件，就会自动确定为虚函数。这时派生类的虚函数就会覆盖基类的虚函数</li>
-<li>派生类的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
-<li>一般习惯在派生类的函数中也使用<code>virtual</code>关键字，以增加程序的可读性</li>
-</ul>
-<h2 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h2><p>如果你打算允许其他人通过基类指针调用对象的析构函数(通过delete这样做是正常的),就需要让基类的析构函数成为虚函数,否则执行delete的结果是不确定的</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/08/20/cpp-%E5%A4%9A%E6%80%81/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -2816,6 +2824,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">json</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">lightroom</a>
               </li>
              
               <li class="article-tag-list-item">

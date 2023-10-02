@@ -145,6 +145,175 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-docker-03daemon" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/09/01/docker-03daemon/">Docker - 03Daemon</a>
+    </h1>
+  
+
+        
+        <a href="/2022/09/01/docker-03daemon/" class="archive-article-date">
+  	<time datetime="2022-09-01T01:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd [OPTIONS]</span><br></pre></td></tr></table></figure>
+
+<p>服务端的入口函数在<code>cmd/dockerd/docker.go</code></p>
+<p><code>dockerd</code>将根据<code>options</code>来初始化服务,服务端的命令和客户端一样也是采用<code>cobra</code>构建</p>
+<ul>
+<li><p>装载<code>cobra</code>命令模版<code>cmd/dockerd/docker.go/newDaemonCommand</code></p>
+</li>
+<li><p>执行<code>cmd/dockerd/docker_unix.go/runDaemon</code></p>
+</li>
+<li><p>初始化各项参数,<code>TLS</code>、日志等级……</p>
+</li>
+<li><p><code>linux</code>下检测<code>euid</code>是不是<code>root</code></p>
+</li>
+<li><p>设置<code>umask</code></p>
+</li>
+<li><p>创建<code>docker</code>根目录,默认<code>/var/lib/docker</code>,以及<code>docker exec</code>目录,默认<code>/var/run/docker</code></p>
+</li>
+<li><p>检测<code>pid</code>文件</p>
+</li>
+<li><p>配置<code>API server</code>和监听端口</p>
+</li>
+<li><p>初始化<code>ContainerD</code>以及退出清理函数</p>
+</li>
+<li><p><code>NewDaemon</code>创建<code>daemon</code>对象</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to start daemon&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>将<code>api server</code>的应答接口与<code>daemon</code>对象绑定,<code>initRouter(routerOptions)</code></p>
+</li>
+<li><p>通过<code>goroutine</code>启动<code>api servier</code>监听 </p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The serve API routine never exits unless an error occurs</span></span><br><span class="line"><span class="comment">// We need to start it as a goroutine and wait on it so</span></span><br><span class="line"><span class="comment">// daemon doesn&#x27;t exit</span></span><br><span class="line">serveAPIWait := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"><span class="keyword">go</span> cli.api.Wait(serveAPIWait)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>daemon</code>结束会做<code>shutdownDaemon</code>停止进行中的容器</p>
+</li>
+</ul>
+<h3 id="NewDaemon"><a href="#NewDaemon" class="headerlink" title="NewDaemon"></a>NewDaemon</h3><p><code>NewDaemon</code>会进一步初始化<code>docker daemon</code>,并返回<code>Daemon</code>对象,Daemon对象将响应<code>api servier</code>执行具体的操作</p>
+<ul>
+<li>设置默认<code>mtu</code> 1500 </li>
+<li>初始化<code>registry service</code></li>
+<li>对配置参数进行校验,对一些产生冲突的参数一起使用时报错并退出</li>
+<li>检测内核版本和系统</li>
+<li>创建<code>/var/lib/docker/containers</code></li>
+<li>创建<code>/var/lib/docker/runtimes</code>, 初始化<code>runtimes</code></li>
+<li>设置<code>grpc</code>,创建<code>containerdCli</code></li>
+<li>创建插件管理器 </li>
+<li>创建<code>graphDrivers</code> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// List of drivers that should be used in an order</span></span><br><span class="line">priority = <span class="string">&quot;btrfs,zfs,overlay2,fuse-overlayfs,aufs,overlay,devicemapper,vfs&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>创建<code>volumeService</code></li>
+<li>创建<code>imageService</code></li>
+<li>创建容器客户端<code>libcontainerd</code></li>
+</ul>
+<h2 id="创建容器流程"><a href="#创建容器流程" class="headerlink" title="创建容器流程"></a>创建容器流程</h2><p><code>docker create</code></p>
+<ul>
+<li>当客户端发起创建容器，<code>daemon</code>接收请求后创建容器在<code>daemon/creat.go/ContainerCreate</code></li>
+<li>通过<code>imageService</code>获取创建容器对应的镜像,并提取镜像<code>ID</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img, err = daemon.imageService.GetImage(opts.params.Config.Image, opts.params.Platform)</span><br></pre></td></tr></table></figure></li>
+<li>通过<code>newContainer</code>函数创建<code>Container</code>结构 <ul>
+<li>创建容器<code>ID</code>和名称<code>generateIDAndName</code></li>
+</ul>
+</li>
+<li>通过<code>imageService</code>的<code>CreateLayer</code>函数创建容器在<code>graphdriver</code>上的<code>init</code>层(daemon&#x2F;initlayer&#x2F;setup_unix.go&#x2F;Setup)和读写层</li>
+<li>创建容器根目录<code>/var/lib/docker/containers/container-id</code></li>
+<li>在容器根目录创建<code>checkpoint</code>和容器相关配置文件信息</li>
+<li>向<code>daemon</code>注册该容器</li>
+<li>将容器状态设置为<code>stopped</code></li>
+<li>函数调用成功后会返回容器<code>ID</code>和创建时的一些警告</li>
+</ul>
+<h2 id="启动容器流程"><a href="#启动容器流程" class="headerlink" title="启动容器流程"></a>启动容器流程</h2><p><code>docker start</code></p>
+<ul>
+<li>当客户端发起启动容器流程时,<code>daemon</code>接收请求后执行容器核心流程在<code>daemon/start.go/ContainerStart</code></li>
+<li>根据容器的<code>ID</code>获取<code>Container</code>数据结构</li>
+<li>检查要运行的容器是否处于暂停、已经执行、被移除的状态</li>
+<li>对参数<code>ctr.HostConfig</code>进行验证</li>
+<li>挂载容器读写层到<code>merge</code>  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := daemon.conditionalMountOnStart(container); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>初始化网络相关配置<code>hosts</code>、<code>hostname</code>、<code>resolv.conf</code></li>
+<li>后面就是和<code>containerd</code>交互</li>
+<li>基于容器的相关参数去初始化<code>oci</code>(Open Container Initiative)<code>runtime-spec</code>项目的<code>Spec</code>数据结构</li>
+<li>初始化<code>ShimConfig</code>,<code>containerd</code>将通过<code>shim</code>去调用<code>runc</code></li>
+<li>执行<code>daemon.containerd.Create</code>创建容器</li>
+<li>执行<code>daemon.containerd.Start</code>启动容器</li>
+<li>设置容器的状态</li>
+</ul>
+<h2 id="moby源码编译"><a href="#moby源码编译" class="headerlink" title="moby源码编译"></a>moby源码编译</h2><ul>
+<li>v20.10.12</li>
+<li>aarch linux20.04</li>
+</ul>
+<ol>
+<li><p>工程目录下添加<code>sources.list</code>文件</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">deb http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian/ buster-backports main non-free contrib</span><br><span class="line">deb http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.163.com/debian-security/ buster/updates main non-free contrib</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>替换apt源，修改<code>Dockerfile</code></p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="keyword">ARG</span> APT_MIRROR</span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -ri <span class="string">&quot;s/(httpredir|deb).debian.org/<span class="variable">$&#123;APT_MIRROR:-deb.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list \</span></span><br><span class="line"><span class="language-bash">&amp;&amp; sed -ri <span class="string">&quot;s/(security).debian.org/<span class="variable">$&#123;APT_MIRROR:-security.debian.org&#125;</span>/g&quot;</span> /etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># 添加源</span></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> sources.list /etc/apt/sources.list</span></span><br><span class="line"><span class="keyword">ENV</span> GO111MODULE=off</span><br><span class="line"><span class="comment">#...</span></span><br></pre></td></tr></table></figure></li>
+<li><p>修改<code>hack/dockerfile/install/containerd.installer</code>中git clone命令</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">install_containerd() (</span><br><span class="line">    echo &quot;Install containerd version $CONTAINERD_VERSION&quot;</span><br><span class="line">    git clone https://ghproxy.com/https://github.com/containerd/containerd.git &quot;$GOPATH/src/github.com/containerd/containerd&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li><p><code>hack/dockerfile/install/proxy.installer</code>,<code>hack/dockerfile/install/runc.installer</code>,<code>hack/dockerfile/install/tini.installer</code>也同样修改<code>git clone</code>命令,在rul前面添加<code>https://ghproxy.com/</code>代理</p>
+</li>
+<li><p><code>hack/dockerfile/install/rootlesskit.installer</code>添加<code>go env</code>代理</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_install_rootlesskit() (</span><br><span class="line">    //...</span><br><span class="line"> export GOPROXY=&quot;https://goproxy.cn&quot;</span><br><span class="line">    for f in rootlesskit rootlesskit-docker-proxy; do</span><br><span class="line">    //...</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>sudo make binary</code>,可执行文件在<code>bundles/binary-daemon</code></p>
+</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/09/01/docker-03daemon/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-docker-02client" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -972,115 +1141,6 @@
 
 
   
-    <article id="post-head-first-go-11接口" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">Head First Go - 11接口</a>
-    </h1>
-  
-
-        
-        <a href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
-  	<time datetime="2022-08-08T01:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>一个接口是特定值预期具有的一组方法</p>
-<p>如果一个类型包含接口中声明的所有方法，那么它可以在任何需要接口的地方使用，而不需要更多的声明</p>
-<p>方法名称、参数类型(可能没有)和返回值(可能没有)都需要与接口中定义的一致。除了接口中列出的方法之外，类型还可以有更多的方法，但是它不能缺少接口中的任何方法，否则就不满足那个接口</p>
-<p>一个类型可以满足多个接口，一个接口(通常应该)可以有多个类型满足它</p>
-<pre><code>type 接口名 interface &#123;  
-    funcA  
-    funcB  
-&#125;
-</code></pre>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">//定义一个接口，有两个方法</span></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">	outPutWithString(str <span class="type">string</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> intf myInterface</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这两个类型恰好都满足这个接口，就可以赋值成功</span></span><br><span class="line"></span><br><span class="line">	intf = myType(<span class="number">15</span>)</span><br><span class="line">	intf.outPut()</span><br><span class="line"></span><br><span class="line">	intf = myAnotherType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	intf.outPut() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="接口变量"><a href="#接口变量" class="headerlink" title="接口变量"></a>接口变量</h2><p>接口变量和普通变量没什么区别，也可以当函数参数或返回值</p>
-<p>如果一个类型声明了指针接收器方法，你就只能将那个类型的指针传递给接口变量</p>
-<h2 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h2><p>可以通过类型断言将接口变量转换为它对应的类型变量</p>
-<p><code>类型变量, bool = 接口变量.(类型)</code></p>
-<p>bool等于true说明断言成功</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	outPut()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myAnotherType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPut() &#123;</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myAnotherType)</span></span> outPutWithString(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(m, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testFunc</span><span class="params">(intf myInterface)</span></span> &#123;</span><br><span class="line">	intf.outPut()</span><br><span class="line">	another,ok := intf.(myAnotherType)</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		another.outPutWithString(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;type err&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	testFunc(myType(<span class="number">15</span>))</span><br><span class="line">	testFunc(myAnotherType(<span class="string">&quot;hhh&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="error接口"><a href="#error接口" class="headerlink" title="error接口"></a>error接口</h2><p>error是一个接口类型 </p>
-<pre><code>type error interface &#123;  
-       Error() string  
-&#125;  
-</code></pre>
-<p>error类型像int或者string一样是一个“预定义标识符”，它不属于任何包。它是“全局块”的一部分，这意味着它在任何地方可用，不用考虑当前包信息</p>
-<p>可以自定义满足error接口的类型</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myErrorType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myErrorType)</span></span> Error() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="type">string</span>(m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err <span class="type">error</span> <span class="comment">//声明一个error接口变量</span></span><br><span class="line"></span><br><span class="line">	err = myErrorType(<span class="string">&quot;wtf&quot;</span>) <span class="comment">//我们的类型方法满足error接口,可以赋值</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(err.Error())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="stringer"><a href="#stringer" class="headerlink" title="stringer"></a>stringer</h2><p>fmt包定义了fmt.Stringer接口:允许任何类型决定在输出时如何展示</p>
-<pre><code>type Stringer interface &#123;  
-    String() string  
-&#125;  
-</code></pre>
-<p>许多在fmt包中的函数都会判断传入的参数是否满足stringer接口，如果满足就调用String方法。这些函数包括Print、Println和Printf等</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;--- &quot;</span> + <span class="type">string</span>(m) + <span class="string">&quot; ---&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	value := myType(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line">	fmt.Println(value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="空接口"><a href="#空接口" class="headerlink" title="空接口"></a>空接口</h2><p>fmt.Println能接收任意类型,因为它声明了空接口<code>Interface&#123;&#125;</code></p>
-<p>Interface{}类型称为空接口，用来接收任何类型的值。不需要实现 任何方法来满足空接口，所以所有的类型都满足它</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> myType <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m myType)</span></span> myTpyeFunc() &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;myTypeFunc&quot;</span>, m)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//空接口作为函数参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(empty <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(empty)</span><br><span class="line"></span><br><span class="line">	mt, ok := empty.(myType) <span class="comment">//空接口无法调用任何方法,通过断言转换成对应的类型</span></span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		mt.myTpyeFunc()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test(<span class="number">123</span>)</span><br><span class="line">	test(myType(<span class="string">&quot;abc&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/08/08/head-first-go-11%E6%8E%A5%E5%8F%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1191,6 +1251,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">json</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">lightroom</a>
               </li>
              
               <li class="article-tag-list-item">

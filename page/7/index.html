@@ -145,6 +145,338 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-linux-io" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/12/linux-io/">Linux io</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/12/linux-io/" class="archive-article-date">
+  	<time datetime="2021-05-12T03:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>open函数：</p>
+<pre><code>int open(char *pathname, int flags)	#include &lt;unistd.h&gt;
+
+参数：
+    pathname: 欲打开的文件路径名
+
+    flags：文件打开方式：	#include &lt;fcntl.h&gt;
+
+        O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
+
+返回值：
+    成功： 打开文件所得到对应的 文件描述符（整数）
+
+    失败： -1， 设置errno	
+
+int open(char *pathname, int flags， mode_t mode)		123  775	
+
+参数：
+    pathname: 欲打开的文件路径名
+
+    flags：文件打开方式：	O_RDONLY|O_WRONLY|O_RDWR	O_CREAT|O_APPEND|O_TRUNC|O_EXCL|O_NONBLOCK ....
+
+    mode: 参数3使用的前提， 参2指定了 O_CREAT。	取值8进制数，用来描述文件的 访问权限。 rwx    0664
+
+        创建文件最终权限 = mode &amp; ~umask
+
+返回值：
+    成功： 打开文件所得到对应的 文件描述符（整数）
+
+    失败： -1， 设置errno	
+</code></pre>
+<p>close函数：</p>
+<pre><code>int close(int fd);
+</code></pre>
+<p>错误处理函数：		与 errno 相关。</p>
+<pre><code>printf(&quot;xxx error: %d\n&quot;, errno);
+
+char *strerror(int errnum);
+
+    printf(&quot;xxx error: %s\n&quot;, strerror(errno));
+
+void perror(const char *s);
+
+    perror(&quot;open error&quot;);
+</code></pre>
+<p>read函数：</p>
+<pre><code>ssize_t read(int fd, void *buf, size_t count);
+
+参数：
+    fd：文件描述符
+
+    buf：存数据的缓冲区
+
+    count：缓冲区大小
+
+返回值：
+
+    0：读到文件末尾。
+
+    成功；	&gt; 0 读到的字节数。
+
+    失败：	-1， 设置 errno
+
+    -1： 并且 errno = EAGIN 或 EWOULDBLOCK, 说明不是read失败，而是read在以非阻塞方式读一个设备文件（网络文件），并且文件无数据。
+</code></pre>
+<p>write函数：</p>
+<pre><code>ssize_t write(int fd, const void *buf, size_t count);
+
+参数：
+    fd：文件描述符
+
+    buf：待写出数据的缓冲区
+
+    count：数据大小
+
+返回值：
+
+    成功；	写入的字节数。
+
+    失败：	-1， 设置 errno
+</code></pre>
+<p>文件描述符：</p>
+<pre><code>PCB进程控制块：本质 结构体。
+
+成员：文件描述符表。
+
+文件描述符：0/1/2/3/4。。。。/1023     表中可用的最小的。
+
+0 - STDIN_FILENO
+
+1 - STDOUT_FILENO
+
+2 - STDERR_FILENO
+</code></pre>
+<p>阻塞、非阻塞：  是设备文件、网络文件的属性。</p>
+<pre><code>产生阻塞的场景。 读设备文件。读网络文件。（读常规文件无阻塞概念。）
+
+/dev/tty -- 终端文件。
+
+open(&quot;/dev/tty&quot;, O_RDWR|O_NONBLOCK)	--- 设置 /dev/tty 非阻塞状态。(默认为阻塞状态)
+</code></pre>
+<p>fcntl：<br>    int (int fd, int cmd, …)</p>
+<pre><code>int flgs = fcntl(fd,  F_GETFL);
+
+flgs |= O_NONBLOCK
+
+fcntl(fd,  F_SETFL, flgs);
+
+获取文件状态： F_GETFL
+
+设置文件状态： F_SETFL
+</code></pre>
+<p>lseek函数：</p>
+<pre><code>off_t lseek(int fd, off_t offset, int whence);
+
+参数：
+    fd：文件描述符
+
+    offset： 偏移量
+
+    whence：起始偏移位置： SEEK_SET/SEEK_CUR/SEEK_END
+
+返回值：
+
+    成功：较起始位置偏移量
+
+    失败：-1 errno
+
+应用场景：	
+    1. 文件的“读”、“写”使用同一偏移位置。
+
+    2. 使用lseek获取文件大小
+
+    3. 使用lseek拓展文件大小：要想使文件大小真正拓展，必须引起IO操作。
+
+        使用 truncate 函数，直接拓展文件。	int ret = truncate(&quot;dict.cp&quot;, 250);
+</code></pre>
+<p>传入参数：</p>
+<pre><code>1. 指针作为函数参数。
+
+2. 同常有const关键字修饰。
+
+3. 指针指向有效区域， 在函数内部做读操作。
+</code></pre>
+<p>传出参数：</p>
+<pre><code>1. 指针作为函数参数。
+
+2. 在函数调用之前，指针指向的空间可以无意义，但必须有效。
+
+3. 在函数内部，做写操作。
+
+4。函数调用结束后，充当函数返回值。
+</code></pre>
+<p>传入传出参数：</p>
+<pre><code>1. 指针作为函数参数。
+
+2. 在函数调用之前，指针指向的空间有实际意义。
+
+3. 在函数内部，先做读操作，后做写操作。
+
+4. 函数调用结束后，充当函数返回值。
+</code></pre>
+<p>stat&#x2F;lstat 函数：</p>
+<pre><code>int stat(const char *path, struct stat *buf);
+
+参数：
+    path： 文件路径
+
+    buf：（传出参数） 存放文件属性。
+
+返回值：
+
+    成功： 0
+
+    失败： -1 errno
+
+获取文件大小： buf.st_size
+
+获取文件类型： buf.st_mode
+
+获取文件权限： buf.st_mode
+
+符号穿透：stat会。lstat不会。
+</code></pre>
+<p><img src="/../photos/src/linux/io01.png"></p>
+<p>link&#x2F;unlink:</p>
+<pre><code>隐式回收。
+</code></pre>
+<p>目录操作函数：</p>
+<pre><code>DIR * opendir(char *name);
+
+int closedir(DIR *dp);
+
+struct dirent *readdir(DIR * dp);
+
+    struct dirent &#123;
+
+        inode
+
+        char dname[256];
+    &#125;
+</code></pre>
+<p>递归遍历目录：</p>
+<pre><code>1. 判断命令行参数，获取用户要查询的目录名。	int argc, char *argv[1]
+
+    argc == 1  --&gt; ./
+
+2. 判断用户指定的是否是目录。 stat  S_ISDIR(); --&gt; 封装函数 isFile() &#123;   &#125;
+
+3. 读目录： read_dir() &#123; 
+
+    opendir（dir）
+
+    while （readdir（））&#123;
+
+        普通文件，直接打印
+
+        目录：
+            拼接目录访问绝对路径。sprintf(path, &quot;%s/%s&quot;, dir, d_name) 
+
+            递归调用自己。--》 opendir（path） readdir closedir
+    &#125;
+
+    closedir（）
+
+    &#125;
+    read_dir() --&gt; isFile() ---&gt; read_dir()
+</code></pre>
+<p>dup 和 dup2：</p>
+<pre><code>int dup(int oldfd);		文件描述符复制。
+
+    oldfd: 已有文件描述符
+
+    返回：新文件描述符。
+
+int dup2(int oldfd, int newfd); 文件描述符复制。重定向。
+
+若参数newfd已经被程序使用，则系统就会将newfd所指的文件关闭，若newfd等于oldfd，则返回newfd,而不关闭newfd所指的文件。dup2所复制的文件描述符与原来的文件描述符共享各种文件状态。共享所有的锁定，读写位置和各项权限或flags等
+
+成功返回新文件描述符，失败返回-1
+</code></pre>
+<p>fcntl 函数实现 dup：</p>
+<pre><code>int fcntl(int fd, int cmd, ....)
+
+cmd: F_DUPFD
+
+参3:  	被占用的，返回最小可用的。
+
+    未被占用的， 返回=该值的文件描述符。
+</code></pre>
+<p>fcntl 函数实现 dup：</p>
+<pre><code>int fcntl(int fd, int cmd, ....)
+
+cmd: F_DUPFD
+
+参3:  	被占用的，返回最小可用的。
+
+    未被占用的， 返回=该值的文件描述符。
+</code></pre>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/12/linux-io/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux-gcc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1411,116 +1743,6 @@ unzip  testzip.zip
 
 
   
-    <article id="post-c-08指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">C-08指针</a>
-    </h1>
-  
-
-        
-        <a href="/2020/08/08/c-08%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2020-08-08T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="01指针变量"><a href="#01指针变量" class="headerlink" title="01指针变量"></a>01指针变量</h2><p>地址变量&#x3D;指针变量（存放地址值）</p>
-<p>内容值只能放在内容变量里</p>
-<p>指针在内存中分配的字节数相同 （2字节）</p>
-<p>指针变量要定义并初始化 </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *temp ;</span><br><span class="line">*temp = <span class="number">10</span>  <span class="comment">//(错)</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="02指向数组元素的指针变量"><a href="#02指向数组元素的指针变量" class="headerlink" title="02指向数组元素的指针变量"></a>02指向数组元素的指针变量</h2><p><img src="/../photos/src/c/08-pointer-arr.png"><br><img src="/../photos/src/c/08-pointer-arr2.png"></p>
-<p>*p++ &#x3D; *(p++)     (单目同级别由右向左运算)</p>
-<h2 id="03指向多维数组的指针变量"><a href="#03指向多维数组的指针变量" class="headerlink" title="03指向多维数组的指针变量"></a>03指向多维数组的指针变量</h2><p><img src="/../photos/src/c/08-pointer2-arr.png"></p>
-<h3 id="列指针变量"><a href="#列指针变量" class="headerlink" title="列指针变量"></a>列指针变量</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">2</span>][<span class="number">3</span>]=&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> *p<span class="comment">//(列指针变量=元素指针变量)</span></span><br><span class="line"></span><br><span class="line">p=a[<span class="number">0</span>]  <span class="comment">//(p=a是错的,a是行指针，p是列指针）</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*(p+<span class="number">5</span>) <span class="comment">//输出6      </span></span><br></pre></td></tr></table></figure>
-
-<h3 id="行指针变量"><a href="#行指针变量" class="headerlink" title="行指针变量"></a>行指针变量</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">5</span>][<span class="number">7</span>]</span><br><span class="line"><span class="type">int</span> (*p)[<span class="number">7</span>] <span class="comment">//(行指针变量)</span></span><br><span class="line">p=a</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><code>int  w[3][4]</code></p>
-<p><code>w</code>:</p>
-<ol>
-<li>元素首地址</li>
-<li>地址常量，不能修改</li>
-<li>行指针，w+1向下移一行</li>
-</ol>
-<h2 id="04指向字符串的指针变量"><a href="#04指向字符串的指针变量" class="headerlink" title="04指向字符串的指针变量"></a>04指向字符串的指针变量</h2><p>按首地址处理符串常量   “abc”&#x3D;首个字符地址常量</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> str[]=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">char</span> str[]=&#123;<span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">char</span> *p=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">char</span> *p=&#123;<span class="string">&quot;abc&quot;</span>&#125;;  <span class="comment">//(×)</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="05指向函数的指针变量"><a href="#05指向函数的指针变量" class="headerlink" title="05指向函数的指针变量"></a>05指向函数的指针变量</h2><p>函数名与数组名一样，是起始地址，是地址常量</p>
-<p><code>类型名   （*指针变量名）（）</code> </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fun</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> (*p)();</span><br><span class="line">p = fun;</span><br></pre></td></tr></table></figure>
-
-<h2 id="06返回指针的函数-返回地址"><a href="#06返回指针的函数-返回地址" class="headerlink" title="06返回指针的函数(返回地址)"></a>06返回指针的函数(返回地址)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *<span class="title function_">fun</span> <span class="params">(<span class="type">int</span> *x,<span class="type">int</span> *y)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="07常量指针-可以换值，不能换地址"><a href="#07常量指针-可以换值，不能换地址" class="headerlink" title="07常量指针(可以换值，不能换地址)"></a>07常量指针(可以换值，不能换地址)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x =<span class="number">100</span>;</span><br><span class="line"><span class="type">int</span> * <span class="type">const</span> p = &amp;x;</span><br><span class="line">*p = <span class="number">200</span>; </span><br></pre></td></tr></table></figure>
-
-<h2 id="08指针常量-可以换地址，不能改值"><a href="#08指针常量-可以换地址，不能改值" class="headerlink" title="08指针常量(可以换地址，不能改值)"></a>08指针常量(可以换地址，不能改值)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">100</span>;</span><br><span class="line"><span class="type">int</span> y = <span class="number">200</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> * p =&amp;x;</span><br><span class="line">p = &amp;y;</span><br></pre></td></tr></table></figure>
-
-<h2 id="09数组作为函数参数"><a href="#09数组作为函数参数" class="headerlink" title="09数组作为函数参数"></a>09数组作为函数参数</h2><p>call by value 传值调用</p>
-<p>call by reference 传引用 （&amp;a，节省内存）(*p 解引用)</p>
-<p>当编译器看到数组作为参数的时候，不会拷贝整个数组，而是创建一个指向数组首元素的指针，所以数组作为参数总是传引用不会传值</p>
-<p>int A[] &#x3D; int *A    ([]表示这是一个数组)还需要传入数组长度，如图2，但是字符数组不用，字符数组到‘\0’结束<br><img src="/../photos/src/c/08-arr-as-arg.png"><br><img src="/../photos/src/c/08-arr-as-arg2.png"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">C</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/08/08/c-08%E6%8C%87%E9%92%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
@@ -1631,6 +1853,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">json</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">lightroom</a>
               </li>
              
               <li class="article-tag-list-item">
